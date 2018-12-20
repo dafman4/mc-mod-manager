@@ -1,0 +1,4 @@
+rootProject.name = 'mc-mod-checker'
+include 'api'
+findProject(':api')?.name = 'mcmodchecker-api'
+
