@@ -1,14 +1,16 @@
-package squedgy.mcmodchecker;
+package squedgy.mcmodmanager.api.response;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
-public class JsonDeserializer extends StdDeserializer<ModResponse> {
+public class JsonDeserializer extends StdDeserializer<CurseForgeResponse> {
 
     private final String version;
 
@@ -26,21 +28,24 @@ public class JsonDeserializer extends StdDeserializer<ModResponse> {
     }
 
     @Override
-    public ModResponse deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+    public CurseForgeResponse deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
 
-        ModResponse ret = new ModResponse();
+        ModInformation ret = new ModInformation();
 
         JsonNode node = parser.getCodec().readTree(parser);
 
         node.get("versions").elements().forEachRemaining(versionNumber -> {
             versionNumber.elements().forEachRemaining(modVersion -> {
-                if(this.version == null || (modVersion.get("version") != null && version.equals(modVersion.get("version").asText()))) {
-                    ModVersion toAdd = new ModVersion();
+                if(this.version == null
+                        || (modVersion.get("version") != null
+                            && version.equals(modVersion.get("version").asText()))) {
+                    Version toAdd = new Version();
                     toAdd.setId(modVersion.get("id").asLong());
                     toAdd.setDownloadUrl(modVersion.get("url").asText());
                     toAdd.setFileName(modVersion.get("name").asText());
                     toAdd.setTypeOfRelease(modVersion.get("type").asText());
                     toAdd.setMinecraftVersion(modVersion.get("version").asText());
+                    toAdd.setUploadedAt(LocalDateTime.parse(modVersion.get("uploaded_at").asText()));
                     ret.addVersion(toAdd);
                 }
             });
@@ -49,7 +54,7 @@ public class JsonDeserializer extends StdDeserializer<ModResponse> {
         node.get("members").elements().forEachRemaining(member -> {
             String title = member.get("title").asText(),
                     username = member.get("username").asText();
-            ret.addMember(new ModMember(title, username));
+            ret.addMember(new Member(title, username));
         });
 
 

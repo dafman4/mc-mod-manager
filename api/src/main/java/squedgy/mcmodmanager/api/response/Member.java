@@ -1,11 +1,13 @@
-package squedgy.mcmodchecker;
+package squedgy.mcmodmanager.api.response;
 
-public class ModMember {
+import squedgy.mcmodmanager.api.abstractions.ModMember;
+
+class Member implements ModMember {
 
     private String title;
     private String username;
 
-    public ModMember(String title, String username){
+    public Member(String title, String username){
         this.title = title;
         this.username = username;
     }
