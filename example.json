@@ -1,0 +1,1586 @@
+{
+  "id": 223628,
+  "game": "minecraft",
+  "type": "Mods",
+  "urls": {
+    "project": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft",
+    "curseforge": "https:\/\/minecraft.curseforge.com\/projects\/thaumcraft"
+  },
+  "files": [
+    {
+      "id": 2629023,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2629023",
+      "name": "Thaumcraft-1.12.2-6.1.BETA26.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11360786",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 659048,
+      "uploaded_at": "2018-10-18T07:31:06Z"
+    },
+    {
+      "id": 2628773,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2628773",
+      "name": "Thaumcraft-1.12.2-6.1.BETA26.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11360860",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 3900,
+      "uploaded_at": "2018-10-17T11:49:37Z"
+    },
+    {
+      "id": 2623407,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2623407",
+      "name": "Thaumcraft-1.12.2-6.1.BETA25.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11256702",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 116805,
+      "uploaded_at": "2018-10-02T09:27:45Z"
+    },
+    {
+      "id": 2614113,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2614113",
+      "name": "Thaumcraft-1.12.2-6.1.BETA24.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11233600",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 398375,
+      "uploaded_at": "2018-09-07T09:19:50Z"
+    },
+    {
+      "id": 2607849,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2607849",
+      "name": "Thaumcraft-1.12.2-6.1.BETA23.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11236432",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 87176,
+      "uploaded_at": "2018-08-24T09:30:51Z"
+    },
+    {
+      "id": 2603537,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2603537",
+      "name": "Thaumcraft-1.12.2-6.1.BETA22.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11222744",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 145006,
+      "uploaded_at": "2018-08-15T09:10:40Z"
+    },
+    {
+      "id": 2599798,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2599798",
+      "name": "Thaumcraft-1.12.2-6.1.BETA21.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11192297",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 51867,
+      "uploaded_at": "2018-08-08T08:16:47Z"
+    },
+    {
+      "id": 2597126,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2597126",
+      "name": "Thaumcraft-1.12.2-6.1.BETA20.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11178737",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 32444,
+      "uploaded_at": "2018-08-03T09:47:00Z"
+    },
+    {
+      "id": 2587290,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2587290",
+      "name": "Thaumcraft-1.12.2-6.1.BETA19.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11129103",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 116208,
+      "uploaded_at": "2018-07-20T07:43:48Z"
+    },
+    {
+      "id": 2578520,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2578520",
+      "name": "Thaumcraft-1.12.2-6.1.BETA17.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11116529",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 257768,
+      "uploaded_at": "2018-07-02T10:51:57Z"
+    },
+    {
+      "id": 2569273,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2569273",
+      "name": "Thaumcraft-1.12.2-6.1.BETA16.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11015653",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 522620,
+      "uploaded_at": "2018-06-04T10:26:51Z"
+    },
+    {
+      "id": 2565186,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2565186",
+      "name": "Thaumcraft-1.12.2-6.1.BETA15.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "11015810",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 45869,
+      "uploaded_at": "2018-05-24T08:58:44Z"
+    },
+    {
+      "id": 2564655,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2564655",
+      "name": "Thaumcraft-1.12.2-6.1.BETA14.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "10936704",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 11376,
+      "uploaded_at": "2018-05-23T06:27:03Z"
+    },
+    {
+      "id": 2558648,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2558648",
+      "name": "Thaumcraft-1.12.2-6.1.BETA13.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "10657278",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 304754,
+      "uploaded_at": "2018-05-05T09:29:57Z"
+    },
+    {
+      "id": 2558310,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2558310",
+      "name": "Thaumcraft-1.12.2-6.1.BETA12.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "10656599",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 9801,
+      "uploaded_at": "2018-05-04T12:10:31Z"
+    },
+    {
+      "id": 2555599,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2555599",
+      "name": "Thaumcraft-1.12.2-6.1.BETA11.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "10639658",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 57908,
+      "uploaded_at": "2018-04-26T10:03:19Z"
+    },
+    {
+      "id": 2554876,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2554876",
+      "name": "Thaumcraft-1.12.2-6.1.BETA10.jar",
+      "type": "beta",
+      "version": "1.12.2",
+      "filesize": "10633151",
+      "versions": [
+        "1.12.2"
+      ],
+      "downloads": 23291,
+      "uploaded_at": "2018-04-24T10:19:05Z"
+    },
+    {
+      "id": 2546413,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2546413",
+      "name": "Thaumcraft-1.10.2-6.0.BETA8.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "11141674",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 104577,
+      "uploaded_at": "2018-03-29T20:41:25Z"
+    },
+    {
+      "id": 2546198,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2546198",
+      "name": "Thaumcraft-1.10.2-6.0.BETA8.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "10665684",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 1962,
+      "uploaded_at": "2018-03-29T07:24:53Z"
+    },
+    {
+      "id": 2535352,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2535352",
+      "name": "Thaumcraft-1.10.2-6.0.BETA7.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "10947687",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 57052,
+      "uploaded_at": "2018-02-26T08:01:50Z"
+    },
+    {
+      "id": 2531493,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2531493",
+      "name": "Thaumcraft-1.10.2-6.0.BETA6.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "10386746",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 12761,
+      "uploaded_at": "2018-02-15T11:28:44Z"
+    },
+    {
+      "id": 2531151,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2531151",
+      "name": "Thaumcraft-1.10.2-6.0.BETA5.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "10385507",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 10812,
+      "uploaded_at": "2018-02-14T07:00:47Z"
+    },
+    {
+      "id": 2529223,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2529223",
+      "name": "Thaumcraft-1.10.2-6.0.BETA4.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "10317898",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 14339,
+      "uploaded_at": "2018-02-08T10:26:36Z"
+    },
+    {
+      "id": 2524431,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2524431",
+      "name": "Thaumcraft-1.10.2-6.0.BETA3.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "10722439",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 14398,
+      "uploaded_at": "2018-01-26T12:05:02Z"
+    },
+    {
+      "id": 2523647,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2523647",
+      "name": "Thaumcraft-1.10.2-6.0.BETA2.jar",
+      "type": "beta",
+      "version": "1.10.2",
+      "filesize": "10254316",
+      "versions": [
+        "1.10.2"
+      ],
+      "downloads": 12612,
+      "uploaded_at": "2018-01-24T11:07:53Z"
+    },
+    {
+      "id": 2287496,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2287496",
+      "name": "Thaumcraft-1.8.9-5.2.4.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12530644",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 456501,
+      "uploaded_at": "2016-03-17T09:13:52Z"
+    },
+    {
+      "id": 2287303,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2287303",
+      "name": "Thaumcraft-1.8.9-5.2.3.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12530063",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 3495,
+      "uploaded_at": "2016-03-16T10:08:04Z"
+    },
+    {
+      "id": 2287099,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2287099",
+      "name": "Thaumcraft-1.8.9-5.2.2.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12837435",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 2568,
+      "uploaded_at": "2016-03-15T08:32:09Z"
+    },
+    {
+      "id": 2285288,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2285288",
+      "name": "Thaumcraft-1.8.9-5.2.1.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12785553",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 21801,
+      "uploaded_at": "2016-03-04T18:25:07Z"
+    },
+    {
+      "id": 2285221,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2285221",
+      "name": "Thaumcraft-1.8.9-5.2.0.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12780991",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 2820,
+      "uploaded_at": "2016-03-04T06:12:15Z"
+    },
+    {
+      "id": 2279928,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2279928",
+      "name": "Thaumcraft-1.8.9-5.1.6.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12611267",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 73390,
+      "uploaded_at": "2016-02-04T07:36:24Z"
+    },
+    {
+      "id": 2279726,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2279726",
+      "name": "Thaumcraft-1.8.9-5.1.5.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12610430",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 4875,
+      "uploaded_at": "2016-02-03T09:21:27Z"
+    },
+    {
+      "id": 2276528,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2276528",
+      "name": "Thaumcraft-1.8.9-5.1.4.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12553493",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 25693,
+      "uploaded_at": "2016-01-20T09:02:00Z"
+    },
+    {
+      "id": 2275181,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2275181",
+      "name": "Thaumcraft-1.8.9-5.1.3.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12526249",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 23754,
+      "uploaded_at": "2016-01-13T11:03:12Z"
+    },
+    {
+      "id": 2275058,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2275058",
+      "name": "Thaumcraft-1.8.9-5.1.2.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12519614",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 3111,
+      "uploaded_at": "2016-01-12T16:31:50Z"
+    },
+    {
+      "id": 2274561,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2274561",
+      "name": "Thaumcraft-1.8.9-5.1.1.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12485166",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 5092,
+      "uploaded_at": "2016-01-10T03:10:55Z"
+    },
+    {
+      "id": 2274436,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2274436",
+      "name": "Thaumcraft-1.8.9-5.1.0.jar",
+      "type": "release",
+      "version": "1.8.9",
+      "filesize": "12483410",
+      "versions": [
+        "1.8.9"
+      ],
+      "downloads": 37574,
+      "uploaded_at": "2016-01-09T10:52:39Z"
+    },
+    {
+      "id": 2265944,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2265944",
+      "name": "Thaumcraft-1.8-5.0.3.jar",
+      "type": "release",
+      "version": "1.8",
+      "filesize": "12162548",
+      "versions": [
+        "1.8"
+      ],
+      "downloads": 116632,
+      "uploaded_at": "2015-11-09T13:11:58Z"
+    },
+    {
+      "id": 2265122,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2265122",
+      "name": "Thaumcraft-1.8-5.0.2.jar",
+      "type": "release",
+      "version": "1.8",
+      "filesize": "12055683",
+      "versions": [
+        "1.8"
+      ],
+      "downloads": 9804,
+      "uploaded_at": "2015-11-03T16:29:36Z"
+    },
+    {
+      "id": 2264708,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2264708",
+      "name": "Thaumcraft-1.8-5.0.1.jar",
+      "type": "release",
+      "version": "1.8",
+      "filesize": "12046440",
+      "versions": [
+        "1.8"
+      ],
+      "downloads": 5678,
+      "uploaded_at": "2015-10-31T08:11:01Z"
+    },
+    {
+      "id": 2264542,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2264542",
+      "name": "Thaumcraft-1.8-5.0.0.jar",
+      "type": "release",
+      "version": "1.8",
+      "filesize": "12047188",
+      "versions": [
+        "1.8"
+      ],
+      "downloads": 4436,
+      "uploaded_at": "2015-10-30T11:38:56Z"
+    },
+    {
+      "id": 2227552,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2227552",
+      "name": "Thaumcraft-1.7.10-4.2.3.5.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12565807",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 9216157,
+      "uploaded_at": "2015-02-17T06:48:06Z"
+    },
+    {
+      "id": 2225657,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2225657",
+      "name": "Thaumcraft-1.7.10-4.2.3.4.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12485372",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 40658,
+      "uploaded_at": "2015-01-28T07:59:52Z"
+    },
+    {
+      "id": 2224967,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2224967",
+      "name": "Thaumcraft-1.7.10-4.2.3.3.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12470207",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 15372,
+      "uploaded_at": "2015-01-19T06:43:54Z"
+    },
+    {
+      "id": 2224347,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2224347",
+      "name": "Thaumcraft-1.7.10-4.2.3.2.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12469414",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 10185,
+      "uploaded_at": "2015-01-13T06:54:50Z"
+    },
+    {
+      "id": 2224297,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2224297",
+      "name": "Thaumcraft-1.7.10-4.2.3.1.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12469321",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 3439,
+      "uploaded_at": "2015-01-12T12:54:38Z"
+    },
+    {
+      "id": 2223710,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2223710",
+      "name": "Thaumcraft-1.7.10-4.2.3.0.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12415228",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 12565,
+      "uploaded_at": "2015-01-05T05:46:48Z"
+    },
+    {
+      "id": 2222677,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2222677",
+      "name": "Thaumcraft-1.7.10-4.2.2.1.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12332014",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 49205,
+      "uploaded_at": "2014-12-23T07:04:38Z"
+    },
+    {
+      "id": 2222517,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2222517",
+      "name": "Thaumcraft-1.7.10-4.2.2.0.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "12331400",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 33236,
+      "uploaded_at": "2014-12-21T10:18:00Z"
+    },
+    {
+      "id": 2216273,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2216273",
+      "name": "Thaumcraft-1.7.10-4.2.1.4.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "10821058",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 89427,
+      "uploaded_at": "2014-10-10T09:32:41Z"
+    },
+    {
+      "id": 2216015,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2216015",
+      "name": "Thaumcraft-1.7.10-4.2.1.3.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "10793423",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 6989,
+      "uploaded_at": "2014-10-07T13:41:28Z"
+    },
+    {
+      "id": 2215932,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215932",
+      "name": "Thaumcraft-1.7.10-4.2.1.2.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "10787535",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 5445,
+      "uploaded_at": "2014-10-06T13:45:50Z"
+    },
+    {
+      "id": 2215836,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215836",
+      "name": "Thaumcraft-1.7.10-4.2.1.1.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "10776925",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 3053,
+      "uploaded_at": "2014-10-05T11:01:44Z"
+    },
+    {
+      "id": 2215796,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215796",
+      "name": "Thaumcraft-1.7.10-4.2.1.0.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "10768341",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 3721,
+      "uploaded_at": "2014-10-04T18:04:49Z"
+    },
+    {
+      "id": 2215791,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215791",
+      "name": "Thaumcraft-1.7.10-4.2.1.0-api.zip",
+      "type": "release",
+      "version": "Java 8",
+      "filesize": "55453",
+      "versions": [
+        "1.7.10",
+        "Java 6",
+        "Java 7",
+        "Java 8"
+      ],
+      "downloads": 2485,
+      "uploaded_at": "2014-10-04T17:49:07Z"
+    },
+    {
+      "id": 2212814,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2212814",
+      "name": "Thaumcraft-1.7.10-4.2.0.1.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "10029691",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 91913,
+      "uploaded_at": "2014-08-27T06:42:53Z"
+    },
+    {
+      "id": 2212317,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2212317",
+      "name": "Thaumcraft-1.7.10-4.2.0.0.jar",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "9871056",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 13213,
+      "uploaded_at": "2014-08-22T12:25:18Z"
+    },
+    {
+      "id": 2212312,
+      "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2212312",
+      "name": "Thaumcraft-1.7.10-4.2.0.0-api.zip",
+      "type": "release",
+      "version": "1.7.10",
+      "filesize": "54768",
+      "versions": [
+        "1.7.10"
+      ],
+      "downloads": 5011,
+      "uploaded_at": "2014-08-22T11:27:56Z"
+    }
+  ],
+  "links": [
+    {
+      "href": "https:\/\/github.com\/Azanor\/thaumcraft-beta",
+      "title": "Issues"
+    }
+  ],
+  "title": "Thaumcraft",
+  "donate": "https:\/\/www.paypal.com\/cgi-bin\/webscr?return=https:\/\/minecraft.curseforge.com\/projects\/thaumcraft&cn=Add+special+instructions+to+the+addon+author()&business=leon%40imaginet.co.za&bn=PP-DonationsBF:btn_donateCC_LG.gif:NonHosted&cancel_return=https:\/\/minecraft.curseforge.com\/projects\/thaumcraft&lc=US&item_name=Thaumcraft+(from+https%3a%2f%2fminecraft.curseforge.com%2f)&cmd=_donations&rm=1&no_shipping=1&currency_code=USD",
+  "license": "Custom License",
+  "members": [
+    {
+      "title": "Owner",
+      "username": "azanor"
+    }
+  ],
+  "versions": {
+    "1.8": [
+      {
+        "id": 2265944,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2265944",
+        "name": "Thaumcraft-1.8-5.0.3.jar",
+        "type": "release",
+        "version": "1.8",
+        "filesize": "12162548",
+        "versions": [
+          "1.8"
+        ],
+        "downloads": 116632,
+        "uploaded_at": "2015-11-09T13:11:58Z"
+      },
+      {
+        "id": 2265122,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2265122",
+        "name": "Thaumcraft-1.8-5.0.2.jar",
+        "type": "release",
+        "version": "1.8",
+        "filesize": "12055683",
+        "versions": [
+          "1.8"
+        ],
+        "downloads": 9804,
+        "uploaded_at": "2015-11-03T16:29:36Z"
+      },
+      {
+        "id": 2264708,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2264708",
+        "name": "Thaumcraft-1.8-5.0.1.jar",
+        "type": "release",
+        "version": "1.8",
+        "filesize": "12046440",
+        "versions": [
+          "1.8"
+        ],
+        "downloads": 5678,
+        "uploaded_at": "2015-10-31T08:11:01Z"
+      },
+      {
+        "id": 2264542,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2264542",
+        "name": "Thaumcraft-1.8-5.0.0.jar",
+        "type": "release",
+        "version": "1.8",
+        "filesize": "12047188",
+        "versions": [
+          "1.8"
+        ],
+        "downloads": 4436,
+        "uploaded_at": "2015-10-30T11:38:56Z"
+      }
+    ],
+    "1.8.9": [
+      {
+        "id": 2287496,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2287496",
+        "name": "Thaumcraft-1.8.9-5.2.4.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12530644",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 456501,
+        "uploaded_at": "2016-03-17T09:13:52Z"
+      },
+      {
+        "id": 2287303,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2287303",
+        "name": "Thaumcraft-1.8.9-5.2.3.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12530063",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 3495,
+        "uploaded_at": "2016-03-16T10:08:04Z"
+      },
+      {
+        "id": 2287099,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2287099",
+        "name": "Thaumcraft-1.8.9-5.2.2.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12837435",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 2568,
+        "uploaded_at": "2016-03-15T08:32:09Z"
+      },
+      {
+        "id": 2285288,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2285288",
+        "name": "Thaumcraft-1.8.9-5.2.1.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12785553",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 21801,
+        "uploaded_at": "2016-03-04T18:25:07Z"
+      },
+      {
+        "id": 2285221,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2285221",
+        "name": "Thaumcraft-1.8.9-5.2.0.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12780991",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 2820,
+        "uploaded_at": "2016-03-04T06:12:15Z"
+      },
+      {
+        "id": 2279928,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2279928",
+        "name": "Thaumcraft-1.8.9-5.1.6.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12611267",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 73390,
+        "uploaded_at": "2016-02-04T07:36:24Z"
+      },
+      {
+        "id": 2279726,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2279726",
+        "name": "Thaumcraft-1.8.9-5.1.5.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12610430",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 4875,
+        "uploaded_at": "2016-02-03T09:21:27Z"
+      },
+      {
+        "id": 2276528,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2276528",
+        "name": "Thaumcraft-1.8.9-5.1.4.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12553493",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 25693,
+        "uploaded_at": "2016-01-20T09:02:00Z"
+      },
+      {
+        "id": 2275181,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2275181",
+        "name": "Thaumcraft-1.8.9-5.1.3.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12526249",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 23754,
+        "uploaded_at": "2016-01-13T11:03:12Z"
+      },
+      {
+        "id": 2275058,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2275058",
+        "name": "Thaumcraft-1.8.9-5.1.2.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12519614",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 3111,
+        "uploaded_at": "2016-01-12T16:31:50Z"
+      },
+      {
+        "id": 2274561,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2274561",
+        "name": "Thaumcraft-1.8.9-5.1.1.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12485166",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 5092,
+        "uploaded_at": "2016-01-10T03:10:55Z"
+      },
+      {
+        "id": 2274436,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2274436",
+        "name": "Thaumcraft-1.8.9-5.1.0.jar",
+        "type": "release",
+        "version": "1.8.9",
+        "filesize": "12483410",
+        "versions": [
+          "1.8.9"
+        ],
+        "downloads": 37574,
+        "uploaded_at": "2016-01-09T10:52:39Z"
+      }
+    ],
+    "1.10.2": [
+      {
+        "id": 2546413,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2546413",
+        "name": "Thaumcraft-1.10.2-6.0.BETA8.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "11141674",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 104577,
+        "uploaded_at": "2018-03-29T20:41:25Z"
+      },
+      {
+        "id": 2546198,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2546198",
+        "name": "Thaumcraft-1.10.2-6.0.BETA8.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "10665684",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 1962,
+        "uploaded_at": "2018-03-29T07:24:53Z"
+      },
+      {
+        "id": 2535352,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2535352",
+        "name": "Thaumcraft-1.10.2-6.0.BETA7.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "10947687",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 57052,
+        "uploaded_at": "2018-02-26T08:01:50Z"
+      },
+      {
+        "id": 2531493,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2531493",
+        "name": "Thaumcraft-1.10.2-6.0.BETA6.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "10386746",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 12761,
+        "uploaded_at": "2018-02-15T11:28:44Z"
+      },
+      {
+        "id": 2531151,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2531151",
+        "name": "Thaumcraft-1.10.2-6.0.BETA5.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "10385507",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 10812,
+        "uploaded_at": "2018-02-14T07:00:47Z"
+      },
+      {
+        "id": 2529223,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2529223",
+        "name": "Thaumcraft-1.10.2-6.0.BETA4.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "10317898",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 14339,
+        "uploaded_at": "2018-02-08T10:26:36Z"
+      },
+      {
+        "id": 2524431,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2524431",
+        "name": "Thaumcraft-1.10.2-6.0.BETA3.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "10722439",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 14398,
+        "uploaded_at": "2018-01-26T12:05:02Z"
+      },
+      {
+        "id": 2523647,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2523647",
+        "name": "Thaumcraft-1.10.2-6.0.BETA2.jar",
+        "type": "beta",
+        "version": "1.10.2",
+        "filesize": "10254316",
+        "versions": [
+          "1.10.2"
+        ],
+        "downloads": 12612,
+        "uploaded_at": "2018-01-24T11:07:53Z"
+      }
+    ],
+    "1.12.2": [
+      {
+        "id": 2629023,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2629023",
+        "name": "Thaumcraft-1.12.2-6.1.BETA26.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11360786",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 659048,
+        "uploaded_at": "2018-10-18T07:31:06Z"
+      },
+      {
+        "id": 2628773,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2628773",
+        "name": "Thaumcraft-1.12.2-6.1.BETA26.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11360860",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 3900,
+        "uploaded_at": "2018-10-17T11:49:37Z"
+      },
+      {
+        "id": 2623407,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2623407",
+        "name": "Thaumcraft-1.12.2-6.1.BETA25.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11256702",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 116805,
+        "uploaded_at": "2018-10-02T09:27:45Z"
+      },
+      {
+        "id": 2614113,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2614113",
+        "name": "Thaumcraft-1.12.2-6.1.BETA24.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11233600",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 398375,
+        "uploaded_at": "2018-09-07T09:19:50Z"
+      },
+      {
+        "id": 2607849,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2607849",
+        "name": "Thaumcraft-1.12.2-6.1.BETA23.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11236432",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 87176,
+        "uploaded_at": "2018-08-24T09:30:51Z"
+      },
+      {
+        "id": 2603537,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2603537",
+        "name": "Thaumcraft-1.12.2-6.1.BETA22.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11222744",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 145006,
+        "uploaded_at": "2018-08-15T09:10:40Z"
+      },
+      {
+        "id": 2599798,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2599798",
+        "name": "Thaumcraft-1.12.2-6.1.BETA21.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11192297",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 51867,
+        "uploaded_at": "2018-08-08T08:16:47Z"
+      },
+      {
+        "id": 2597126,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2597126",
+        "name": "Thaumcraft-1.12.2-6.1.BETA20.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11178737",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 32444,
+        "uploaded_at": "2018-08-03T09:47:00Z"
+      },
+      {
+        "id": 2587290,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2587290",
+        "name": "Thaumcraft-1.12.2-6.1.BETA19.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11129103",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 116208,
+        "uploaded_at": "2018-07-20T07:43:48Z"
+      },
+      {
+        "id": 2578520,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2578520",
+        "name": "Thaumcraft-1.12.2-6.1.BETA17.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11116529",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 257768,
+        "uploaded_at": "2018-07-02T10:51:57Z"
+      },
+      {
+        "id": 2569273,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2569273",
+        "name": "Thaumcraft-1.12.2-6.1.BETA16.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11015653",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 522620,
+        "uploaded_at": "2018-06-04T10:26:51Z"
+      },
+      {
+        "id": 2565186,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2565186",
+        "name": "Thaumcraft-1.12.2-6.1.BETA15.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "11015810",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 45869,
+        "uploaded_at": "2018-05-24T08:58:44Z"
+      },
+      {
+        "id": 2564655,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2564655",
+        "name": "Thaumcraft-1.12.2-6.1.BETA14.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "10936704",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 11376,
+        "uploaded_at": "2018-05-23T06:27:03Z"
+      },
+      {
+        "id": 2558648,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2558648",
+        "name": "Thaumcraft-1.12.2-6.1.BETA13.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "10657278",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 304754,
+        "uploaded_at": "2018-05-05T09:29:57Z"
+      },
+      {
+        "id": 2558310,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2558310",
+        "name": "Thaumcraft-1.12.2-6.1.BETA12.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "10656599",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 9801,
+        "uploaded_at": "2018-05-04T12:10:31Z"
+      },
+      {
+        "id": 2555599,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2555599",
+        "name": "Thaumcraft-1.12.2-6.1.BETA11.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "10639658",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 57908,
+        "uploaded_at": "2018-04-26T10:03:19Z"
+      },
+      {
+        "id": 2554876,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2554876",
+        "name": "Thaumcraft-1.12.2-6.1.BETA10.jar",
+        "type": "beta",
+        "version": "1.12.2",
+        "filesize": "10633151",
+        "versions": [
+          "1.12.2"
+        ],
+        "downloads": 23291,
+        "uploaded_at": "2018-04-24T10:19:05Z"
+      }
+    ],
+    "1.7.10": [
+      {
+        "id": 2227552,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2227552",
+        "name": "Thaumcraft-1.7.10-4.2.3.5.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12565807",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 9216157,
+        "uploaded_at": "2015-02-17T06:48:06Z"
+      },
+      {
+        "id": 2225657,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2225657",
+        "name": "Thaumcraft-1.7.10-4.2.3.4.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12485372",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 40658,
+        "uploaded_at": "2015-01-28T07:59:52Z"
+      },
+      {
+        "id": 2224967,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2224967",
+        "name": "Thaumcraft-1.7.10-4.2.3.3.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12470207",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 15372,
+        "uploaded_at": "2015-01-19T06:43:54Z"
+      },
+      {
+        "id": 2224347,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2224347",
+        "name": "Thaumcraft-1.7.10-4.2.3.2.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12469414",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 10185,
+        "uploaded_at": "2015-01-13T06:54:50Z"
+      },
+      {
+        "id": 2224297,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2224297",
+        "name": "Thaumcraft-1.7.10-4.2.3.1.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12469321",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 3439,
+        "uploaded_at": "2015-01-12T12:54:38Z"
+      },
+      {
+        "id": 2223710,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2223710",
+        "name": "Thaumcraft-1.7.10-4.2.3.0.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12415228",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 12565,
+        "uploaded_at": "2015-01-05T05:46:48Z"
+      },
+      {
+        "id": 2222677,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2222677",
+        "name": "Thaumcraft-1.7.10-4.2.2.1.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12332014",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 49205,
+        "uploaded_at": "2014-12-23T07:04:38Z"
+      },
+      {
+        "id": 2222517,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2222517",
+        "name": "Thaumcraft-1.7.10-4.2.2.0.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "12331400",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 33236,
+        "uploaded_at": "2014-12-21T10:18:00Z"
+      },
+      {
+        "id": 2216273,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2216273",
+        "name": "Thaumcraft-1.7.10-4.2.1.4.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "10821058",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 89427,
+        "uploaded_at": "2014-10-10T09:32:41Z"
+      },
+      {
+        "id": 2216015,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2216015",
+        "name": "Thaumcraft-1.7.10-4.2.1.3.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "10793423",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 6989,
+        "uploaded_at": "2014-10-07T13:41:28Z"
+      },
+      {
+        "id": 2215932,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215932",
+        "name": "Thaumcraft-1.7.10-4.2.1.2.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "10787535",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 5445,
+        "uploaded_at": "2014-10-06T13:45:50Z"
+      },
+      {
+        "id": 2215836,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215836",
+        "name": "Thaumcraft-1.7.10-4.2.1.1.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "10776925",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 3053,
+        "uploaded_at": "2014-10-05T11:01:44Z"
+      },
+      {
+        "id": 2215796,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215796",
+        "name": "Thaumcraft-1.7.10-4.2.1.0.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "10768341",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 3721,
+        "uploaded_at": "2014-10-04T18:04:49Z"
+      },
+      {
+        "id": 2212814,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2212814",
+        "name": "Thaumcraft-1.7.10-4.2.0.1.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "10029691",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 91913,
+        "uploaded_at": "2014-08-27T06:42:53Z"
+      },
+      {
+        "id": 2212317,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2212317",
+        "name": "Thaumcraft-1.7.10-4.2.0.0.jar",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "9871056",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 13213,
+        "uploaded_at": "2014-08-22T12:25:18Z"
+      },
+      {
+        "id": 2212312,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2212312",
+        "name": "Thaumcraft-1.7.10-4.2.0.0-api.zip",
+        "type": "release",
+        "version": "1.7.10",
+        "filesize": "54768",
+        "versions": [
+          "1.7.10"
+        ],
+        "downloads": 5011,
+        "uploaded_at": "2014-08-22T11:27:56Z"
+      }
+    ],
+    "Java 8": [
+      {
+        "id": 2215791,
+        "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2215791",
+        "name": "Thaumcraft-1.7.10-4.2.1.0-api.zip",
+        "type": "release",
+        "version": "Java 8",
+        "filesize": "55453",
+        "versions": [
+          "1.7.10",
+          "Java 6",
+          "Java 7",
+          "Java 8"
+        ],
+        "downloads": 2485,
+        "uploaded_at": "2014-10-04T17:49:07Z"
+      }
+    ]
+  },
+  "downloads": {
+    "total": 13472265,
+    "monthly": 0
+  },
+  "thumbnail": "https:\/\/media.forgecdn.net\/avatars\/thumbnails\/9\/951\/120\/120\/635442866020755480.jpeg",
+  "categories": [
+    "Magic",
+    "Adventure and RPG",
+    "Armor, Tools, and Weapons",
+    "Cosmetic",
+    "API and Library"
+  ],
+  "created_at": "2014-08-22T11:21:48Z",
+  "description": "<div style=\"text-align: center;\"><img src=\"http:\/\/i.imgur.com\/r9aB2.png\" alt=\"\" \/><\/div>\r\n<div style=\"text-align: center;\">\"Thaumaturgy... which giveth certain order to make strange works, of the sense to be perceived and of men greatly to be wondered at.\"&nbsp;<em>- Mathematicall Praeface to Euclid's Elements (1570), John Dee<\/em><\/div>\r\n<p style=\"text-align: center;\"><br \/>Thaumaturgy is the capability of a magician to work miracles. A practitioner of thaumaturgy is a thaumaturge, thaumaturgist or miracle worker.<br \/><br \/>This is what this mod is all about - drawing magic from physical objects in the form of Essentia and reshaping it to perform miracles.<br \/><br \/><\/p>\r\n<div style=\"text-align: center;\"><img src=\"http:\/\/i.imgur.com\/j2UT9.png\" alt=\"\" \/><\/div>\r\n<p style=\"text-align: center;\"><br \/>The first thing you will need to craft is a wand. The first one available to you is the Iron Capped Wooden Wand crafted as shown here (using a stick and iron nuggets):<br \/><br \/><\/p>\r\n<div style=\"text-align: center;\"><img src=\"http:\/\/i.imgur.com\/6z2jPqq.png\" alt=\"\" \/>&nbsp;<img src=\"http:\/\/i.imgur.com\/aKNOrYy.png\" alt=\"\" \/><\/div>\r\n<p style=\"text-align: center;\"><br \/>You then place a bookshelf in the world and right click on it with the wand. This gives you the Thaumonomicon which explains almost everything else you will need to know about Thaumcraft.<br \/><br \/><br \/><strong>Thanks to the following folks for their help with translations<\/strong><br \/>Vexatos, jualme, crafteverywhere, Mexahoid, FrancescoDeSa, TheVikingWarrior, Hgmoa, VeryBigBro, avttrue, ferzrrn, RustyXXL, bgh251f2, Egor305, Zaltora, PlatonCraft, XuIIIHuK, Sternes, DancingPeral, GLaDTheresCake, BrunoLG, dmf444, aucunn, tyrope, m9731526<br \/><br \/>shadydeath created an IRC channel at irc.esper.net:#thaumcraft<br \/>I check it regularly so pop in if you want to chat.<\/p>\r\n<p style=\"text-align: center;\">&nbsp;<\/p>\r\n<p style=\"text-align: center;\"><br \/><strong>Compatible \/ Add-on Mods<\/strong><\/p>\r\n<div style=\"text-align: center;\">These are mods that use the API or other means to intergrate with or add content to Thaumcraft. More importantly they do so without breaking the balance of my mod (such as it is).<br \/><br \/>A friendly request to addon makers:<br \/>\r\n<div>I love all the addons that have been made recently, but I have a few requests.<br \/>- Don't go too crazy when adding new aspects. If you do, drop me a PM. If it is something obvious or useful beyond your addon I might add it to vanilla TC. :)<br \/>- Try not to add more than one research tab<br \/>- Please try and keep your own researches on your own tab<br \/>- Please don't move my researches around. You can make copies if you wish to show dependendies on your tab, but the research should remain in its original location.<br \/>- Please don't alter any of my recipes. If you feel it is needed for the balance of your addon please drop me a PM. Partly to discuss if the change is required, but mostly since it might actually be a change that should be in vanilla TC.<br \/><br \/>Lastly, I've noticed some addons adding items from TC 3 or earlier. I don't have a problem with that, so go wild. However several of those items I have been planning to re-add myself. A lot of TC 2 stuff never made it into TC 3 simply due to time constraints. So don't come crying to me if and when I do that. :)<br \/>Note - I obviously won't just copy-paste someones elses code for those items or blocks - I will implement my own versions.<br \/><br \/>If you want access to beta version of my mod to make version update go a bit smoother, send me a PM with your dropbox user info and a link to your mod (so I can check if you are actually an addon dev :P )<\/div>\r\n<br \/>-&nbsp;<a href=\"http:\/\/www.minecraftforum.net\/topic\/1813058-thaumic-tinkerer-thaumcraft-addon-evolve-knowledge-v102\">Thaumic Tinkerer<\/a><br \/>-&nbsp;<a href=\"http:\/\/www.minecraftforum.net\/topic\/2090604-16x-thaumcraft-addon-mob-aspects\/\">Thaumcraft Mob Aspects<\/a><br \/>-&nbsp;<a href=\"http:\/\/www.minecraftforum.net\/topic\/2196652-164\">Electric Magic Tools<\/a><br \/><br \/>Texture Packs<br \/>-&nbsp;<a href=\"http:\/\/soartex.net\/downloads\/mods\/\">Soartex<\/a><\/div>\r\n<p style=\"text-align: center;\"><br \/><strong>Mod Packs<\/strong><\/p>\r\n<div style=\"text-align: center;\">The code of &ldquo;Thaumcraft for Minecraft&rdquo; in source or binary form is the intellectual property of Azanor. See below for copyright, terms and conditions.<br \/><br \/>As a habit I ignore every PM in regards to mod-packs - both private and public. Everything you need to know about them is listed here.<br \/><br \/>You want Thaumcraft in your mod pack? All you need to meet are five simple conditions:<br \/>1. Your mod pack needs a link back to this forum post.<br \/>2. You cannot make any money off of the mod pack.<br \/>3. You cannot claim that you made any part of the mod, and you must give credit to the author of the mod (Azanor).<br \/>4. If I ever ask you to remove my mod from your pack, for whatever reason, you do so.<br \/>5. Handle any queries and bug reports internally first. This is one of the main reasons I had such a strict anti-modpack policy for such a long time - people using modpacks would come here posting errors that have nothing to do with my mod or that have been fixed ages ago, but still occurs in the modpack because it is using an older version.<br \/><br \/>If these five conditions are met, then you have my permission to use it in a mod pack.<br \/><br \/><\/div>\r\n<p style=\"text-align: center;\"><strong>Special thanks to...<\/strong><\/p>\r\n<div style=\"text-align: center;\">My&nbsp;Beta Testers, you know who you are :)<\/div>\r\n<div style=\"text-align: center;\">All the folks on the&nbsp;Forgecraft&nbsp;server for your help and support.<\/div>\r\n<div style=\"text-align: center;\"><strong>Dan Scott&nbsp;<\/strong>(&nbsp;for all the help he gave me with some of the sprites.<\/div>\r\n<div style=\"text-align: center;\"><strong>mr.Hazard(d95)&nbsp;<\/strong>for his awesome models<br \/><strong>Lorc<\/strong>, creator of the icons I use for enchanting and other things<br \/><strong>bonemouse<\/strong>, creator of the&nbsp;<a href=\"http:\/\/www.minecraftforum.net\/topic\/242175-16x10-isabella-10v2-many-small-improvements-dec-19-2011\/\">Isabella Texture Pack<\/a>&nbsp;for letting me use his chest textures and skin as well as&nbsp;ScottKillen&nbsp;for making the Thaumium armor graphics based on the Isabella pack.<br \/><strong>chicken_bones&nbsp;<\/strong>for letting me base my lightning effect and deploader code from&nbsp;<a href=\"http:\/\/www.minecraftforum.net\/topic\/909223-100181-chickenbones-mods\/\">WRCBE<\/a><br \/><strong>CovertJaguar&nbsp;<\/strong>for his custom biome spawning code.<br \/><strong>Rorax&nbsp;<\/strong>for allowing me to use some of her models.<br \/><strong><a href=\"http:\/\/www.jwbjerk.com\/art\">J. W. Bjerk (eleazzaar)<\/a><\/strong>for the use of his icons for certain research categories. Find this and other open art at:&nbsp;<a href=\"http:\/\/opengameart.org\">http:\/\/opengameart.org<\/a><br \/><strong>BitterBusiness&nbsp;<\/strong>for the use of his Pech model.<\/div>\r\n<p style=\"text-align: center;\">&nbsp;<\/p>",
+  "last_fetch": "2018-12-21T18:18:11+00:00",
+  "download": {
+    "id": 2287496,
+    "url": "https:\/\/www.curseforge.com\/minecraft\/mc-mods\/thaumcraft\/download\/2287496",
+    "name": "Thaumcraft-1.8.9-5.2.4.jar",
+    "type": "release",
+    "version": "1.8.9",
+    "filesize": "12530644",
+    "versions": [
+      "1.8.9"
+    ],
+    "downloads": 456501,
+    "uploaded_at": {
+      "date": "2016-03-17 09:13:52.000000",
+      "timezone_type": 2,
+      "timezone": "Z"
+    }
+  }
+}
