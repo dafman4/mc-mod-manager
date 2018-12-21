@@ -1,3 +1,0 @@
-project.group='squedgy'
-project.name='mc-mod-checker'
-include ':api', ':app'

@@ -1,16 +1,18 @@
 # idea
-out
-*.ipr
-*.iws
-*.iml
-.idea
-.editorconfig
+**/out
+**/*.ipr
+**/*.iws
+**/*.iml
+**/.idea
+**/.editorconfig
 
 
 #Gradle stuffs
-.gradle
-/build/
-gradle-app.setting
-!gradle-wrapper.jar
-.gradletasknamecache
+**/.gradle
+**/build/
+**/gradle-app.setting
+!**/gradle-wrapper.jar
+**/.gradletasknamecache
+
+**/.DS_Store
 
