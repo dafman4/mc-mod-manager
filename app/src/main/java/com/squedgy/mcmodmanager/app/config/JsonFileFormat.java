@@ -53,18 +53,19 @@ public class JsonFileFormat implements FileFormatter<Map<String, String>> {
         return null;
     }
 
+    /**
+     * An actually good reason to use recursion :D
+     * @param conf - the Map we're loading with all the nodes
+     * @param read - The Node we're currently reading
+     * @param keyPrepend - A string that tells what nodes came before the current one, seperated by .'s
+     */
     private void readNode(Map<String,String> conf, ObjectNode read, String keyPrepend){
         read
             .fields()
             .forEachRemaining( node -> {
-                if(node.getValue().isObject()){
-                    System.out.println(node.getValue());
-                    System.out.println(node.getKey());
-                    readNode(conf, (ObjectNode) node.getValue(), keyPrepend + node.getKey() + ".");
-                } else if(node.getValue().isTextual()){
-                    System.out.println(node.getKey() + ": " + node.getValue().textValue());
-                    conf.put(keyPrepend + node.getKey(), node.getValue().textValue());
-                }
+                if(node.getValue().isObject()) readNode(conf, (ObjectNode) node.getValue(), keyPrepend + node.getKey() + ".");
+
+                else if(node.getValue().isTextual()) conf.put(keyPrepend + node.getKey(), node.getValue().textValue());
             });
     }
 
@@ -112,23 +113,6 @@ public class JsonFileFormat implements FileFormatter<Map<String, String>> {
                 writer.flush();
             }
         }
-    }
-
-    public static void main(String[] args) throws Exception {
-        FileFormatter<Map<String,String >> format = new JsonFileFormat();
-
-        com.squedgy.utilities.writer.FileWriter<Map<String,String>> writer = new com.squedgy.utilities.writer.FileWriter<>("test/test.json", format, false);
-        Map<String,String> map = new HashMap<>();
-        map.put("test123.ab", "ace in the hole");
-        map.put("test123.abc", "test again");
-        map.put("test", "test");
-        writer.write(map);
-        map = new com.squedgy.utilities.reader.FileReader<Map<String,String>>(format, "test/test.json").read();
-        System.out.println(map);
-        System.out.println(map.get("test123.ab").equals("ace in the hole"));
-        System.out.println(map.get("test123.abc").equals("test again"));
-        System.out.println(map.get("test").equals("test"));
-
     }
 
 }
