@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<GridPane xmlns:fx="http://javafx.com/fxml" alignment="CENTER" fx:controller="com.squedgy.mcmodmanager.app.components.ListViewController">
+    <TableView fx:id="listView" minWidth="400">
+        <columns>
+            <TableColumn text="Mod Name">
+                <cellValueFactory>
+                    <PropertyValueFactory property="modName"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="MC Version">
+                <cellValueFactory>
+                    <PropertyValueFactory property="minecraftVersion"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="Mod Id">
+                <cellValueFactory>
+                    <PropertyValueFactory property="modId"/>
+                </cellValueFactory>
+            </TableColumn>
+            <TableColumn text="File Name">
+                <cellValueFactory>
+                    <PropertyValueFactory property="fileName"/>
+                </cellValueFactory>
+            </TableColumn>
+        </columns>
+    </TableView>
+</GridPane>

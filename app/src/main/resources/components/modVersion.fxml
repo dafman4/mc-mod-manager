@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+
+<HBox fx:id="hbox" xmlns:fx="http://javafx.com/fxml">
+    <Label fx:id="name" styleClass="column" minWidth="180" maxWidth="180"/>
+    <Label fx:id="mcVersion" styleClass="column" minWidth="180" maxWidth="180"/>
+    <Label fx:id="modId" styleClass="column" minWidth="180" maxWidth="180"/>
+    <Label fx:id="fileName" styleClass="column" minWidth="180" maxWidth="180"/>
+</HBox>

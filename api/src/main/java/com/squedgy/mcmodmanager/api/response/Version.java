@@ -4,7 +4,7 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 
 import java.time.LocalDateTime;
 
-class Version implements ModVersion{
+public class Version implements ModVersion{
 
     private String minecraftVersion;
     private String fileName;
@@ -52,4 +52,18 @@ class Version implements ModVersion{
     public void setModName(String modName) { this.modName = modName; }
 
     public void setModId(String modId) { this.modId = modId; }
+
+    @Override
+    public String toString() {
+        return "Version{" +
+                "minecraftVersion='" + minecraftVersion + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", typeOfRelease='" + typeOfRelease + '\'' +
+                ", id=" + id +
+                ", downloadUrl='" + downloadUrl + '\'' +
+                ", uploadedAt=" + uploadedAt +
+                ", modName='" + modName + '\'' +
+                ", modId='" + modId + '\'' +
+                '}';
+    }
 }

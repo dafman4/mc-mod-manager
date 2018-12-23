@@ -3,17 +3,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" minWidth="400" minHeight="600">
-    <HBox alignment="CENTER">
-        <Label styleClass="header,text" text="Minecraft Mod Manager" minWidth="500" textAlignment="CENTER" alignment="CENTER"/>
+<VBox xmlns:fx="http://javafx.com/fxml" minWidth="400" minHeight="600"
+      fx:controller="com.squedgy.mcmodmanager.app.StartUp"  styleClass="base,app-back">
+    <HBox>
+        <Label styleClass="header,text,app-back" text="Minecraft Mod Manager" minWidth="500"/>
     </HBox>
-    <HBox alignment="CENTER">
+    <HBox>
         <VBox maxWidth="40" >
             <padding>
                 <Insets top="5" right="2"/>
             </padding>
             <Label text="Mods:" styleClass="text" alignment="TOP_RIGHT" textAlignment="RIGHT"/>
         </VBox>
-        <ListView fx:id="modList"/>
+        <fx:include source="components/listView.fxml" fx:id="listView"/>
     </HBox>
 </VBox>
