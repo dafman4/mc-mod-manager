@@ -1,0 +1,13 @@
+.header{
+    -fx-min-height:30px;
+    -fx-font-size:24pt;
+    -fx-text-alignment: center;
+}
+.text{
+    -fx-text-fill:#ccc;
+}
+.root{
+    -fx-font-family:monospace;
+    -fx-background-color: #222;
+    -fx-min-height: 600px;
+}
