@@ -1,4 +1,3 @@
 rootProject.name = 'mc-mod-manager'
-
 include 'app'
 include 'api'
