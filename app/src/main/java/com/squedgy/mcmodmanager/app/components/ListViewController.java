@@ -19,8 +19,6 @@ public class ListViewController {
     @FXML
     public void setListView(){
         ObservableList<ModVersion> t = FXCollections.observableArrayList(StartUp.getMods());
-        System.out.println("setListView");
-        System.out.println(t);
         listView.setItems(t);
         listView.refresh();
 //        listView.setCellFactory(cell -> new ModVersionCell());

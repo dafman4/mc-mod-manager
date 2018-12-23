@@ -16,9 +16,7 @@
 .base{
     -fx-padding:5,10,5,10;
 }
-.root{
-    -fx-min-height: 600px;
-}
+.root{ }
 
 .scroll-bar {
     -fx-background-color:#666;
@@ -63,4 +61,8 @@
     -fx-background-color: #005797;
     -fx-background-insets: 0;
     -fx-background-radius: 1;
+}
+
+.corner{
+    -fx-background-color:#000;
 }

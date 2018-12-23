@@ -43,8 +43,8 @@ public class StartUp extends Application {
 
         stage.setTitle("Mc Mod Manager");
         stage.setScene(scene);
+        stage.setMinHeight(500);
         stage.setMinWidth(700);
-        stage.setMinHeight(600);
         stage.show();
     }
 

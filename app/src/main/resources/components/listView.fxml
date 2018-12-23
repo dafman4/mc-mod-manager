@@ -1,32 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TableColumn?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<GridPane xmlns:fx="http://javafx.com/fxml" alignment="CENTER" fx:controller="com.squedgy.mcmodmanager.app.components.ListViewController">
-    <TableView fx:id="listView" minWidth="400">
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<GridPane fx:id="listGrid" xmlns:fx="http://javafx.com/fxml/1"
+          xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.squedgy.mcmodmanager.app.components.ListViewController">
+    <TableView fx:id="listView" prefHeight="${listGrid.height}" prefWidth="${listGrid.width}" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
         <columns>
             <TableColumn text="Mod Name">
                 <cellValueFactory>
-                    <PropertyValueFactory property="modName"/>
+                    <PropertyValueFactory property="modName" />
                 </cellValueFactory>
             </TableColumn>
             <TableColumn text="MC Version">
                 <cellValueFactory>
-                    <PropertyValueFactory property="minecraftVersion"/>
+                    <PropertyValueFactory property="minecraftVersion" />
                 </cellValueFactory>
             </TableColumn>
             <TableColumn text="Mod Id">
                 <cellValueFactory>
-                    <PropertyValueFactory property="modId"/>
+                    <PropertyValueFactory property="modId" />
                 </cellValueFactory>
             </TableColumn>
             <TableColumn text="File Name">
                 <cellValueFactory>
-                    <PropertyValueFactory property="fileName"/>
+                    <PropertyValueFactory property="fileName" />
                 </cellValueFactory>
             </TableColumn>
         </columns>
     </TableView>
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" />
+        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="10.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints vgrow="ALWAYS" />
+    </rowConstraints>
 </GridPane>
