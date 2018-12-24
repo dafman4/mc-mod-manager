@@ -8,7 +8,8 @@ import java.util.Map;
 
 public abstract class Config {
 
-    public static final String CONFIG_FILE_PATH = "config/manager.json";
+    public static final String CONFIG_DIRECTORY = "config/";
+    public static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY + "manager.json";
     private static final JsonFileFormat format = new JsonFileFormat();
     private static final FileReader<Map<String,String>> READER = new FileReader<>(format, CONFIG_FILE_PATH);
     private static final FileWriter<Map<String,String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH, format, false);
@@ -38,6 +39,7 @@ public abstract class Config {
 
     public static Map<String,String> readProps(String file) throws Exception {
         READER.setFileLocation(file);
+        System.out.println("reading " + file);
         return READER.read();
     }
 
@@ -47,8 +49,9 @@ public abstract class Config {
 
     public static void writeProps(String file, Map<String,String> props){
         try {
-
             WRITER.setFileLocation(file);
+            System.out.println("writing to " + file);
+            System.out.println(props);
             WRITER.write(props);
         } catch (Exception e) {
             throw new RuntimeException("The file " + file + " couldn't be written to, check logs for more information.", e);

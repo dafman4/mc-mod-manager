@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
-import com.squedgy.mcmodmanager.app.components.ListViewController;
+import com.squedgy.mcmodmanager.app.components.TableViewController;
 import com.squedgy.mcmodmanager.app.config.Config;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -12,7 +12,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import javafx.scene.control.TableView;
 
 import java.io.File;
 import java.net.URL;
@@ -27,7 +26,7 @@ public class StartUp extends Application {
     public static String DOT_MINECRAFT_LOCATION;
 
     @FXML
-    private static ListViewController listViewController;
+    private static TableViewController tableViewController;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -46,6 +45,7 @@ public class StartUp extends Application {
         stage.setMinHeight(500);
         stage.setMinWidth(700);
         stage.show();
+        System.out.println(tableViewController);
     }
 
     public static ModVersion readNode(JsonNode modInfo, File modJar){

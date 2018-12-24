@@ -103,8 +103,9 @@ public class JsonFileFormat implements FileFormatter<Map<String, String>> {
     }
 
     private void makeFile() throws IOException {
-        File f = new File(workingFile);
-        if (f.toPath().getParent().toFile().mkdirs() && f.createNewFile()) {
+        File f = new File(workingFile),
+            parent = f.toPath().getParent().toFile();
+        if ((parent.exists() || parent.mkdirs()) && f.createNewFile()) {
             try(FileWriter writer = new FileWriter(f)){
                 writer.write(
                         "{\n" +
@@ -112,6 +113,8 @@ public class JsonFileFormat implements FileFormatter<Map<String, String>> {
                 );
                 writer.flush();
             }
+        } else {
+          throw new IOException("There was an issue making " + f.getAbsolutePath());
         }
     }
 

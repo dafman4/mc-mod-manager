@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
@@ -9,7 +7,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 
 <GridPane fx:id="listGrid" xmlns:fx="http://javafx.com/fxml/1"
-          xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.squedgy.mcmodmanager.app.components.ListViewController">
+          xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.squedgy.mcmodmanager.app.components.TableViewController">
     <TableView fx:id="listView" prefHeight="${listGrid.height}" prefWidth="${listGrid.width}" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
         <columns>
             <TableColumn text="Mod Name">
@@ -36,7 +34,7 @@
     </TableView>
     <columnConstraints>
         <ColumnConstraints hgrow="ALWAYS" />
-        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="10.0" />
+        <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0" />
     </columnConstraints>
     <rowConstraints>
         <RowConstraints vgrow="ALWAYS" />
