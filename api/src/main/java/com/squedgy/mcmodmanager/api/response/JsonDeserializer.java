@@ -9,10 +9,18 @@ import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 public class JsonDeserializer extends StdDeserializer<CurseForgeResponse> {
 
     private final String version;
+    public static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+            .append(DateTimeFormatter.ISO_LOCAL_DATE)
+            .appendLiteral('T')
+            .append(DateTimeFormatter.ISO_LOCAL_TIME)
+            .appendLiteral('Z')
+            .toFormatter();
 
     public JsonDeserializer(){ this((Class<?>)null); }
 
@@ -48,7 +56,7 @@ public class JsonDeserializer extends StdDeserializer<CurseForgeResponse> {
                     toAdd.setFileName(modVersion.get("name").asText());
                     toAdd.setTypeOfRelease(modVersion.get("type").asText());
                     toAdd.setMinecraftVersion(modVersion.get("version").asText());
-                    toAdd.setUploadedAt(LocalDateTime.parse(modVersion.get("uploaded_at").asText()));
+                    toAdd.setUploadedAt(LocalDateTime.parse(modVersion.get("uploaded_at").asText(), formatter));
                     toAdd.setModId(modId);
                     toAdd.setModName(modName);
                     ret.addVersion(toAdd);

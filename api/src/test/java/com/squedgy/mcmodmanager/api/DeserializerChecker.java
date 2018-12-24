@@ -12,7 +12,6 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class DeserializerChecker {
 
@@ -23,7 +22,7 @@ public class DeserializerChecker {
                                 version = "1.12.2",
                                 title = "Author",
                                 username = "squedgy",
-                                uploaded_at = uploadedTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),
+                                uploaded_at = uploadedTime.format(JsonDeserializer.formatter),
                                 modName = "Lava Sources",
                                 modId = "lavasources";
     private static final long id = 12345679;
@@ -45,7 +44,7 @@ public class DeserializerChecker {
                             "\"name\":\"" + name + "\"," +
                             "\"type\":\"" + type + "\"," +
                             "\"version\":\"" + version + "\"," +
-                            "\"uploaded_at\":\"" + uploadedTime.plusDays(1).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME) + "\"" +
+                            "\"uploaded_at\":\"" + uploadedTime.plusDays(1).format(JsonDeserializer.formatter) + "\"" +
                         "}" +
                     "]" +
                 "}," +

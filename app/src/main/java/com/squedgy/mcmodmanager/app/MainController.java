@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +48,7 @@ public class MainController extends Application {
         System.out.println(tableViewController);
     }
 
-    public static ModVersion readNode(JsonNode modInfo, File modJar){
+    public static ModVersion readNode(JsonNode modInfo, JarFile modJar){
         ModVersionFactory factory = new ModVersionFactory();
 
         factory.withName(modInfo.get("name").textValue());
@@ -54,6 +56,7 @@ public class MainController extends Application {
         factory.withModId(modInfo.get("modid").textValue());
         factory.withMcVersion(modInfo.get("mcversion").textValue().replaceAll("[^0-9.]",""));
         factory.withUrl(modInfo.get("url").textValue());
+        factory.uploadedAt(LocalDateTime.ofInstant(modJar.entries().nextElement().getLastModifiedTime().toInstant(), ZoneId.systemDefault()));
 
         return factory.build();
     }
@@ -73,10 +76,10 @@ public class MainController extends Application {
                     if(root.isArray()){
                         JsonNode jsonInfo = root.get(0);
                         if(jsonInfo.isObject()){
-                            ret.add(readNode(jsonInfo, f));
+                            ret.add(readNode(jsonInfo, file));
                         }
                     }else{
-                        ret.add(readNode(root, f));
+                        ret.add(readNode(root, file));
                     }
                     continue;
                 } catch (Exception ignored) { }
