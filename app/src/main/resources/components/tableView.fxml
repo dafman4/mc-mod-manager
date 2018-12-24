@@ -5,10 +5,16 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.HBox?>
 
-<GridPane fx:id="listGrid" xmlns:fx="http://javafx.com/fxml/1"
+<?import javafx.scene.control.Button?>
+<GridPane fx:id="listGrid" xmlns:fx="http://javafx.com/fxml/1" stylesheets="@table-view.css"
           xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.squedgy.mcmodmanager.app.components.TableViewController">
-    <TableView fx:id="listView" prefHeight="${listGrid.height}" prefWidth="${listGrid.width}" GridPane.columnIndex="0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+    <HBox GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="button-list" spacing="4">
+        <Button text="Save Columns" fx:id="columns" onMouseReleased="#setColumns"/>
+        <Button text="Check for Updates" fx:id="updates" onMouseReleased="#searchForUpdates"/>
+    </HBox>
+    <TableView fx:id="listView" prefHeight="${listGrid.height}" prefWidth="${listGrid.width}" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
         <columns>
             <TableColumn text="Mod Name">
                 <cellValueFactory>
@@ -37,6 +43,7 @@
         <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0" />
     </columnConstraints>
     <rowConstraints>
+        <RowConstraints vgrow="ALWAYS" />
         <RowConstraints vgrow="ALWAYS" />
     </rowConstraints>
 </GridPane>

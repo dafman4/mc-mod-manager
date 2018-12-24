@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.squedgy.mcmodmanager.app.StartUp"  styleClass="base,app-back">
-    <HBox>
-        <Label styleClass="header,text,app-back" text="Minecraft Mod Manager" VBox.vgrow="NEVER"/>
-    </HBox>
+<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.squedgy.mcmodmanager.app.MainController" styleClass="base,app-back" stylesheets="@main.css">
     <fx:include source="components/tableView.fxml" fx:id="listView" VBox.vgrow="SOMETIMES"/>
 </VBox>

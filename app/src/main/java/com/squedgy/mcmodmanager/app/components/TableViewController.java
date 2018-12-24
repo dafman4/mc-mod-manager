@@ -1,21 +1,33 @@
 package com.squedgy.mcmodmanager.app.components;
 
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.app.StartUp;
+import com.squedgy.mcmodmanager.app.MainController;
 import com.squedgy.mcmodmanager.app.config.VersionTableOrder;
+import com.squedgy.mcmodmanager.api.ModChecker;
+import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import javafx.collections.FXCollections;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 
 public class TableViewController {
 
     @FXML
     private TableView<ModVersion> listView;
+    @FXML
+    private Button columns;
+    @FXML
+    private Button updates;
+    private ModCheckingThread checking;
 
 //    @FXML
     public void setListView(){
-        listView.setItems(FXCollections.observableArrayList(StartUp.getMods()));
+        listView.setItems(FXCollections.observableArrayList(MainController.getMods()));
         listView.refresh();
     }
 
@@ -32,4 +44,21 @@ public class TableViewController {
     public TableView<ModVersion> getListView() {
         return listView;
     }
+
+    @FXML
+    public void setColumns(Event e){
+        VersionTableOrder.writeColumnOrder(listView.getColumns());
+    }
+
+    @FXML
+    public void searchForUpdates(Event e){
+        checking = new ModCheckingThread(new ArrayList<ModVersion>(listView.getItems()),MainController.MINECRAFT_VERSION, l -> {
+            //do something with the returned list
+            System.out.println("updateables");
+            System.out.println(l);
+            return null;
+        } );
+        checking.run();
+    }
+
 }
