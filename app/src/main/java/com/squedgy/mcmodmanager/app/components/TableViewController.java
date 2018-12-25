@@ -1,5 +1,6 @@
 package com.squedgy.mcmodmanager.app.components;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.MainController;
 import com.squedgy.mcmodmanager.app.config.VersionTableOrder;
@@ -47,13 +48,17 @@ public class TableViewController {
 
     @FXML
     public void searchForUpdates(Event e){
-        checking = new ModCheckingThread(new ArrayList<>(listView.getItems()),MainController.MINECRAFT_VERSION, l -> {
-            //do something with the returned list
-            System.out.println("updateables");
-            System.out.println(l);
-            return null;
-        } );
-        checking.start();
+        if(checking == null || !checking.isAlive()){
+            checking = new ModCheckingThread(new ArrayList<>(listView.getItems()),MainController.MINECRAFT_VERSION, l -> {
+                //do something with the returned list
+                System.out.println("updateables");
+                System.out.println(l);
+                return null;
+            } );
+            checking.start();
+        }else{
+            AppLogger.info("checking is still alive!", getClass());
+        }
     }
 
 

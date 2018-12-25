@@ -107,8 +107,6 @@ public class MainController extends Application {
         else if (os.matches(".*[Mm]ac [Oo][Ss].*")) DOT_MINECRAFT_LOCATION = "~/Library/Application Support/minecraft";
         else DOT_MINECRAFT_LOCATION = "~/.minecraft";
 
-        AppLogger.info(".minecraft location: " + FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).toFile(), MainController.class);
-
         launch(args);
     }
 

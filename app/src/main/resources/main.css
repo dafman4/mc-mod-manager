@@ -34,3 +34,8 @@
     -fx-background-radius:2em;
     -fx-min-width:10em;
 }
+.button:armed{
+    -fx-border-color:#aaa;
+    -fx-border-width:1px;
+    -fx-background-color:#353535;
+}
