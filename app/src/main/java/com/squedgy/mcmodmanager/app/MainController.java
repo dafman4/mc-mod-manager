@@ -2,12 +2,11 @@ package com.squedgy.mcmodmanager.app;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
-import com.squedgy.mcmodmanager.app.components.TableViewController;
 import com.squedgy.mcmodmanager.app.config.Config;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -15,11 +14,10 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.file.FileSystems;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
@@ -27,9 +25,6 @@ public class MainController extends Application {
 
     public static String DOT_MINECRAFT_LOCATION;
     public static String MINECRAFT_VERSION = "1.12.2";
-
-    @FXML
-    private static TableViewController tableViewController;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -45,18 +40,21 @@ public class MainController extends Application {
         stage.setMinHeight(500);
         stage.setMinWidth(700);
         stage.show();
-        System.out.println(tableViewController);
+
     }
 
     public static ModVersion readNode(JsonNode modInfo, JarFile modJar){
         ModVersionFactory factory = new ModVersionFactory();
 
         factory.withName(modInfo.get("name").textValue());
-        factory.withFileName(modJar.getName());
+        String[] names = modJar.getName().split("[\\\\/]");
+        factory.withFileName(names[names.length-1]);
         factory.withModId(modInfo.get("modid").textValue());
         factory.withMcVersion(modInfo.get("mcversion").textValue().replaceAll("[^0-9.]",""));
         factory.withUrl(modInfo.get("url").textValue());
-        factory.uploadedAt(LocalDateTime.ofInstant(modJar.entries().nextElement().getLastModifiedTime().toInstant(), ZoneId.systemDefault()));
+        modJar.stream()
+                .min(Comparator.comparing(ZipEntry::getLastModifiedTime))
+                .ifPresent(e -> factory.uploadedAt(LocalDateTime.ofInstant(e.getLastModifiedTime().toInstant(), ZoneId.systemDefault())));
 
         return factory.build();
     }
@@ -102,11 +100,14 @@ public class MainController extends Application {
 
     public static void main(String[] args) throws Exception {
         String os = System.getProperty("os.name");
+
         //If custom set, otherwise looking for defaults
         if(Config.getProperty("mc-dir") != null) DOT_MINECRAFT_LOCATION = Config.getProperty("mc-dir");
         else if (os.matches(".*[Ww]indows.*")) DOT_MINECRAFT_LOCATION = System.getenv().get("APPDATA") + "\\.minecraft\\";
         else if (os.matches(".*[Mm]ac [Oo][Ss].*")) DOT_MINECRAFT_LOCATION = "~/Library/Application Support/minecraft";
         else DOT_MINECRAFT_LOCATION = "~/.minecraft";
+
+        AppLogger.info(".minecraft location: " + FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).toFile(), MainController.class);
 
         launch(args);
     }

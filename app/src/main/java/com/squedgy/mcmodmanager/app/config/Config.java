@@ -39,7 +39,7 @@ public abstract class Config {
 
     public static Map<String,String> readProps(String file) throws Exception {
         READER.setFileLocation(file);
-        System.out.println("reading " + file);
+
         return READER.read();
     }
 
@@ -50,8 +50,8 @@ public abstract class Config {
     public static void writeProps(String file, Map<String,String> props){
         try {
             WRITER.setFileLocation(file);
-            System.out.println("writing to " + file);
-            System.out.println(props);
+
+
             WRITER.write(props);
         } catch (Exception e) {
             throw new RuntimeException("The file " + file + " couldn't be written to, check logs for more information.", e);

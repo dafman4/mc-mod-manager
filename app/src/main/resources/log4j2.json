@@ -1,0 +1,31 @@
+{
+	"configuration": {
+		"name": "Default",
+		"appenders": {
+			"RollingFile": {
+				"name": "File",
+				"fileName": "logs/mmm.log",
+				"filePattern": "logs/mmm-%d{MM-dd-yy-HH-mm-ss}-%i.log.gz",
+				"PatternLayout": {
+					"pattern": "[%d{HH:mm:ss}][%-30.-30t][LEVEL/%-5p]%m%n%throwable"
+				},
+				"Policies": {
+					"SizeBasedTriggeringPolicy": {
+						"size": "10 MB"
+					}
+				},
+				"DefaultRolloverStrategy": {
+					"max": "10"
+				}
+			}
+		},
+		"loggers": {
+			"root": {
+				"level": "debug",
+				"appender-ref": {
+					"ref": "File"
+				}
+			}
+		}
+	}
+}

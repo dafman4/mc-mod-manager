@@ -4,32 +4,16 @@ buildscript{
     }
 }
 
-plugins {
-    id 'java'
-}
 group 'com.squedgy.mc-mod-manager'
-version '1.0-SNAPSHOT'
 
-apply plugin: 'java'
-apply plugin: 'idea'
 
 jar{
   baseName = 'mc-mod-manager-api'
-  version = '0.0.1-SNAPSHOT'
+  version = version
 }
 
 sourceCompatibility = 1.8
 
-repositories{ 
-    mavenCentral() 
-    mavenLocal()
-}
-
 dependencies{
-  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-  testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-  compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.7'
-  compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'
-  compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.7'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'
 }

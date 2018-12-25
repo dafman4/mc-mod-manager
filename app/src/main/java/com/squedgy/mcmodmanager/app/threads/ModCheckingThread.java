@@ -4,6 +4,7 @@ import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
+import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
@@ -28,18 +29,23 @@ public class ModCheckingThread extends Thread {
     public void run() {
         IDS.forEach(id -> {
             try {
-                CurseForgeResponse resp = ModChecker.getForVersion(id.getModId(), mc);
+                CurseForgeResponse resp;
+                try{
+                    resp = ModChecker.getForVersion(id.getModId(), mc);
+                }catch(ModIdFailedException ignored){
+                    resp = ModChecker.getForVersion(id.getModName().toLowerCase().replace(' ', '-').replaceAll("[^-a-z0-9]", ""), mc);
+                }
                 resp.getVersions()
                     .stream()
                     .max(Comparator.comparing(ModVersion::getUploadedAt))
                     .ifPresent( v -> {
-                        System.out.println(v.getUploadedAt() + " VS. " + id.getUploadedAt());
-                        System.out.println();
+                        System.out.println("Newest: " + v.getUploadedAt() + " VS. Current: " + id.getUploadedAt());
+
                         if(v.getUploadedAt().isAfter(id.getUploadedAt())){
                             updateables.add(v);
                         }
                     });
-            }catch(ModIdNotFoundException e){ System.out.println(e.getMessage()); }
+            }catch(ModIdNotFoundException e){  }
             catch (NullPointerException ignored){ }
             catch (Exception e) {
                 e.printStackTrace();

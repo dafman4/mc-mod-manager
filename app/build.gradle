@@ -3,32 +3,51 @@ buildscript{
 }
 
 plugins {
-    id 'java'
+    id 'io.spring.dependency-management' version '1.0.1.RELEASE'
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-
 group 'com.squedgy.mc-mod-manager'
-version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-repositories{
-    mavenCentral()
-    mavenLocal()
+dependencyManagement {
+    imports {
+        mavenBom 'org.apache.logging.log4j:log4j-bom:2.11.1'
+    }
 }
 
 dependencies{
-    testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.1'
-    compile project(':api')
-    compile group: 'com.typesafe', name: 'config', version: '1.3.2'
-    compile group: 'com.squedgy', name: 'my-utilities', version:'1.0'
+    implementation project(':api')
+    implementation group: 'com.squedgy', name: 'my-utilities', version:'1.0'
 }
 
 jar{
     baseName = 'mc-mod-manager-app'
-    version = '0.0.1-SNAPSHOT'
+    version = version
+    manifest{
+        attributes(
+            'Main-Class': 'com.squedgy.mcmodmanager.app.MainController'
+        )
+    }
 }
+
+uploadArchives{
+    repositories{
+        mavenLocal()
+    }
+}
+
+
+
+task dist(type: Zip) {
+    from 'src/dist'
+    into('libs') {
+        from configurations.runtimeClasspath
+    }
+}
+
+artifacts {
+    archives dist
+}
+
+

@@ -27,7 +27,6 @@ public class JsonDeserializer extends StdDeserializer<CurseForgeResponse> {
     public JsonDeserializer(String version){
         super((Class<?>)null);
         this.version = version;
-        System.out.println("version = " + version);
     }
 
     public JsonDeserializer(Class<?> vc) {
@@ -36,41 +35,44 @@ public class JsonDeserializer extends StdDeserializer<CurseForgeResponse> {
     }
 
     @Override
-    public CurseForgeResponse deserialize(JsonParser parser, DeserializationContext context) throws IOException, JsonProcessingException {
+    public CurseForgeResponse deserialize(JsonParser parser, DeserializationContext context) throws IOException {
+        try {
+            ModInformation ret = new ModInformation();
 
-        ModInformation ret = new ModInformation();
+            JsonNode node = parser.getCodec().readTree(parser);
+            String[] urlId = node.get("files").get(0).get("url").asText().split("/");
+            String modName = node.get("title").asText(),
+                    modId = urlId[urlId.length - 3];
 
-        JsonNode node = parser.getCodec().readTree(parser);
-        String[] urlId = node.get("files").get(0).get("url").asText().split("/");
-        String modName = node.get("title").asText(),
-                modId = urlId[urlId.length-3];
-
-        node.get("versions").elements().forEachRemaining(versionNumber -> {
-            versionNumber.elements().forEachRemaining(modVersion -> {
-                if(this.version == null
-                        || (modVersion.get("version") != null
+            node.get("versions").elements().forEachRemaining(versionNumber -> {
+                versionNumber.elements().forEachRemaining(modVersion -> {
+                    if (this.version == null
+                            || (modVersion.get("version") != null
                             && version.equals(modVersion.get("version").asText()))) {
-                    Version toAdd = new Version();
-                    toAdd.setId(modVersion.get("id").asLong());
-                    toAdd.setDownloadUrl(modVersion.get("url").asText());
-                    toAdd.setFileName(modVersion.get("name").asText());
-                    toAdd.setTypeOfRelease(modVersion.get("type").asText());
-                    toAdd.setMinecraftVersion(modVersion.get("version").asText());
-                    toAdd.setUploadedAt(LocalDateTime.parse(modVersion.get("uploaded_at").asText(), formatter));
-                    toAdd.setModId(modId);
-                    toAdd.setModName(modName);
-                    ret.addVersion(toAdd);
-                }
+                        Version toAdd = new Version();
+                        toAdd.setId(modVersion.get("id").asLong());
+                        toAdd.setDownloadUrl(modVersion.get("url").asText());
+                        toAdd.setFileName(modVersion.get("name").asText());
+                        toAdd.setTypeOfRelease(modVersion.get("type").asText());
+                        toAdd.setMinecraftVersion(modVersion.get("version").asText());
+                        toAdd.setUploadedAt(LocalDateTime.parse(modVersion.get("uploaded_at").asText(), formatter));
+                        toAdd.setModId(modId);
+                        toAdd.setModName(modName);
+                        ret.addVersion(toAdd);
+                    }
+                });
             });
-        });
 
-        node.get("members").elements().forEachRemaining(member -> {
-            String title = member.get("title").asText(),
-                    username = member.get("username").asText();
-            ret.addMember(new Member(title, username));
-        });
+            node.get("members").elements().forEachRemaining(member -> {
+                String title = member.get("title").asText(),
+                        username = member.get("username").asText();
+                ret.addMember(new Member(title, username));
+            });
+            if(ret.getVersions().size() > 0) System.out.println("mId: " + ret.getVersions().get(0).getModId());
 
-
-        return ret;
+            return ret;
+        }catch(NullPointerException e){
+            throw new IOException(e);
+        }
     }
 }
