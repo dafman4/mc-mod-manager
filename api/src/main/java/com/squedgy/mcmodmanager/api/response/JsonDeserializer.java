@@ -43,6 +43,8 @@ public class JsonDeserializer extends StdDeserializer<CurseForgeResponse> {
             String[] urlId = node.get("files").get(0).get("url").asText().split("/");
             String modName = node.get("title").asText(),
                     modId = urlId[urlId.length - 3];
+            String desc = node.get("description").textValue();
+            boolean html = desc.matches(".*<[-a-zA-Z]+ *([-a-zA-Z]*=[\"'].*[\"'] *)* */?>.*");
 
             node.get("versions").elements().forEachRemaining(versionNumber -> {
                 versionNumber.elements().forEachRemaining(modVersion -> {
@@ -56,6 +58,8 @@ public class JsonDeserializer extends StdDeserializer<CurseForgeResponse> {
                         toAdd.setTypeOfRelease(modVersion.get("type").asText());
                         toAdd.setMinecraftVersion(modVersion.get("version").asText());
                         toAdd.setUploadedAt(LocalDateTime.parse(modVersion.get("uploaded_at").asText(), formatter));
+                        toAdd.setDescription(desc);
+                        toAdd.setHtml(html);
                         toAdd.setModId(modId);
                         toAdd.setModName(modName);
                         ret.addVersion(toAdd);

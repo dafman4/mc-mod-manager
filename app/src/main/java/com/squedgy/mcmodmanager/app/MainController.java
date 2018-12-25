@@ -69,7 +69,7 @@ public class MainController extends Application {
                     ObjectMapper mapper = new ObjectMapper();
                     JarFile file = new JarFile(f);
                     ZipEntry e = file.getEntry("mcmod.info");
-                    if(e == null) throw new Exception();
+                    if(e == null) continue;
                     JsonNode root = mapper.readValue(file.getInputStream(e), JsonNode.class);
                     if(root.isArray()){
                         JsonNode jsonInfo = root.get(0);

@@ -12,5 +12,7 @@ public interface ModVersion extends Comparable<ModVersion>{
     public abstract String getMinecraftVersion();
     public abstract LocalDateTime getUploadedAt();
     public abstract String getModId();
+    public abstract String getDescription();
+    public abstract boolean isHtmlDescription();
 
 }

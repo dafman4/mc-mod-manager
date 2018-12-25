@@ -14,6 +14,8 @@ public class Version implements ModVersion{
     private LocalDateTime uploadedAt;
     private String modName;
     private String modId;
+    private String description;
+    private boolean html;
 
     public String getMinecraftVersion() { return minecraftVersion; }
 
@@ -49,6 +51,16 @@ public class Version implements ModVersion{
     @Override
     public String getModId() { return modId; }
 
+    @Override
+    public String getDescription() { return description; }
+
+    @Override
+    public boolean isHtmlDescription() { return html; }
+
+    public void setDescription(String description) { this.description = description; }
+
+    public void setHtml(boolean html) { this.html = html; }
+
     public void setModName(String modName) { this.modName = modName; }
 
     public void setModId(String modId) { this.modId = modId; }
@@ -57,13 +69,15 @@ public class Version implements ModVersion{
     public String toString() {
         return "Version{" +
                 "minecraftVersion='" + minecraftVersion + '\'' +
-                ", fileName='" + fileName + '\'' +
-                ", typeOfRelease='" + typeOfRelease + '\'' +
-                ", id=" + id +
-                ", downloadUrl='" + downloadUrl + '\'' +
-                ", uploadedAt=" + uploadedAt +
-                ", modName='" + modName + '\'' +
-                ", modId='" + modId + '\'' +
-                '}';
+                ",\n\tfileName='" + fileName + '\'' +
+                ",\n\ttypeOfRelease='" + typeOfRelease + '\'' +
+                ",\n\tid=" + id +
+                ",\n\tdownloadUrl='" + downloadUrl + '\'' +
+                ",\n\tuploadedAt=" + uploadedAt +
+                ",\n\tmodName='" + modName + '\'' +
+                ",\n\tmodId='" + modId + '\'' +
+                ",\n\tdescription='" + description + '\'' +
+                ",\n\thtml=" + html +
+                '\n' + '}';
     }
 }

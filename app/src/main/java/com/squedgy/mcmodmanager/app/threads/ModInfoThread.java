@@ -39,26 +39,28 @@ public class ModInfoThread extends Thread {
 				);
 			} catch (Exception e1) {
 				AppLogger.error(e1, getClass());
-				throw new ThreadFailedException();
 			}
 		} catch (Exception e) {
 			AppLogger.error(e, getClass());
 		}
 
+		System.out.println(resp);
+		
+		if(resp == null){
+			this.couldntFind.call(null);
+			throw new ThreadFailedException();
+		}else {
+			ModVersion ret = resp.getVersions()
+					.stream()
+					.filter(e -> e.getUploadedAt().toLocalDate().equals(toFind.getUploadedAt().toLocalDate()))
+					.min(Comparator.comparing(e -> Math.abs(e.getUploadedAt().toLocalTime().toSecondOfDay() - toFind.getUploadedAt().toLocalTime().toSecondOfDay())))
+					.orElse(null);
+			if (ret == null){
+				this.couldntFind.call(null);
+				throw new ThreadFailedException();
+			}
 
-		if(resp == null) throw new ThreadFailedException();
-
-		ModVersion ret = resp.getVersions()
-				.stream()
-				.min(Comparator.comparing(ModVersion::getUploadedAt))
-				.orElse(null);
-
-		if(ret == null) throw new ThreadFailedException();
-
-		if(toFind.getUploadedAt().equals(ret.getUploadedAt())){
 			callback.call(ret);
-		}else if(couldntFind != null){
-			couldntFind.call(null);
 		}
 	}
 }
