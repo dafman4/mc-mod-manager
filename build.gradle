@@ -18,24 +18,32 @@ subprojects{
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
     }
 
+    group 'com.squedgy.mc-mod-manager'
     version="1.0"
-    sourceCompatibility=1.8
+    sourceCompatibility = 1.8
     targetCompatibility=1.8
 
     jar{
         manifest.attributes provider: 'gradle'
+        baseName = 'mc-mod-manager-' + project.name
+        version = version
     }
 
     task fatJar(type: Jar){
         manifest{
             attributes(
                     'Implementation-Title': 'All Projects Jar',
-                    'Implementation-Version':version,
-                    'Main-Class': 'com.squedgy.mcmodmanager.app.MainController'
+                    'Implementation-Version':version
             )
         }
         baseName = project.name + "-all"
         from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it)}}
         with jar
+    }
+
+    uploadArchives{
+        repositories{
+            mavenLocal()
+        }
     }
 }

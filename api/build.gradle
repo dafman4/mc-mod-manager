@@ -4,16 +4,6 @@ buildscript{
     }
 }
 
-group 'com.squedgy.mc-mod-manager'
-
-
-jar{
-  baseName = 'mc-mod-manager-api'
-  version = version
-}
-
-sourceCompatibility = 1.8
-
 dependencies{
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'
 }

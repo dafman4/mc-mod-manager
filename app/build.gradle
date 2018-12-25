@@ -6,10 +6,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.1.RELEASE'
 }
 
-group 'com.squedgy.mc-mod-manager'
-
-sourceCompatibility = 1.8
-
 dependencyManagement {
     imports {
         mavenBom 'org.apache.logging.log4j:log4j-bom:2.11.1'
@@ -22,8 +18,6 @@ dependencies{
 }
 
 jar{
-    baseName = 'mc-mod-manager-app'
-    version = version
     manifest{
         attributes(
             'Main-Class': 'com.squedgy.mcmodmanager.app.MainController'
@@ -31,23 +25,8 @@ jar{
     }
 }
 
-uploadArchives{
-    repositories{
-        mavenLocal()
-    }
-}
-
-
-
-task dist(type: Zip) {
-    from 'src/dist'
-    into('libs') {
-        from configurations.runtimeClasspath
-    }
-}
-
-artifacts {
-    archives dist
+fatJar{
+    dependsOn(":api:fatJar")
 }
 
 
