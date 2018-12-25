@@ -45,3 +45,10 @@
     -fx-border-insets:4px 3px 4px 3px;
     -fx-background-insets:4px 3px 4px 3px;
 }
+
+.scroll-pane{
+    -fx-border-radius:3em;
+    -fx-background-radius:3em;
+    -fx-background-color:#2a2a2a;
+    -fx-border-color:#2a2a2a;
+}

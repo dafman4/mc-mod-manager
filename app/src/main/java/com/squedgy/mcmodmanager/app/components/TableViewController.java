@@ -9,6 +9,8 @@ import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import java.util.ArrayList;
 
@@ -21,9 +23,12 @@ public class TableViewController {
     private Button columns;
     @FXML
     private Button updates;
+    @FXML
+    private ScrollPane objectView;
+
     private ModCheckingThread checking;
 
-//    @FXML
+    @FXML
     public void setListView(){
         listView.setItems(FXCollections.observableArrayList(MainController.getMods()));
         listView.refresh();
@@ -35,6 +40,7 @@ public class TableViewController {
         listView.getColumns().setAll(listView.getColumns().sorted( (a, b) -> VersionTableOrder.compareColumns(a.getText(), b.getText())));
         listView.refresh();
         listView.getSelectionModel().selectedItemProperty().addListener((obs, old, neu) -> {
+            objectView.setContent(new Label("Loading"));
 
         });
     }

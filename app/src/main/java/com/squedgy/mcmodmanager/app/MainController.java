@@ -79,8 +79,7 @@ public class MainController extends Application {
                     }else{
                         ret.add(readNode(root, file));
                     }
-                    continue;
-                } catch (Exception ignored) { }
+                } catch (Exception e) { AppLogger.error(e, MainController.class);}
             }
         }
         return ret;
@@ -90,7 +89,7 @@ public class MainController extends Application {
         List<ModVersion> strings = new LinkedList<>();
         File f = new File(DOT_MINECRAFT_LOCATION);
         if(f.exists() && f.isDirectory()){
-            f = f.toPath().resolve("mods").toFile();
+            f = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
             if(f.exists() && f.isDirectory()){
                 strings.addAll(scanForMods(f));
             }
@@ -103,9 +102,9 @@ public class MainController extends Application {
 
         //If custom set, otherwise looking for defaults
         if(Config.getProperty("mc-dir") != null) DOT_MINECRAFT_LOCATION = Config.getProperty("mc-dir");
-        else if (os.matches(".*[Ww]indows.*")) DOT_MINECRAFT_LOCATION = System.getenv().get("APPDATA") + "\\.minecraft\\";
-        else if (os.matches(".*[Mm]ac [Oo][Ss].*")) DOT_MINECRAFT_LOCATION = "~/Library/Application Support/minecraft";
-        else DOT_MINECRAFT_LOCATION = "~/.minecraft";
+        else if (os.matches(".*[Ww]indows.*")) DOT_MINECRAFT_LOCATION = System.getenv("APPDATA") + "\\.minecraft\\";
+        else if (os.matches(".*[Mm]ac [Oo][Ss].*")) DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + "/Library/Application Support/minecraft";
+        else DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + "/.minecraft";
 
         launch(args);
     }

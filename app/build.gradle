@@ -2,19 +2,9 @@ buildscript{
     repositories{ mavenCentral() }
 }
 
-plugins {
-    id 'io.spring.dependency-management' version '1.0.1.RELEASE'
-}
-
-dependencyManagement {
-    imports {
-        mavenBom 'org.apache.logging.log4j:log4j-bom:2.11.1'
-    }
-}
-
 dependencies{
-    implementation project(':api')
-    implementation group: 'com.squedgy', name: 'my-utilities', version:'1.0'
+    compile project(':api')
+    compile group: 'com.squedgy', name: 'my-utilities', version:'1.0'
 }
 
 jar{
@@ -27,6 +17,5 @@ jar{
 
 fatJar{
     dependsOn(":api:fatJar")
+    fatJar
 }
-
-

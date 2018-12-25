@@ -11,7 +11,7 @@
     -fx-text-alignment: center;
 }
 .app-back{
-    -fx-background-color:#222;
+    -fx-background-color:-back;
 }
 .base{
     -fx-padding:5,10,5,10;
