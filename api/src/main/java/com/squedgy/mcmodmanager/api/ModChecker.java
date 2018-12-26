@@ -55,12 +55,9 @@ public abstract class ModChecker {
         try{
             setReadWrite(() -> currentRead = mod + "." + mcVersion);
             ret = new Cacher().readCache(mod, mcVersion);
-        } catch (Exception e) {
-            AppLogger.error(e, ModChecker.class);
-            throw new CacheRetrievalException();
-        }finally{
-            setReadWrite(() -> currentRead = "");
         }
+        catch (Exception e) { throw new CacheRetrievalException(); }
+        finally{ setReadWrite(() -> currentRead = ""); }
 
         return ret;
     }
@@ -127,7 +124,7 @@ public abstract class ModChecker {
                     .stream()
                     .max(Comparator.comparing(ModVersion::getUploadedAt))
                     .orElse(null);
-            } catch (Exception ex) { AppLogger.error(ex, ModChecker.class); }
+            } catch (Exception ex) { }
 
             if(ret == null){
                 throw new ModIdNotFoundException("Couldn't find the mod Id : " + mId + ". It's not cached and DOESN'T match a Curse Forge mod.\nTalk to the mod author about having the Id within their mcmod.info file match their Curse Forge mod id.");

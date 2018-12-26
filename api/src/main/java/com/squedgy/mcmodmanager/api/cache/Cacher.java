@@ -8,13 +8,16 @@ import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
 public class Cacher {
@@ -53,39 +56,44 @@ public class Cacher {
         WRITER.write(toWrite);
     }
 
-    public synchronized ModVersion readCache(String modId, String mcVersion) throws Exception {
+    public synchronized ModVersion readCache(String modId, String mcVersion){
         READER.setFileLocation(getFileLocation(modId, mcVersion));
         Map<String,String> info = READER.read();
-        return new ModVersionFactory()
-            .withId(Long.valueOf(info.get(ID)))
-            .withModId(info.get(MOD_ID))
-            .withName(info.get(MOD_NAME))
-            .withFileName(info.get(FILE_NAME))
-            .withType(info.get(RELEASE_TYPE))
-            .withMcVersion(info.get(MC_VERSION))
-            .withDescription(info.get(DESCRIPTION))
-            .withUrl(info.get(URL))
-            .uploadedAt(LocalDateTime.parse(info.get(UPLOADED_AT)))
-            .build();
+        try {
+            return new ModVersionFactory()
+                .withId(Long.valueOf(info.get(ID)))
+                .withModId(info.get(MOD_ID))
+                .withName(info.get(MOD_NAME))
+                .withFileName(info.get(FILE_NAME))
+                .withType(info.get(RELEASE_TYPE))
+                .withMcVersion(info.get(MC_VERSION))
+                .withDescription(info.get(DESCRIPTION))
+                .withUrl(info.get(URL))
+                .uploadedAt(LocalDateTime.parse(info.get(UPLOADED_AT)))
+                .build();
+        }catch(NullPointerException ex){
+            return null;
+        }
     }
 
     public static String getFileLocation(String mId, String v){
         return MOD_CACHE_DIRECTORY + mId + File.separator + v + File.separator + "cache.json";
     }
 
-    public static String getJarModId(JarFile file) throws CachingFailedException{
+    public static String getJarModId(JarFile file) throws CacheRetrievalException{
         ZipEntry e = file.getEntry("mcmod.info");
         if(e!= null && !e.isDirectory()){
             ObjectMapper mapper = new ObjectMapper();
-            try {
-                JsonNode root = mapper.readValue(file.getInputStream(e), JsonNode.class);
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
+                JsonNode root = mapper.readValue(
+                    reader.lines().map(l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
+                    JsonNode.class
+                );
                 if(root.isArray()) root = root.get(0);
                 if(root.has("modid")) return root.get("modid").textValue();
-            } catch (IOException e1) {
-                AppLogger.error(e1, Cacher.class);
-            }
+            } catch (IOException e1) { }
         }
-        throw new CachingFailedException();
+        throw new CacheRetrievalException();
     }
 
 }

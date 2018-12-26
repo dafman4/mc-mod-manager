@@ -67,9 +67,9 @@ public class MainController extends Application {
 
         if(modInfo.has("modid"))factory.withModId(modInfo.get("modid").textValue());
         else{
-            String modId = modInfo.get("name").textValue().toLowerCase().replaceAll(" " , "-");
+            String modId = modInfo.get("name").textValue().toLowerCase().replace(' ' , '-');
             if(modId.contains(":")) modId = modId.substring(0, modId.indexOf(":"));
-            modId = modId.replaceAll("[^-a-z]", "");
+            modId = modId.replaceAll("[^-a-z0-9]", "");
             factory.withModId(modId);
         }
 
@@ -105,6 +105,7 @@ public class MainController extends Application {
                          root = mapper.readValue(r.lines().map(l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()), JsonNode.class);
                     }catch(JsonParseException e1){
                         AppLogger.error(new ModIdNotFoundException(""/*"For File:" + f.getAbsolutePath()*/), MainController.class);
+//                        badJars.put()
                         continue;
                     }
 
@@ -115,7 +116,18 @@ public class MainController extends Application {
                         ret.add(v);
                         continue;
                     }catch(CacheRetrievalException ex){
-                        ModVersion m = ModChecker.getNewest(Cacher.getJarModId(file), MINECRAFT_VERSION);
+                        ModVersion m = null;
+                        try {
+                            m = ModChecker.getNewest(Cacher.getJarModId(file), MINECRAFT_VERSION);
+                        }catch(ModIdNotFoundException ex2){
+                            if(root.has("name")){
+                                String name = root.get("name").textValue().toLowerCase().replace(' ', '-');
+                                if(name.contains(":"))name = name.substring(0, name.indexOf(':'));
+                                try {
+                                    m = ModChecker.getNewest(name.replaceAll("[^-a-z0-9]+", ""), MINECRAFT_VERSION);
+                                }catch(ModIdNotFoundException ignored){}
+                            }
+                        }
                         if(m != null){
                             try {
                                 new Cacher().writeCache(m, Cacher.getJarModId(file));
@@ -141,6 +153,7 @@ public class MainController extends Application {
             f = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
             if(f.exists() && f.isDirectory()){
                 strings.addAll(scanForMods(f));
+                System.out.println(badJars);
             }
         }else{
             System.out.println("minecraft directory doesn't exist or isn't a directory");

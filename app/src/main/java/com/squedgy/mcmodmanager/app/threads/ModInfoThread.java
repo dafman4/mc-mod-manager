@@ -66,6 +66,5 @@ public class ModInfoThread extends Thread {
 
 		}
 		this.couldntFind.call(null);
-		throw new ThreadFailedException();
 	}
 }

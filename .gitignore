@@ -19,4 +19,5 @@ app/test
 
 **/logs
 **/config
+**/cache
 local.properties
