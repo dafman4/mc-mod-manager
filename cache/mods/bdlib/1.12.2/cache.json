@@ -1,0 +1,11 @@
+{
+	"mod-name" : "BdLib",
+	"release" : "beta",
+	"mc-version" : "1.12.2",
+	"uploaded" : "2018-01-08T06:45:16",
+	"id" : "2518031",
+	"file-name" : "bdlib-1.14.3.12-mc1.12.2.jar",
+	"mod-id" : "bdlib",
+	"url" : "https://www.curseforge.com/minecraft/mc-mods/bdlib/download/2518031",
+	"desc" : "<h2>This is a collection of generic code used by my other mods.</h2>\r\n<h2>Currently used by the following released mods:</h2>\r\n<ul>\r\n<li><a href=\"http://minecraft.curseforge.com/mc-mods/gendustry/\">Gendustry</a></li>\r\n<li><a href=\"http://minecraft.curseforge.com/mc-mods/221214-pressure-pipes\">Pressure Pipes</a></li>\r\n<li><a href=\"http://minecraft.curseforge.com/mc-mods/223622-advanced-generators\">Advanced Generators</a></li>\r\n<li><a href=\"http://minecraft.curseforge.com/mc-mods/225194-ae2-stuff\">AE2 Stuff</a></li>\r\n<li><a href=\"http://minecraft.curseforge.com/mc-mods/231549-compacter\">Compacter</a></li>\r\n</ul>"
+}

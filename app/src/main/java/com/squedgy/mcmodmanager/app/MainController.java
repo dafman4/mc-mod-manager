@@ -4,7 +4,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squedgy.mcmodmanager.AppLogger;
+import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.api.cache.CacheRetrievalException;
+import com.squedgy.mcmodmanager.api.cache.Cacher;
+import com.squedgy.mcmodmanager.api.cache.CachingFailedException;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
 import com.squedgy.mcmodmanager.app.config.Config;
@@ -14,19 +18,27 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.file.FileSystems;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
 public class MainController extends Application {
 
     public static String DOT_MINECRAFT_LOCATION;
-    public static String MINECRAFT_VERSION = "1.12.2";
+    public static final String MINECRAFT_VERSION = "1.12.2";
+    private static final Map<String,String> badJars = new HashMap<>();
+
+    public static Map<String,String> getBadJars(){
+        return Collections.unmodifiableMap(badJars);
+    }
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -47,17 +59,26 @@ public class MainController extends Application {
 
     public static ModVersion readNode(JsonNode modInfo, JarFile modJar){
         ModVersionFactory factory = new ModVersionFactory();
-
         if(modInfo.has("name")) factory.withName(modInfo.get("name").textValue());
         else factory.withName("");
+
         String[] names = modJar.getName().split("[\\\\/]");
         factory.withFileName(names[names.length-1]);
+
         if(modInfo.has("modid"))factory.withModId(modInfo.get("modid").textValue());
-        else throw new ModIdNotFoundException("Mod Id not found for file: " + modJar.getName());
+        else{
+            String modId = modInfo.get("name").textValue().toLowerCase().replaceAll(" " , "-");
+            if(modId.contains(":")) modId = modId.substring(0, modId.indexOf(":"));
+            modId = modId.replaceAll("[^-a-z]", "");
+            factory.withModId(modId);
+        }
+
         if(modInfo.has("mcversion")) factory.withMcVersion(modInfo.get("mcversion").textValue().replaceAll("[^0-9.]", ""));
         else factory.withMcVersion("");
+
         if(modInfo.has("url"))factory.withUrl(modInfo.get("url").textValue());
         else factory.withUrl("");
+
         modJar.stream()
                 .min(Comparator.comparing(ZipEntry::getLastModifiedTime))
                 .ifPresent(e -> factory.uploadedAt(LocalDateTime.ofInstant(e.getLastModifiedTime().toInstant(), ZoneId.systemDefault())));
@@ -75,12 +96,38 @@ public class MainController extends Application {
                     ObjectMapper mapper = new ObjectMapper();
                     JarFile file = new JarFile(f);
                     ZipEntry e = file.getEntry("mcmod.info");
-                    if(e == null) continue;
-                    JsonNode root = mapper.readValue(file.getInputStream(e), JsonNode.class);
+                    if(e == null){
+                        badJars.put(f.getName(), "mcmod.info doesn't exist");
+                        continue;
+                    }
+                    JsonNode root;
+                    try(BufferedReader r = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
+                         root = mapper.readValue(r.lines().map(l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()), JsonNode.class);
+                    }catch(JsonParseException e1){
+                        AppLogger.error(new ModIdNotFoundException(""/*"For File:" + f.getAbsolutePath()*/), MainController.class);
+                        continue;
+                    }
 
                     if(root.isArray())root = root.get(0);
 
-                    ret.add(readNode(root, file));
+                    try {
+                        ModVersion v = ModChecker.getCurrentVersion(Cacher.getJarModId(file), MINECRAFT_VERSION);
+                        ret.add(v);
+                        continue;
+                    }catch(CacheRetrievalException ex){
+                        ModVersion m = ModChecker.getNewest(Cacher.getJarModId(file), MINECRAFT_VERSION);
+                        if(m != null){
+                            try {
+                                new Cacher().writeCache(m, Cacher.getJarModId(file));
+                            }catch(CachingFailedException ignored){ }
+                        }
+                    }
+
+                    try {
+                        ret.add(readNode(root, file));
+                    } catch (ModIdNotFoundException e1){
+                        badJars.put(f.getName(), e1.getMessage());
+                    }
                 } catch (Exception e) { AppLogger.error(e, MainController.class);}
             }
         }

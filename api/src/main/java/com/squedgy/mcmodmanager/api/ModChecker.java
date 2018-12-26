@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.api.cache.CacheRetrievalException;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
+import com.squedgy.mcmodmanager.api.cache.CachingFailedException;
 import com.squedgy.mcmodmanager.api.response.CurseForgeResponseDeserializer;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
@@ -31,6 +33,8 @@ public abstract class ModChecker {
 
     private static String currentRead = "", currentWrite = "";
 
+    public static String getCurrentRead(){ return currentRead; }
+    public static String getCurrentWrite(){ return currentWrite; }
 
 
     public static CurseForgeResponse getForVersion(String mod, String version) throws Exception {
@@ -45,29 +49,42 @@ public abstract class ModChecker {
         r.run();
     }
 
-    public static synchronized ModVersion getCurrentVersion(String mod, String mcVersion){
+    public static synchronized ModVersion getCurrentVersion(String mod, String mcVersion) throws CacheRetrievalException{
         ModVersion ret = null;
         while(currentWrite.equals(mod + "." + mcVersion));
-        setReadWrite(() -> currentRead = mod + "." + mcVersion);
-        Cacher c = new Cacher();
+        try{
+            setReadWrite(() -> currentRead = mod + "." + mcVersion);
+            ret = new Cacher().readCache(mod, mcVersion);
+        } catch (Exception e) {
+            AppLogger.error(e, ModChecker.class);
+            throw new CacheRetrievalException();
+        }finally{
+            setReadWrite(() -> currentRead = "");
+        }
 
-        try { ret = c.readCache(mod, mcVersion); }
-        catch (Exception e) { AppLogger.error(e, ModChecker.class); }
-
-        setReadWrite(() -> currentRead = "");
         return ret;
     }
 
-    public static synchronized void writeCurrentVersion(ModVersion fromCurse, String modId){
+    public static synchronized void writeCurrentVersion(ModVersion fromCurse, String modId, String dotMinecraft) throws CachingFailedException{
         while(currentRead.equals(modId + "." + fromCurse));
-        setReadWrite(() -> currentWrite = modId + "." + fromCurse);
+        try{
+            setReadWrite(() -> currentWrite = modId + "." + fromCurse);
+            File f = new File(dotMinecraft + File.separator + fromCurse.getFileName());
+            if(f.exists()) {
+                Cacher c = new Cacher();
+                c.writeCache(fromCurse, Cacher.getJarModId(new JarFile(f)));
 
-
-        setReadWrite(() -> currentWrite = "");
+            }
+        } catch (Exception e) {
+            AppLogger.error(e, ModChecker.class);
+            throw new CachingFailedException();
+        }finally{
+            setReadWrite(() -> currentWrite = "");
+        }
     }
 
     private static CurseForgeResponse get(String mod, CurseForgeResponseDeserializer deserializer) throws Exception{
-
+        System.out.println("getting:" + mod);
         URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/" + mod);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -98,15 +115,19 @@ public abstract class ModChecker {
         }
     }
 
-    public static ModVersion getNewest(String mId, String mcV) throws Exception{
-        ModVersion ret = getCurrentVersion(mId, mcV);
+    public static ModVersion getNewest(String mId, String mcV) throws ModIdNotFoundException{
+        ModVersion ret = null;
+        try { ret = getCurrentVersion(mId, mcV); }
+        catch( CacheRetrievalException ignored){ }
         //If no cached type
         if(ret == null){
-            ret = getForVersion(mId, mcV)
-                .getVersions()
-                .stream()
-                .max(Comparator.comparing(ModVersion::getUploadedAt))
-                .orElse(null);
+            try {
+                ret = getForVersion(mId, mcV)
+                    .getVersions()
+                    .stream()
+                    .max(Comparator.comparing(ModVersion::getUploadedAt))
+                    .orElse(null);
+            } catch (Exception ex) { AppLogger.error(ex, ModChecker.class); }
 
             if(ret == null){
                 throw new ModIdNotFoundException("Couldn't find the mod Id : " + mId + ". It's not cached and DOESN'T match a Curse Forge mod.\nTalk to the mod author about having the Id within their mcmod.info file match their Curse Forge mod id.");

@@ -73,18 +73,19 @@ public class Cacher {
         return MOD_CACHE_DIRECTORY + mId + File.separator + v + File.separator + "cache.json";
     }
 
-    public static String getJarModId(JarFile file){
+    public static String getJarModId(JarFile file) throws CachingFailedException{
         ZipEntry e = file.getEntry("mcmod.info");
         if(e!= null && !e.isDirectory()){
             ObjectMapper mapper = new ObjectMapper();
-
             try {
                 JsonNode root = mapper.readValue(file.getInputStream(e), JsonNode.class);
                 if(root.isArray()) root = root.get(0);
                 if(root.has("modid")) return root.get("modid").textValue();
-            } catch (IOException e1) { AppLogger.error(e1, Cacher.class); }
+            } catch (IOException e1) {
+                AppLogger.error(e1, Cacher.class);
+            }
         }
-        return null;
+        throw new CachingFailedException();
     }
 
 }

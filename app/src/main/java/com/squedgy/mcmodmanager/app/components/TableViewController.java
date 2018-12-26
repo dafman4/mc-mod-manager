@@ -59,7 +59,7 @@ public class TableViewController {
         });
         //Set the default view to a decent looking background
         updateObjectView("");
-	    objectView.getEngine().setJavaScriptEnabled(false);
+	    objectView.getEngine().setJavaScriptEnabled(true);
     }
 
     public TableView<ModVersion> getListView() { return listView; }

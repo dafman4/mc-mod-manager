@@ -4,6 +4,7 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.api.cache.CacheRetrievalException;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 import javafx.util.Callback;
 
@@ -25,7 +26,15 @@ public class ModInfoThread extends Thread {
 
 	@Override
 	public void run() {
-
+		ModVersion ret = null;
+		try{
+			System.out.println(ModChecker.getCurrentRead());
+			ret = ModChecker.getCurrentVersion(toFind.getModId(), toFind.getMinecraftVersion());
+			System.out.println(ModChecker.getCurrentRead());
+			callback.call(ret);
+			return;
+		}
+		catch ( CacheRetrievalException ignored){ }
 		CurseForgeResponse resp = null;
 		try {
 			resp = ModChecker.getForVersion(toFind.getModId(), toFind.getMinecraftVersion());
@@ -45,7 +54,7 @@ public class ModInfoThread extends Thread {
 		}
 		
 		if(resp != null){
-			ModVersion ret = resp.getVersions()
+			ret = resp.getVersions()
 				.stream()
 				.filter(e -> e.getUploadedAt().toLocalDate().equals(toFind.getUploadedAt().toLocalDate()))
 				.min(Comparator.comparing(e -> Math.abs(e.getUploadedAt().toLocalTime().toSecondOfDay() - toFind.getUploadedAt().toLocalTime().toSecondOfDay())))

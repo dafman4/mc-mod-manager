@@ -1,0 +1,11 @@
+{
+	"mod-name" : "Bookshelf",
+	"release" : "release",
+	"mc-version" : "1.12.2",
+	"uploaded" : "2018-12-03T11:12:18",
+	"id" : "2643719",
+	"file-name" : "Bookshelf-1.12.2-2.3.569.jar",
+	"mod-id" : "bookshelf",
+	"url" : "https://www.curseforge.com/minecraft/mc-mods/bookshelf/download/2643719",
+	"desc" : "<p>&nbsp;Bookshelf is a core/library mod which adds re-usable code that is used across several different mods. It also provides a few misc tweaks which can be useful for modpacks and servers.&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p><span style=\"color: #ff0000;\"><strong>IMPORTANT NOTICE: If you are not a mod developer, please use the latest release that is NOT a beta or alpha release. The alpha/beta builds are not tested, and may contain changes that break other mods!</strong></span></p>\r\n<p>&nbsp;</p>\r\n<p><a href=\"https://nodecraft.com/r/darkhax\"><img src=\"https://nodecraft.com/assets/images/logo-dark.png\" width=\"384\" height=\"90\" /></a><br />This project is sponsored by Nodecraft. Use code <a href=\"https://nodecraft.com/r/darkhax\">Darkhax</a> for 30% off your first month of service!</p>\r\n<p>&nbsp;</p>\r\n<p>Note: A lot of the user facing features of this mod have been removed. The mod was getting pretty bloated, and tweaks/fixes should be in separate mods. If you want the attribute fix feature, it has been re-released <a href=\"https://minecraft.curseforge.com/projects/attributefix\">here</a>.&nbsp;</p>\r\n<p>&nbsp;</p>\r\n<p>The Ore Dictionary feature is still included in this mod. Some vanilla items are added to the ore dictionary. For example stone variants are registered as stone, and fence gates are registered.</p>\r\n<p>&nbsp;</p>"
+}

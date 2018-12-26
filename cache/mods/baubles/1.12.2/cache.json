@@ -1,0 +1,11 @@
+{
+	"mod-name" : "Baubles",
+	"release" : "release",
+	"mc-version" : "1.12.2",
+	"uploaded" : "2018-01-10T08:23:04",
+	"id" : "2518667",
+	"file-name" : "Baubles-1.12-1.5.2.jar",
+	"mod-id" : "baubles",
+	"url" : "https://www.curseforge.com/minecraft/mc-mods/baubles/download/2518667",
+	"desc" : "<p>Baubles is a small addon mod and api that is intended to be used by other mods to add additional inventory slots to a character.</p>\r\n<div><img src=\"http://i.imgur.com/veuh8Uh.png\" alt=\"\" width=\"108\" height=\"74\" /><br />It adds 7&nbsp;new slots: an amulet, belt, head, body, charm and two rings slots. The baubles inventory is accessed by pressing the&nbsp;<strong>'b'</strong>&nbsp;hotkey. It is probably a good idea to remap your normal inventory hotkey to the baubles inventory if you are going to be accessing it a lot.<br /><br />This mod adds very little content itself - it is intended to be an addon for other mods and the only reason I included an item at all was to serve as an example for other developers. The Miners Ring has no crafting recipe and is only attainable in creative mode.</div>\r\n<p>&nbsp;</p>\r\n<p>More information and developer versions can be found on the <a href=\"http://www.minecraftforum.net/forums/mapping-and-modding/minecraft-mods/1294623-baubles-1-1-0-0-updated-2014-1-6\">main thread</a></p>"
+}
