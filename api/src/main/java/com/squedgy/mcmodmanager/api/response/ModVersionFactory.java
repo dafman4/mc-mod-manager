@@ -59,7 +59,7 @@ public class ModVersionFactory {
     }
 
     public ModVersionFactory withDescription(String description){
-        if(modId != null) this.description = description;
+        if(description != null) this.description = description;
         return this;
     }
 

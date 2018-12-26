@@ -32,7 +32,7 @@ public class JsonFileFormatTest {
 
         writer.write(map);
 
-        map = new FileReader<>(format, "test/test.json").read();
+        map = new FileReader<>("test/test.json", format).read();
         Assertions.assertEquals(singleWrite, map.get(singleDeep));
         Assertions.assertEquals(doubleWrite, map.get(doubleDeep));
         Assertions.assertEquals(tripleWrite, map.get(tripleDeep));

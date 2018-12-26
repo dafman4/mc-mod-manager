@@ -19,7 +19,7 @@ public abstract class Config {
     private static final String TABLE_CONFIG = "table.";
 
     private static final JsonFileFormat format = new JsonFileFormat();
-    private static final FileReader<Map<String,String>> READER = new FileReader<>(format, CONFIG_FILE_PATH);
+    private static final FileReader<Map<String,String>> READER = new FileReader<>(CONFIG_FILE_PATH, format);
     private static final FileWriter<Map<String,String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH, format, false);
     private static Map<String,String> CONFIG;
 
