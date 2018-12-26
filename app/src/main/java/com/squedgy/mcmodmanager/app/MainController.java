@@ -1,9 +1,11 @@
 package com.squedgy.mcmodmanager.app;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
 import com.squedgy.mcmodmanager.app.config.Config;
 import javafx.application.Application;
@@ -46,12 +48,16 @@ public class MainController extends Application {
     public static ModVersion readNode(JsonNode modInfo, JarFile modJar){
         ModVersionFactory factory = new ModVersionFactory();
 
-        factory.withName(modInfo.get("name").textValue());
+        if(modInfo.has("name")) factory.withName(modInfo.get("name").textValue());
+        else factory.withName("");
         String[] names = modJar.getName().split("[\\\\/]");
         factory.withFileName(names[names.length-1]);
-        factory.withModId(modInfo.get("modid").textValue());
-        factory.withMcVersion(modInfo.get("mcversion").textValue().replaceAll("[^0-9.]",""));
-        factory.withUrl(modInfo.get("url").textValue());
+        if(modInfo.has("modid"))factory.withModId(modInfo.get("modid").textValue());
+        else throw new ModIdNotFoundException("Mod Id not found for file: " + modJar.getName());
+        if(modInfo.has("mcversion")) factory.withMcVersion(modInfo.get("mcversion").textValue().replaceAll("[^0-9.]", ""));
+        else factory.withMcVersion("");
+        if(modInfo.has("url"))factory.withUrl(modInfo.get("url").textValue());
+        else factory.withUrl("");
         modJar.stream()
                 .min(Comparator.comparing(ZipEntry::getLastModifiedTime))
                 .ifPresent(e -> factory.uploadedAt(LocalDateTime.ofInstant(e.getLastModifiedTime().toInstant(), ZoneId.systemDefault())));
@@ -70,7 +76,13 @@ public class MainController extends Application {
                     JarFile file = new JarFile(f);
                     ZipEntry e = file.getEntry("mcmod.info");
                     if(e == null) continue;
-                    JsonNode root = mapper.readValue(file.getInputStream(e), JsonNode.class);
+                    JsonNode root;
+                    try {
+                        root = mapper.readValue(file.getInputStream(e), JsonNode.class);
+                    } catch(JsonParseException ignored){
+                        System.out.println(f.getAbsolutePath());
+                        continue;
+                    }
                     if(root.isArray()){
                         JsonNode jsonInfo = root.get(0);
                         if(jsonInfo.isObject()){
@@ -93,6 +105,8 @@ public class MainController extends Application {
             if(f.exists() && f.isDirectory()){
                 strings.addAll(scanForMods(f));
             }
+        }else{
+            System.out.println("minecraft directory doesn't exist or isn't a directory");
         }
         return strings.toArray(new ModVersion[0]);
     }
