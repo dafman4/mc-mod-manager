@@ -27,6 +27,9 @@ public class ModInfoThread extends Thread {
 
 	@Override
 	public void run() {
+
+
+
 		CurseForgeResponse resp = null;
 		try {
 			resp = ModChecker.getForVersion(toFind.getModId(), toFind.getMinecraftVersion());

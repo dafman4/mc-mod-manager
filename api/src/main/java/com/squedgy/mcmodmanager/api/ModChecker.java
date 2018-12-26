@@ -28,6 +28,7 @@ public abstract class ModChecker {
     }
 
     private static CurseForgeResponse get(String mod, JsonDeserializer deserializer) throws Exception{
+
         URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/" + mod);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 

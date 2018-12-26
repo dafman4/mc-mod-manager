@@ -3,17 +3,14 @@ package com.squedgy.mcmodmanager.app.components;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.MainController;
-import com.squedgy.mcmodmanager.app.config.VersionTableOrder;
+import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
 import javafx.scene.web.WebView;
 
@@ -44,16 +41,14 @@ public class TableViewController {
     public void initialize() {
         setListView();
         //Set mod list
-        listView.getColumns().setAll(listView.getColumns().sorted( (a, b) -> VersionTableOrder.compareColumns(a.getText(), b.getText())));
+        listView.getColumns().setAll(listView.getColumns().sorted( (a, b) -> Config.compareColumns(a.getText(), b.getText())));
         listView.refresh();
         //When selecting one load it into the description into WebViewer
         listView.getSelectionModel().selectedItemProperty().addListener((obs, old, neu) -> {
             updateObjectView("<h1>Loading...</h1>");
             if(gathering == null || !gathering.isAlive()) {
                 gathering = new ModInfoThread(neu, version -> {
-                    Platform.runLater(() -> {
-                    	updateObjectView(version.getDescription());
-                    });
+                    Platform.runLater(() -> updateObjectView(version.getDescription()));
                     return null;
                 }, n -> {
                     Platform.runLater(() -> updateObjectView(("<h2>Error Loading, couldn't find a matching version!</h2>")));
@@ -70,13 +65,11 @@ public class TableViewController {
     public TableView<ModVersion> getListView() { return listView; }
 
     private synchronized void updateObjectView(String n){
-        objectView.getEngine().loadContent("<style>body{background-color:#434343; color:#aaa;}</style>" + n);
+        objectView.getEngine().loadContent("<style>body{background-color:#434343; color:#aaa;}img{max-width:100%;height:auto;}</style>" + n);
     }
 
     @FXML
-    public void setColumns(Event e){
-        VersionTableOrder.writeColumnOrder(listView.getColumns());
-    }
+    public void setColumns(Event e){ Config.writeColumnOrder(listView.getColumns()); }
 
     @FXML
     public void searchForUpdates(Event e){
