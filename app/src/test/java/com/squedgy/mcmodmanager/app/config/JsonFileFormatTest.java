@@ -1,5 +1,6 @@
 package com.squedgy.mcmodmanager.app.config;
 
+import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.utilities.interfaces.FileFormatter;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

@@ -15,7 +15,6 @@ public class ModVersionFactory {
     private LocalDateTime uploadedAt;
     private String modId;
     private String description;
-    private boolean html;
 
     public ModVersionFactory(){ }
 
@@ -64,15 +63,6 @@ public class ModVersionFactory {
         return this;
     }
 
-    public ModVersionFactory isHtml(){
-        this.html = true;
-        return this;
-    }
-
-    public ModVersionFactory isNotHtml(){
-        this.html = false;
-        return this;
-    }
 
     public ModVersion build(){
         Version ret = new Version();
@@ -84,7 +74,6 @@ public class ModVersionFactory {
         ret.setMinecraftVersion(version);
         ret.setUploadedAt(uploadedAt);
         ret.setModId(modId);
-        ret.setHtml(html);
         ret.setDescription(description);
         return ret;
     }

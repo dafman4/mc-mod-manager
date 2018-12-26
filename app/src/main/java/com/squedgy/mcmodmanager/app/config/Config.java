@@ -1,6 +1,7 @@
 package com.squedgy.mcmodmanager.app.config;
 
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
 import javafx.scene.control.TableColumn;

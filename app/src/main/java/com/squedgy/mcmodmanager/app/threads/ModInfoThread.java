@@ -28,8 +28,6 @@ public class ModInfoThread extends Thread {
 	@Override
 	public void run() {
 
-
-
 		CurseForgeResponse resp = null;
 		try {
 			resp = ModChecker.getForVersion(toFind.getModId(), toFind.getMinecraftVersion());
@@ -49,21 +47,19 @@ public class ModInfoThread extends Thread {
 
 		System.out.println(resp);
 		
-		if(resp == null){
-			this.couldntFind.call(null);
-			throw new ThreadFailedException();
-		}else {
+		if(resp != null){
 			ModVersion ret = resp.getVersions()
 					.stream()
 					.filter(e -> e.getUploadedAt().toLocalDate().equals(toFind.getUploadedAt().toLocalDate()))
 					.min(Comparator.comparing(e -> Math.abs(e.getUploadedAt().toLocalTime().toSecondOfDay() - toFind.getUploadedAt().toLocalTime().toSecondOfDay())))
 					.orElse(null);
-			if (ret == null){
-				this.couldntFind.call(null);
-				throw new ThreadFailedException();
+			if (ret != null){
+				callback.call(ret);
+				return;
 			}
 
-			callback.call(ret);
 		}
+		this.couldntFind.call(null);
+		throw new ThreadFailedException();
 	}
 }

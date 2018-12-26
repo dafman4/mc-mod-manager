@@ -65,7 +65,11 @@ public class TableViewController {
     public TableView<ModVersion> getListView() { return listView; }
 
     private synchronized void updateObjectView(String n){
-        objectView.getEngine().loadContent("<style>body{background-color:#434343; color:#aaa;}img{max-width:100%;height:auto;}</style>" + n);
+        objectView.getEngine().loadContent("<style>" +
+            "body{background-color:#303030; color:#ddd;}" +
+            "img{max-width:100%;height:auto;}" +
+            "a{color:#ff9000;text-decoration:none;} a:visited{color:#4f124f;}" +
+            "</style>" + n);
     }
 
     @FXML

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import com.squedgy.mcmodmanager.api.response.JsonDeserializer;
+import com.squedgy.mcmodmanager.api.response.CurseForgeResponseDeserializer;
 import com.squedgy.mcmodmanager.api.abstractions.ModMember;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
@@ -22,7 +22,7 @@ public class DeserializerChecker {
                                 version = "1.12.2",
                                 title = "Author",
                                 username = "squedgy",
-                                uploaded_at = uploadedTime.format(JsonDeserializer.formatter),
+                                uploaded_at = uploadedTime.format(CurseForgeResponseDeserializer.formatter),
                                 modName = "Lava Sources",
                                 modId = "lavasources";
     private static final long id = 12345679;
@@ -44,7 +44,7 @@ public class DeserializerChecker {
                             "\"name\":\"" + name + "\"," +
                             "\"type\":\"" + type + "\"," +
                             "\"version\":\"" + version + "\"," +
-                            "\"uploaded_at\":\"" + uploadedTime.plusDays(1).format(JsonDeserializer.formatter) + "\"" +
+                            "\"uploaded_at\":\"" + uploadedTime.plusDays(1).format(CurseForgeResponseDeserializer.formatter) + "\"" +
                         "}" +
                     "]" +
                 "}," +
@@ -67,7 +67,7 @@ public class DeserializerChecker {
     @BeforeEach
     public void init(){
         mapper = new ObjectMapper();
-        mapper.registerModule(new SimpleModule().addDeserializer(CurseForgeResponse.class, new JsonDeserializer()));
+        mapper.registerModule(new SimpleModule().addDeserializer(CurseForgeResponse.class, new CurseForgeResponseDeserializer()));
     }
 
     @Test

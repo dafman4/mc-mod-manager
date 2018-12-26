@@ -6,16 +6,15 @@ import java.time.LocalDateTime;
 
 public class Version implements ModVersion{
 
-    private String minecraftVersion;
+    private long id;
     private String fileName;
     private String typeOfRelease;
-    private long id;
+    private String minecraftVersion;
     private String downloadUrl;
     private LocalDateTime uploadedAt;
-    private String modName;
     private String modId;
+    private String modName;
     private String description;
-    private boolean html;
 
     public String getMinecraftVersion() { return minecraftVersion; }
 
@@ -55,11 +54,9 @@ public class Version implements ModVersion{
     public String getDescription() { return description; }
 
     @Override
-    public boolean isHtmlDescription() { return html; }
+    public boolean isHtmlDescription() { return true; }
 
     public void setDescription(String description) { this.description = description; }
-
-    public void setHtml(boolean html) { this.html = html; }
 
     public void setModName(String modName) { this.modName = modName; }
 
@@ -77,7 +74,6 @@ public class Version implements ModVersion{
                 ",\n\tmodName='" + modName + '\'' +
                 ",\n\tmodId='" + modId + '\'' +
                 ",\n\tdescription='" + description + '\'' +
-                ",\n\thtml=" + html +
                 '\n' + '}';
     }
 }

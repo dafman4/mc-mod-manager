@@ -1,4 +1,8 @@
 
+.filler{
+    -fx-background-color: linear-gradient(to bottom, #292929, #131313);;
+}
+
 .table-view {
     -fx-background-color:transparent;
 }

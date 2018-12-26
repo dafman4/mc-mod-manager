@@ -71,14 +71,10 @@ public class MainController extends Application {
                     ZipEntry e = file.getEntry("mcmod.info");
                     if(e == null) continue;
                     JsonNode root = mapper.readValue(file.getInputStream(e), JsonNode.class);
-                    if(root.isArray()){
-                        JsonNode jsonInfo = root.get(0);
-                        if(jsonInfo.isObject()){
-                            ret.add(readNode(jsonInfo, file));
-                        }
-                    }else{
-                        ret.add(readNode(root, file));
-                    }
+
+                    if(root.isArray())root = root.get(0);
+
+                    ret.add(readNode(root, file));
                 } catch (Exception e) { AppLogger.error(e, MainController.class);}
             }
         }

@@ -6,4 +6,5 @@ buildscript{
 
 dependencies{
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.9.7'
+    compile group: 'com.squedgy', name: 'my-utilities', version: '1.0'
 }
