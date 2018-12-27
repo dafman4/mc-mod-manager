@@ -3,9 +3,9 @@ package com.squedgy.mcmodmanager.app.components;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.MainController;
-import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
+import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
@@ -15,7 +15,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.web.WebView;
 
 import java.util.ArrayList;
-
 
 public class TableViewController {
 
@@ -33,7 +32,7 @@ public class TableViewController {
 
     @FXML
     public void setListView(){
-        listView.setItems(FXCollections.observableArrayList(MainController.getMods()));
+        listView.setItems(FXCollections.observableArrayList(ModUtils.getInstance().getMods()));
         listView.refresh();
     }
 
@@ -41,7 +40,7 @@ public class TableViewController {
     public void initialize() {
         setListView();
         //Set mod list
-        listView.getColumns().setAll(listView.getColumns().sorted( (a, b) -> Config.compareColumns(a.getText(), b.getText())));
+        listView.getColumns().setAll(listView.getColumns().sorted( (a, b) -> ModUtils.getInstance().CONFIG.compareColumns(a.getText(), b.getText())));
         listView.refresh();
         //When selecting one load it into the description into WebViewer
         listView.getSelectionModel().selectedItemProperty().addListener((obs, old, neu) -> {
@@ -73,15 +72,13 @@ public class TableViewController {
     }
 
     @FXML
-    public void setColumns(Event e){ Config.writeColumnOrder(listView.getColumns()); }
+    public void setColumns(Event e){ ModUtils.getInstance().CONFIG.writeColumnOrder(listView.getColumns()); }
 
     @FXML
     public void searchForUpdates(Event e){
         if(checking == null || !checking.isAlive()){
             checking = new ModCheckingThread(new ArrayList<>(listView.getItems()),MainController.MINECRAFT_VERSION, l -> {
                 //do something with the returned list
-                System.out.println("updateables");
-                System.out.println(l);
                 return null;
             } );
             checking.start();

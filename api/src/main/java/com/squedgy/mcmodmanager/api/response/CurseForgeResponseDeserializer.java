@@ -71,7 +71,6 @@ public class CurseForgeResponseDeserializer extends StdDeserializer<CurseForgeRe
                         username = member.get("username").asText();
                 ret.addMember(new Member(title, username));
             });
-            if(ret.getVersions().size() > 0) System.out.println("mId: " + ret.getVersions().get(0).getModId());
 
             return ret;
         }catch(NullPointerException e){

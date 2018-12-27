@@ -39,14 +39,11 @@ public class ModCheckingThread extends Thread {
                     .stream()
                     .max(Comparator.comparing(ModVersion::getUploadedAt))
                     .ifPresent( v -> {
-                        System.out.println("Newest: " + v.getUploadedAt() + " VS. Current: " + id.getUploadedAt());
-
                         if(v.getUploadedAt().isAfter(id.getUploadedAt())){
                             updateables.add(v);
                         }
                     });
-            }catch(ModIdNotFoundException e){  }
-            catch (NullPointerException ignored){ }
+            }catch(ModIdNotFoundException | NullPointerException e){  }
             catch (Exception e) {
                 e.printStackTrace();
             }

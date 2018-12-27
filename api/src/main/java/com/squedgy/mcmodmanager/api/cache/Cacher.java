@@ -1,19 +1,13 @@
 package com.squedgy.mcmodmanager.api.cache;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
-import com.squedgy.utilities.reader.FileReader;
-import com.squedgy.utilities.writer.FileWriter;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
@@ -22,65 +16,69 @@ import java.util.zip.ZipEntry;
 
 public class Cacher {
 
-    public static final String MOD_CACHE_DIRECTORY = "cache/mods/";
-    private final FileReader<Map<String,String>> READER;
-    private final FileWriter<Map<String,String>> WRITER;
-    private static final String MOD_ID = "mod-id",
-        URL = "url",
-        FILE_NAME = "file-name",
-        RELEASE_TYPE = "release",
-        MC_VERSION = "mc-version",
-        UPLOADED_AT = "uploaded",
-        DESCRIPTION = "desc",
-        MOD_NAME = "mod-name",
-        ID = "id";
+    public static final String MOD_CACHE_DIRECTORY = "cache" + File.separator;
 
-    public Cacher(){
-        JsonFileFormat f = new JsonFileFormat();
-        READER = new FileReader<>(MOD_CACHE_DIRECTORY, f);
-        WRITER = new FileWriter<>(MOD_CACHE_DIRECTORY, f, false);
-    }
-    //Pass in the modId separately as we want to cache the one that matches Curse Forge's knowledge
-    public synchronized void writeCache(ModVersion v, String modId) throws Exception {
-        WRITER.setFileLocation(getFileLocation(modId, v.getMinecraftVersion()));
-        Map<String,String> toWrite = new HashMap<>();
-        toWrite.put(ID, "" + v.getId());
-        toWrite.put(MOD_ID, v.getModId());
-        toWrite.put(MOD_NAME, v.getModName());
-        toWrite.put(FILE_NAME, v.getFileName());
-        toWrite.put(RELEASE_TYPE, v.getTypeOfRelease());
-        toWrite.put(MC_VERSION, v.getMinecraftVersion());
-        toWrite.put(UPLOADED_AT, v.getUploadedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
-        toWrite.put(DESCRIPTION, v.getDescription());
-        toWrite.put(URL, v.getDownloadUrl());
-        WRITER.write(toWrite);
+    private Map<String,ModVersion> cachedMods;
+    private String fileName;
+
+    private static Cacher instance;
+
+    public static Cacher getInstance(String mc){
+        if(instance == null){
+            System.out.println("cacher null");
+            instance = new Cacher(mc);
+        }
+        return instance;
     }
 
-    public synchronized ModVersion readCache(String modId, String mcVersion){
-        READER.setFileLocation(getFileLocation(modId, mcVersion));
-        Map<String,String> info = READER.read();
+    private  Cacher(String mcVersion) {
+        System.out.println("cacher");
         try {
-            return new ModVersionFactory()
-                .withId(Long.valueOf(info.get(ID)))
-                .withModId(info.get(MOD_ID))
-                .withName(info.get(MOD_NAME))
-                .withFileName(info.get(FILE_NAME))
-                .withType(info.get(RELEASE_TYPE))
-                .withMcVersion(info.get(MC_VERSION))
-                .withDescription(info.get(DESCRIPTION))
-                .withUrl(info.get(URL))
-                .uploadedAt(LocalDateTime.parse(info.get(UPLOADED_AT)))
-                .build();
-        }catch(NullPointerException ex){
-            return null;
+            fileName = MOD_CACHE_DIRECTORY + mcVersion + ".json";
+            System.out.println(new File(fileName).getAbsolutePath());
+            loadCache(mcVersion);
+        }catch(Exception e){
+            AppLogger.error(e, getClass());
+            throw new RuntimeException();
+        }
+
+    }
+
+    public synchronized void loadCache(String mcVersion) {
+        try {
+            TypeReference<Map<String, ModVersion>> ref = new TypeReference<Map<String, ModVersion>>() { };
+            SimpleModule module = new SimpleModule();
+            Class<Map<String, ModVersion>> clz;
+            clz = (Class<Map<String, ModVersion>>) (Class) Map.class;
+            module.addDeserializer(clz, new JsonModVersionDeserializer());
+            cachedMods = new ObjectMapper()
+                .registerModule(module)
+                .readValue(new File(fileName), ref);
+        } catch (IOException e) {
+            AppLogger.error(e, getClass());
+            cachedMods = new HashMap<>();
+        }
+    }
+    //Pass in the modId separately as we want to cache the one that matches Curse Forge's knowledge based on the Jar File's id
+    public synchronized void writeCache() throws IOException {
+        File f = new File(fileName);
+        try {
+            new ObjectMapper().writeValue(f, cachedMods);
+        } catch (FileNotFoundException e) {
+            if(f.toPath().getParent().toFile().mkdirs() && f.createNewFile()){
+                new ObjectMapper().registerModule(new SimpleModule().addSerializer(new JsonModVersionSerializer())).writeValue(f, cachedMods);
+            }
         }
     }
 
-    public static String getFileLocation(String mId, String v){
-        return MOD_CACHE_DIRECTORY + mId + File.separator + v + File.separator + "cache.json";
+    public void addMod(String modId, ModVersion version){
+        System.out.println("Adding " + modId + ": " + version.getModId());
+        cachedMods.put(modId, version);
     }
 
-    public static String getJarModId(JarFile file) throws CacheRetrievalException{
+    public ModVersion getMod(String modId){ return cachedMods.get(modId); }
+
+    public static String getJarModId(JarFile file) throws IOException{
         ZipEntry e = file.getEntry("mcmod.info");
         if(e!= null && !e.isDirectory()){
             ObjectMapper mapper = new ObjectMapper();
@@ -90,10 +88,16 @@ public class Cacher {
                     JsonNode.class
                 );
                 if(root.isArray()) root = root.get(0);
+                else if(root.has("modList")) root = root.get("modList").get(0);
                 if(root.has("modid")) return root.get("modid").textValue();
-            } catch (IOException e1) { }
+                if(root.has("name")){
+                    String name = root.get("name").textValue().toLowerCase().replace(' ', '-');
+                    if(name.contains(":"))name = name.substring(0, name.indexOf(':'));
+                    return name.replaceAll("[^-a-z0-9]", "");
+                }
+            }finally{ }
         }
-        throw new CacheRetrievalException();
+        throw new IOException("JarFile mcmod.info did not have a modid");
     }
 
 }

@@ -66,14 +66,14 @@ public class Version implements ModVersion{
     public String toString() {
         return "Version{" +
                 "minecraftVersion='" + minecraftVersion + '\'' +
-                ",\n\tfileName='" + fileName + '\'' +
-                ",\n\ttypeOfRelease='" + typeOfRelease + '\'' +
-                ",\n\tid=" + id +
-                ",\n\tdownloadUrl='" + downloadUrl + '\'' +
-                ",\n\tuploadedAt=" + uploadedAt +
-                ",\n\tmodName='" + modName + '\'' +
-                ",\n\tmodId='" + modId + '\'' +
-                ",\n\tdescription='" + description + '\'' +
-                '\n' + '}';
+                ",fileName='" + fileName + '\'' +
+                ",typeOfRelease='" + typeOfRelease + '\'' +
+                ",id=" + id +
+                ",downloadUrl='" + downloadUrl + '\'' +
+                ",uploadedAt=" + uploadedAt +
+                ",modName='" + modName + '\'' +
+                ",modId='" + modId + '\'' +
+                ",description='" + description + '\''
+                + '}';
     }
 }

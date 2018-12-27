@@ -63,6 +63,18 @@ public class ModVersionFactory {
         return this;
     }
 
+    public void reset(){
+        this.url = null;
+        this.uploadedAt = null;
+        this.description = null;
+        this.fileName = null;
+        this.id = 0;
+        this.modId = null;
+        this.name = null;
+        this.type = null;
+        this.version = null;
+    }
+
 
     public ModVersion build(){
         Version ret = new Version();

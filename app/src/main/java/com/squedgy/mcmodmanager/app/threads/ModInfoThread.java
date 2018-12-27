@@ -28,9 +28,8 @@ public class ModInfoThread extends Thread {
 	public void run() {
 		ModVersion ret = null;
 		try{
-			System.out.println(ModChecker.getCurrentRead());
 			ret = ModChecker.getCurrentVersion(toFind.getModId(), toFind.getMinecraftVersion());
-			System.out.println(ModChecker.getCurrentRead());
+
 			callback.call(ret);
 			return;
 		}

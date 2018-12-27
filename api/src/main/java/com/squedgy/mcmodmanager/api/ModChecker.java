@@ -50,27 +50,26 @@ public abstract class ModChecker {
     }
 
     public static synchronized ModVersion getCurrentVersion(String mod, String mcVersion) throws CacheRetrievalException{
-        ModVersion ret = null;
+        ModVersion ret;
         while(currentWrite.equals(mod + "." + mcVersion));
         try{
             setReadWrite(() -> currentRead = mod + "." + mcVersion);
-            ret = new Cacher().readCache(mod, mcVersion);
+            ret = Cacher.getInstance(mcVersion).getMod(mod);
         }
         catch (Exception e) { throw new CacheRetrievalException(); }
         finally{ setReadWrite(() -> currentRead = ""); }
-
+        if (ret == null) throw new CacheRetrievalException();
         return ret;
     }
 
-    public static synchronized void writeCurrentVersion(ModVersion fromCurse, String modId, String dotMinecraft) throws CachingFailedException{
+    public static synchronized void writeCurrentVersion(ModVersion fromCurse, String mcVersion, String modId, String dotMinecraft) throws CachingFailedException{
         while(currentRead.equals(modId + "." + fromCurse));
         try{
             setReadWrite(() -> currentWrite = modId + "." + fromCurse);
             File f = new File(dotMinecraft + File.separator + fromCurse.getFileName());
             if(f.exists()) {
-                Cacher c = new Cacher();
-                c.writeCache(fromCurse, Cacher.getJarModId(new JarFile(f)));
-
+                Cacher c = Cacher.getInstance(mcVersion);
+                c.addMod(Cacher.getJarModId(new JarFile(f)), fromCurse);
             }
         } catch (Exception e) {
             AppLogger.error(e, ModChecker.class);
@@ -81,7 +80,7 @@ public abstract class ModChecker {
     }
 
     private static CurseForgeResponse get(String mod, CurseForgeResponseDeserializer deserializer) throws Exception{
-        System.out.println("getting:" + mod);
+
         URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/" + mod);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
@@ -127,14 +126,14 @@ public abstract class ModChecker {
             } catch (Exception ex) { }
 
             if(ret == null){
-                throw new ModIdNotFoundException("Couldn't find the mod Id : " + mId + ". It's not cached and DOESN'T match a Curse Forge mod.\nTalk to the mod author about having the Id within their mcmod.info file match their Curse Forge mod id.");
+                throw new ModIdNotFoundException("Couldn't find the mod Id : " + mId + ". It's not cached and DOESN'T match a Curse Forge mod. Talk to the mod author about having the Id within their mcmod.info file match their Curse Forge mod id.");
             }
         }
 
         return ret;
     }
 
-    public static boolean download(ModVersion v, String location){
+    public static boolean download(ModVersion v, String location, String mcVersion){
         URL u = null;
         try {
             u = new URL(v.getDownloadUrl());
@@ -160,9 +159,9 @@ public abstract class ModChecker {
             out.transferFrom(in, 0, Long.MAX_VALUE);
             String modId = Cacher.getJarModId(new JarFile(f.getAbsolutePath()));
 
-            Cacher c = new Cacher();
+            Cacher c = Cacher.getInstance(mcVersion);
 
-            c.writeCache(v, modId);
+            c.addMod(modId, v);
         } catch (IOException e) {
             AppLogger.error(e, ModChecker.class);
             return false;
