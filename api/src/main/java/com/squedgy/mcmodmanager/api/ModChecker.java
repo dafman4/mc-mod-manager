@@ -21,6 +21,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.FileSystems;
 import java.util.Comparator;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
@@ -85,22 +86,31 @@ public abstract class ModChecker {
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
 
         con.setRequestMethod("GET");
-        if(con.getResponseCode() == 202 && !check){
-            Thread.sleep(1000 * 2);
+        int responseCode = con.getResponseCode();
+        //If it's a 301 we should try with the new location
+        if(responseCode == 301){
+            url = new URL(con.getHeaderField("location"));
+            con = (HttpURLConnection) url.openConnection();
+            responseCode = con.getResponseCode();
+        }
+
+        if(responseCode == 202 && !check){
+            TimeUnit.SECONDS.sleep(2);
             check = true;
             return get(mod, deserializer);
-        }else if ((con.getResponseCode() == 400 || con.getResponseCode() == 404) && idChecked){
+        }else if ((responseCode == 400 || responseCode == 404) && idChecked){
             idChecked = false;
             throw new ModIdNotFoundException(mod);
-        }else if (con.getResponseCode() == 400 || con.getResponseCode() == 404){
+        }else if (responseCode == 400 || responseCode == 404){
             idChecked = true;
             throw new ModIdFailedException();
         }
+
         try(BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()))){
             ObjectMapper mapper = new ObjectMapper()
                     .registerModule(new SimpleModule()
                             .addDeserializer(CurseForgeResponse.class, deserializer));
-            return mapper.readValue(reader.lines().collect(Collectors.joining("")), CurseForgeResponse.class);
+            return mapper.readValue(reader.lines().collect(Collectors.joining("")).replaceAll("\\n", "\\n").replaceAll("\\r", "\\r"), CurseForgeResponse.class);
         }catch(FileNotFoundException e){
             throw new ModIdNotFoundException(mod);
         }catch (Exception e){

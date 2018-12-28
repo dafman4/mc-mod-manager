@@ -30,14 +30,12 @@ public class Config {
 
     public static Config getInstance(){
         if(instance == null) {
-            System.out.println("config null");
             instance = new Config();
         }
         return instance;
     }
 
     private Config(){
-        System.out.println("config");
         try {
             CONFIG = readProps();
         } catch (Exception e) {

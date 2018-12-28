@@ -39,13 +39,11 @@ public class ModUtils {
     private static ModUtils instance;
 
     private ModUtils(){
-        System.out.println("mod utils");
         CONFIG = Config.getInstance();
     }
 
     public static ModUtils getInstance(){
         if(instance == null){
-            System.out.println("ModUtils null");
             instance = new ModUtils();
         }
         return instance;
@@ -102,7 +100,6 @@ public class ModUtils {
                         continue;
                     }catch(ModIdNotFoundException ignored){ }
 
-
                     JsonNode root;
                     try(BufferedReader r = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
                         root = new ObjectMapper()
@@ -114,22 +111,14 @@ public class ModUtils {
                         badJars.put(jarId, "Error parsing Json");
                         continue;
                     }
-                    if(root.isArray())root = root.get(0);
-                    else if(root.has("modList")) root = root.get("modList").get(0);
-                    System.out.println(root);
-                    try {
-                        searchWithId(root.get("modid").textValue(), jarId, ret);
-                        continue;
-                    }catch(ModIdNotFoundException ex2){
-                        try{
-                            searchWithId(formatModName(root.get("name").textValue()), jarId, ret);
-                            continue;
-                        }catch (ModIdNotFoundException ignored){}
-                    }
+                    if(root.has("modList")) root = root.get("modList");//this will be an array
+
+                    checkNode(root, jarId, root.isArray() ? root.size() : 0, ret);
 
                     try {
                         ModVersion v = readNode(root, file);
                         addToList(ret, v);
+                        badJars.put(v.getModName(), "This mod doesn't have a correct id within their mcmod.info file and I couldn't guess what it's id was, inform the mod creator if they're willing otherwise you'll have to add it to the cache if you want all the features");
                     } catch (ModIdNotFoundException e1){
                         badJars.put(f.getName(), e1.getMessage());
                     }
@@ -139,8 +128,25 @@ public class ModUtils {
         return ret;
     }
 
+    private void checkNode(JsonNode array, String jarId, int length, List<ModVersion> ret){
+        int i = 0;
+        do{
+            JsonNode root = length > 0 ? array.get(i) : array;
+            i++;
+            if(root == null) continue;
+            try {
+                searchWithId(root.get("modid").textValue(), jarId, ret);
+                break;
+            }catch(ModIdNotFoundException ex2){
+                try{
+                    searchWithId(formatModName(root.get("name").textValue()), jarId, ret);
+                    break;
+                }catch (ModIdNotFoundException ignored){}
+            }
+        }while( i < length);
+    }
+
     private  void searchWithId(String id, String jarId, List<ModVersion> list) throws ModIdNotFoundException{
-        System.out.println("searchWithId:" + id);
         ModVersion v = CONFIG.getCachedMods().getMod(id);
 
         if(v == null) v = ModChecker.getNewest(id, MINECRAFT_VERSION);
@@ -164,6 +170,8 @@ public class ModUtils {
             f = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
             if(f.exists() && f.isDirectory()){
                 strings.addAll(scanForMods(f));
+                System.out.println("BAD JARS");
+                badJars.forEach((id, mes) -> System.out.println(id + ": " + mes));
                 try { CONFIG.getCachedMods().writeCache(); }
                 catch (IOException e) {
                     AppLogger.error(e, MainController.class);
@@ -176,6 +184,9 @@ public class ModUtils {
     public String formatModName(String name){
         name = name.toLowerCase().replace(' ' , '-');
         if(name.contains(":"))name = name.substring(0, name.indexOf(':'));
-        return name.replaceAll("[^-a-z0-9]", "");
+        name = name
+            .replaceAll("[^-a-z0-9]", "")
+            .replaceAll("([^-])([0-9]+)|([0-9]+)([^-])", "$1-$2");
+        return name;
     }
 }

@@ -25,17 +25,14 @@ public class Cacher {
 
     public static Cacher getInstance(String mc){
         if(instance == null){
-            System.out.println("cacher null");
             instance = new Cacher(mc);
         }
         return instance;
     }
 
     private  Cacher(String mcVersion) {
-        System.out.println("cacher");
         try {
             fileName = MOD_CACHE_DIRECTORY + mcVersion + ".json";
-            System.out.println(new File(fileName).getAbsolutePath());
             loadCache(mcVersion);
         }catch(Exception e){
             AppLogger.error(e, getClass());
@@ -59,20 +56,20 @@ public class Cacher {
             cachedMods = new HashMap<>();
         }
     }
-    //Pass in the modId separately as we want to cache the one that matches Curse Forge's knowledge based on the Jar File's id
+
     public synchronized void writeCache() throws IOException {
         File f = new File(fileName);
+        ObjectMapper mapper = new ObjectMapper().registerModule(new SimpleModule().addSerializer(new JsonModVersionSerializer()));
         try {
-            new ObjectMapper().writeValue(f, cachedMods);
+            mapper.writeValue(f, cachedMods);
         } catch (FileNotFoundException e) {
             if(f.toPath().getParent().toFile().mkdirs() && f.createNewFile()){
-                new ObjectMapper().registerModule(new SimpleModule().addSerializer(new JsonModVersionSerializer())).writeValue(f, cachedMods);
+                mapper.writeValue(f, cachedMods);
             }
         }
     }
 
     public void addMod(String modId, ModVersion version){
-        System.out.println("Adding " + modId + ": " + version.getModId());
         cachedMods.put(modId, version);
     }
 
