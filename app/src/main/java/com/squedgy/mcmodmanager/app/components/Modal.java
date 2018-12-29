@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 
@@ -33,12 +34,13 @@ public class Modal {
         root.minHeightProperty().setValue(300);
     }
 
-    public void setContents(Node... nodes){
-        for(Node node : nodes) holder.getChildren().add(node);
-    }
+    public void setContents(Node... nodes){ for(Node node : nodes) holder.getChildren().add(node); }
 
-    public ScrollPane getRoot(){
-        return root;
+    public ScrollPane getRoot(){ return root; }
+
+    public void openModal(){
+        Scene s = new Scene(root);
+
     }
 
 }

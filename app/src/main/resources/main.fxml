@@ -14,8 +14,8 @@
         <URL value="@main.css"/>
         <URL value="@table-view.css"/>
     </stylesheets>
-    <VBox>
-        <HBox styleClass="button-list">
+    <VBox fx:id="content">
+        <HBox fx:id="buttons" styleClass="button-list">
             <Button text="Save Columns" fx:id="columns" onMouseReleased="#setColumns"/>
             <Button text="Check for Updates" fx:id="updates" onMouseReleased="#searchForUpdates"/>
             <Button text="Bad Jars" fx:id="badJars" onMouseReleased="#showBadJars" />

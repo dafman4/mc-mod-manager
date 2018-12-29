@@ -17,7 +17,7 @@ import static com.squedgy.mcmodmanager.app.Startup.MINECRAFT_VERSION;
 
 public class Config {
 
-    public static final String CONFIG_DIRECTORY = "CONFIG/";
+    public static final String CONFIG_DIRECTORY = "config/";
     public static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY + "manager.json";
     private final Cacher cachedMods;
     private static final String TABLE_CONFIG = "table.";

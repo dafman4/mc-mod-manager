@@ -18,11 +18,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -48,36 +47,56 @@ public class TableViewController {
     private GridPane listGrid;
     @FXML
     private ScrollPane root;
+    @FXML
+    private VBox content;
+    @FXML
+    private HBox buttons;
 
     private ModCheckingThread checking;
     private ModInfoThread gathering;
 
     @FXML
     public void initialize() throws IOException {
-        table = new ModVersionTableController(ModUtils.getInstance().getMods());
-        listGrid.add(table.getRoot(), 0,0);
-
-        badJars.setVisible(ModUtils.viewBadJars().size() > 0);
-        System.out.println(badJars.visibleProperty().getValue());
-        //Set the default view to a decent looking background
-        updateObjectView("");
-	    objectView.getEngine().setJavaScriptEnabled(true);
-	    listGrid.prefHeightProperty().bind(root.heightProperty().multiply(.8));
-	    listGrid.maxWidthProperty().bind(root.widthProperty().subtract(2));
-	    table.addOnChange((obs, old, neu) -> {
-            updateObjectView("<h1>Loading...</h1>");
-            if(gathering == null || !gathering.isAlive()) {
-                gathering = new ModInfoThread(neu, version -> {
-                    Platform.runLater(() -> updateObjectView(version.getDescription()));
-                    return null;
-                }, n -> {
-                    Platform.runLater(() -> updateObjectView(("<h2>Error Loading, couldn't find a matching version!</h2>")));
-                    return null;
-                });
-                gathering.start();
+        System.out.println(content.getChildren());
+        root.setContent(new LoadingController().getRoot());
+        Thread t = new Thread(() -> {
+            try {
+                table = new ModVersionTableController(ModUtils.getInstance().getMods());
+            } catch (IOException e) {
+                throw new RuntimeException();
             }
+            table.addOnChange((obs, old, neu) -> {
+                updateObjectView("<h1>Loading...</h1>");
+                if (gathering == null || !gathering.isAlive()) {
+                    gathering = new ModInfoThread(neu, version -> {
+                        Platform.runLater(() -> updateObjectView(version.getDescription()));
+                        return null;
+                    }, n -> {
+                        Platform.runLater(() -> updateObjectView(("<h2>Error Loading, couldn't find a matching version!</h2>")));
+                        return null;
+                    });
+                    gathering.start();
+                }
+            });
+            Platform.runLater(() ->{
+                listGrid.add(table.getRoot(), 0, 0);
+                badJars.setVisible(ModUtils.viewBadJars().size() > 0);
+                //Set the default view to a decent looking background
+                updateObjectView("<h1>&nbsp;</h1>");
+                objectView.getEngine().setJavaScriptEnabled(true);
+                listGrid.prefHeightProperty().bind(root.heightProperty().multiply(.8));
+                listGrid.maxWidthProperty().bind(root.widthProperty().subtract(2));
+                root.setContent(content);
+                Platform.runLater(() ->{
+                    Startup.getParent().getWindow().setHeight(content.heightProperty().getValue());
+                    Startup.getParent().getWindow().setWidth(content.widthProperty().getValue()+20);
+                    Startup.getParent().getWindow().centerOnScreen();
+                });
+            });
         });
+        t.start();
     }
+
 
     private synchronized void updateObjectView(String description){
         objectView.getEngine().loadContent(

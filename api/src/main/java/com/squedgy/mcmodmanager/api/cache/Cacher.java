@@ -51,6 +51,8 @@ public class Cacher {
             cachedMods = new ObjectMapper()
                 .registerModule(module)
                 .readValue(new File(fileName), ref);
+        }catch (FileNotFoundException e){
+            cachedMods = new HashMap<>();
         } catch (IOException e) {
             AppLogger.error(e, getClass());
             cachedMods = new HashMap<>();
