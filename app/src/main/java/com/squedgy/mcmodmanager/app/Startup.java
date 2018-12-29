@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 
@@ -14,6 +15,8 @@ public class Startup extends Application {
 
     public static String DOT_MINECRAFT_LOCATION;
     public static String MINECRAFT_VERSION = "1.12.2";
+    private static Scene PARENT;
+
 
 
     @Override
@@ -23,13 +26,13 @@ public class Startup extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(fxml);
         Parent root = fxmlLoader.load();
 
-        Scene scene = new Scene(root);
+        PARENT = new Scene(root);
 
         stage.setTitle("Minecraft Mod Manager");
-        stage.setScene(scene);
+        stage.setScene(PARENT);
+        stage.show();
         stage.setMinHeight(500);
         stage.setMinWidth(700);
-        stage.show();
 
     }
 
@@ -48,6 +51,10 @@ public class Startup extends Application {
 
     public static URL getResource(String resource){
         return Thread.currentThread().getContextClassLoader().getResource(resource);
+    }
+
+    public static Scene getParent(){
+        return PARENT;
     }
 
 }

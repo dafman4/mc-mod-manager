@@ -33,7 +33,7 @@ public class ModUtils {
     public final Config CONFIG;
     private static Map<String,String> badJars = new HashMap<>();
 
-    public static Map<String,String> viewBadJars(){ return Collections.unmodifiableMap(badJars); }
+    public static Map<String,String> viewBadJars(){ return new HashMap<>(badJars); }
 
     private static ModUtils instance;
 
