@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.control.*?>
+<?import java.net.URL?>
+<TableView styleClass="mod-table" fx:id="root" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" minHeight="400" minWidth="600">
+    <stylesheets>
+        <URL value="@../main.css"/>
+        <URL value="@../table-view.css"/>
+    </stylesheets>
+    <columns>
+        <TableColumn text="Mod Name">
+            <cellValueFactory>
+                <PropertyValueFactory property="modName" />
+            </cellValueFactory>
+        </TableColumn>
+        <TableColumn text="MC Version">
+            <cellValueFactory>
+                <PropertyValueFactory property="minecraftVersion" />
+            </cellValueFactory>
+        </TableColumn>
+        <TableColumn text="Mod Id">
+            <cellValueFactory>
+                <PropertyValueFactory property="modId" />
+            </cellValueFactory>
+        </TableColumn>
+        <TableColumn text="File Name">
+            <cellValueFactory>
+                <PropertyValueFactory property="fileName" />
+            </cellValueFactory>
+        </TableColumn>
+    </columns>
+</TableView>
