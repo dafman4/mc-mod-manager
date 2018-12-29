@@ -114,25 +114,32 @@ public class TableViewController {
     @FXML
     public void searchForUpdates(Event e){
         if(checking == null || !checking.isAlive()){
+            Modal modal;
+            LoadingController c;
+            try {
+                modal = new Modal();
+                c = new LoadingController();
+            } catch (IOException e1) {
+                throw new RuntimeException();
+            }
+
+            modal.setContent(c.getRoot());
+            modal.open(Startup.getParent().getWindow());
+
             checking = new ModCheckingThread(new ArrayList<>(table.getItems()), Startup.MINECRAFT_VERSION, l -> {
                 //do something with the returned list
                 Platform.runLater(() -> {
-                    Stage modal = new Stage();
+
                     ModVersionTableController table;
                     try {
                         table = new ModVersionTableController(l.toArray(new ModVersion[0]));
                     } catch (IOException e1) {
                         throw new RuntimeException();
                     }
+                    modal.close();
+                    modal.setContent(table.getRoot());
+                    modal.openAndWait(Startup.getParent().getWindow());
 
-                    Scene scene = new Scene(table.getRoot());
-
-                    modal.setScene(scene);
-                    modal.setMinHeight(table.getRoot().getMinHeight());
-                    modal.setMinWidth(table.getRoot().getMinWidth());
-                    modal.initOwner(Startup.getParent().getWindow());
-                    modal.initModality(Modality.APPLICATION_MODAL);
-                    modal.showAndWait();
                 });
                 return null;
             } );
@@ -144,13 +151,14 @@ public class TableViewController {
 
     @FXML
     public void showBadJars(Event e) throws IOException {
-        Stage modal = new Stage();
+
         Modal m = new Modal();
+
         TableView<PublicNode> t = new TableView<>();
         ObservableList<PublicNode> list = FXCollections.observableArrayList(ModUtils.viewBadJars().entrySet().stream().map(PublicNode::new).collect(Collectors.toList()));
-        System.out.println(list);
         t.setItems(list);
         ObservableList<TableColumn<PublicNode, String>> columns = FXCollections.observableArrayList();
+
         TableColumn<PublicNode, String> toAdd = new TableColumn<>();
         toAdd.setText("File");
         toAdd.setCellValueFactory(item -> new SimpleStringProperty(item.getValue().getKey()));
@@ -159,19 +167,12 @@ public class TableViewController {
         toAdd.setText("Reason");
         columns.add(toAdd);
         toAdd.setCellValueFactory(item -> new SimpleStringProperty(item.getValue().getValue()));
-
         t.getColumns().setAll(columns);
-
-        m.setContents(t);
-
-        modal.setScene(new Scene(m.getRoot()));
-        modal.setMinWidth(m.getRoot().getMinWidth());
-        modal.setMinHeight(m.getRoot().getMinHeight());
-        modal.initOwner(Startup.getParent().getWindow());
-        modal.initModality(Modality.APPLICATION_MODAL);
-        modal.showAndWait();
         t.refresh();
-        t.getStyleClass().setAll("mod-table");
+
+        m.setContent(t);
+        m.open(Startup.getParent().getWindow());
+        t.getStyleClass().add("mod-table");
     }
 
 }

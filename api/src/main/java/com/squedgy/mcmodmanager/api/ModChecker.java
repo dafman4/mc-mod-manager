@@ -111,11 +111,10 @@ public abstract class ModChecker {
                     .registerModule(new SimpleModule()
                             .addDeserializer(CurseForgeResponse.class, deserializer));
             return mapper.readValue(reader.lines().collect(Collectors.joining("")).replaceAll("\\n", "\\n").replaceAll("\\r", "\\r"), CurseForgeResponse.class);
-        }catch(FileNotFoundException e){
-            throw new ModIdNotFoundException(mod);
-        }catch (Exception e){
-            throw new RuntimeException(String.format("Error with mod %s.", mod), e);
-        }finally {
+        }
+        catch(FileNotFoundException e){ throw new ModIdNotFoundException(mod); }
+        catch (Exception e){ throw new RuntimeException(String.format("Error with mod %s.", mod), e); }
+        finally {
             check = false;
             idChecked = false;
         }
