@@ -9,9 +9,8 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
-import com.squedgy.mcmodmanager.app.MainController;
+import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.config.Config;
-import com.sun.javafx.collections.UnmodifiableObservableMap;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,8 +24,8 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
-import static com.squedgy.mcmodmanager.app.MainController.DOT_MINECRAFT_LOCATION;
-import static com.squedgy.mcmodmanager.app.MainController.MINECRAFT_VERSION;
+import static com.squedgy.mcmodmanager.app.Startup.DOT_MINECRAFT_LOCATION;
+import static com.squedgy.mcmodmanager.app.Startup.MINECRAFT_VERSION;
 
 public class ModUtils {
 
@@ -92,7 +91,7 @@ public class ModUtils {
                     try {
                         jarId = Cacher.getJarModId(file);
                     }catch(IOException e1){
-                        AppLogger.debug("mod: " + file.getName() + " didn't contain an mcmod.info", MainController.class);
+                        AppLogger.debug("mod: " + file.getName() + " didn't contain an mcmod.info", Startup.class);
                         continue;
                     }
                     try{
@@ -122,7 +121,7 @@ public class ModUtils {
                     } catch (ModIdNotFoundException e1){
                         badJars.put(f.getName(), e1.getMessage());
                     }
-                } catch (Exception e2) { AppLogger.error(e2, MainController.class);}
+                } catch (Exception e2) { AppLogger.error(e2, Startup.class);}
             }
         }
         return ret;
@@ -174,7 +173,7 @@ public class ModUtils {
                 badJars.forEach((id, mes) -> System.out.println(id + ": " + mes));
                 try { CONFIG.getCachedMods().writeCache(); }
                 catch (IOException e) {
-                    AppLogger.error(e, MainController.class);
+                    AppLogger.error(e, Startup.class);
                 }
             }
         }

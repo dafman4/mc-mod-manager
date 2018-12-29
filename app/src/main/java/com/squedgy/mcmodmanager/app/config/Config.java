@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.squedgy.mcmodmanager.app.MainController.MINECRAFT_VERSION;
+import static com.squedgy.mcmodmanager.app.Startup.MINECRAFT_VERSION;
 
 public class Config {
 

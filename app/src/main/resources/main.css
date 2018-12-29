@@ -5,6 +5,10 @@
     -active:#444;
     -border-cell:#aaa;
 }
+.root, .stack-pane, .viewport{
+    -fx-background-color: -back;
+}
+
 .header{
     -fx-min-height:30px;
     -fx-font-size:24pt;

@@ -2,7 +2,7 @@ package com.squedgy.mcmodmanager.app.components;
 
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.app.MainController;
+import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
@@ -10,11 +10,19 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.scene.web.WebView;
 
+import java.io.IOException;
 import java.util.ArrayList;
+
+import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
 public class TableViewController {
 
@@ -25,7 +33,13 @@ public class TableViewController {
     @FXML
     private Button updates;
     @FXML
+    private Button badJars;
+    @FXML
     private WebView objectView;
+    @FXML
+    private GridPane listGrid;
+    @FXML
+    private ScrollPane root;
 
     private ModCheckingThread checking;
     private ModInfoThread gathering;
@@ -38,6 +52,7 @@ public class TableViewController {
 
     @FXML
     public void initialize() {
+        badJars.setVisible(ModUtils.viewBadJars().size() <= 0);
         setListView();
         //Set mod list
         listView.getColumns().setAll(listView.getColumns().sorted( (a, b) -> ModUtils.getInstance().CONFIG.compareColumns(a.getText(), b.getText())));
@@ -59,15 +74,22 @@ public class TableViewController {
         //Set the default view to a decent looking background
         updateObjectView("");
 	    objectView.getEngine().setJavaScriptEnabled(true);
+	    listGrid.prefHeightProperty().bind(root.heightProperty().multiply(.8));
+	    listGrid.maxWidthProperty().bind(root.widthProperty().subtract(2));
     }
 
     public TableView<ModVersion> getListView() { return listView; }
 
     private synchronized void updateObjectView(String n){
+        System.out.println(root.prefWidthProperty().getValue());
+        System.out.println(root.widthProperty().getValue());
+        System.out.println(root.widthProperty().multiply(.9).getValue());
+        System.out.println(listGrid.widthProperty().getValue());
+
         objectView.getEngine().loadContent("<style>" +
             "body{background-color:#303030; color:#ddd;}" +
             "img{max-width:100%;height:auto;}" +
-            "a{color:#ff9000;text-decoration:none;} a:visited{color:#4f124f;}" +
+            "a{color:#ff9000;text-decoration:none;} a:visited{color:#544316;}" +
             "</style>" + n);
     }
 
@@ -77,7 +99,7 @@ public class TableViewController {
     @FXML
     public void searchForUpdates(Event e){
         if(checking == null || !checking.isAlive()){
-            checking = new ModCheckingThread(new ArrayList<>(listView.getItems()),MainController.MINECRAFT_VERSION, l -> {
+            checking = new ModCheckingThread(new ArrayList<>(listView.getItems()), Startup.MINECRAFT_VERSION, l -> {
                 //do something with the returned list
                 return null;
             } );
@@ -87,6 +109,8 @@ public class TableViewController {
         }
     }
 
-
-
+    @FXML
+    public void showBadJars(Event e) throws IOException {
+        Scene modal = new Scene(new FXMLLoader(getResource("")).load());
+    }
 }

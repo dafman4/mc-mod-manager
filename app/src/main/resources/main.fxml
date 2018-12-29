@@ -1,6 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.HBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.squedgy.mcmodmanager.app.MainController" styleClass="base,app-back" stylesheets="@main.css">
-    <fx:include source="components/tableView.fxml" fx:id="listView" VBox.vgrow="SOMETIMES"/>
-</VBox>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.web.WebView?>
+<?import java.net.URL?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<ScrollPane fx:id="root" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.squedgy.mcmodmanager.app.components.TableViewController">
+    <stylesheets>
+        <URL value="@main.css"/>
+        <URL value="@table-view.css"/>
+    </stylesheets>
+    <VBox>
+        <HBox styleClass="button-list">
+            <Button text="Save Columns" fx:id="columns" onMouseReleased="#setColumns"/>
+            <Button text="Check for Updates" fx:id="updates" onMouseReleased="#searchForUpdates"/>
+            <Button text="Bad Jars" fx:id="badJars" onMouseReleased="#showBadJars" />
+        </HBox>
+        <GridPane fx:id="listGrid" prefWidth="${root.width}">
+            <TableView fx:id="listView" styleClass="mod-table" prefHeight="${listGrid.height}" prefWidth="${listGrid.width}" GridPane.hgrow="ALWAYS" GridPane.rowIndex="0" GridPane.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn text="Mod Name">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="modName" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="MC Version">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="minecraftVersion" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Mod Id">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="modId" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="File Name">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="fileName" />
+                        </cellValueFactory>
+                    </TableColumn>
+                </columns>
+            </TableView>
+            <WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0" />
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints hgrow="NEVER" minWidth="4.0"/>
+                <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints vgrow="ALWAYS" />
+            </rowConstraints>
+        </GridPane>
+    </VBox>
+</ScrollPane>
