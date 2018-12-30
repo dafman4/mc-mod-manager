@@ -143,16 +143,19 @@ public abstract class ModChecker {
     }
 
     public static boolean download(ModVersion v, String location, String mcVersion){
-        URL u = null;
+        URL u;
         try {
-            u = new URL(v.getDownloadUrl());
+            u = new URL(v.getDownloadUrl() + "/file");
+
         } catch (MalformedURLException e) {
             AppLogger.error(e, ModChecker.class);
             return  false;
         }
-        ReadableByteChannel in = null;
+        HttpURLConnection connection;
         try {
-            in = Channels.newChannel(u.openStream());
+             connection = (HttpURLConnection) u.openConnection();
+            if(connection.getResponseCode() > 299 || connection.getResponseCode() < 200) throw new IOException("Couldn't access the url :" + v.getDownloadUrl() + "/file");
+
         } catch (IOException e) {
             AppLogger.error(e, ModChecker.class);
             return false;
@@ -161,10 +164,12 @@ public abstract class ModChecker {
         boolean append = !v.getFileName().endsWith(".jar");
         File f = new File(location + v.getFileName() + (append ? ".jar": ""));
 
-        FileOutputStream outFile = null;
-        try {
-            outFile = new FileOutputStream(f);
-            FileChannel out = outFile.getChannel();
+        try (
+            FileOutputStream outFile = new FileOutputStream(f);
+            ReadableByteChannel in = Channels.newChannel(connection.getInputStream());
+            FileChannel out = outFile.getChannel()
+        ) {
+
             out.transferFrom(in, 0, Long.MAX_VALUE);
             String modId = Cacher.getJarModId(new JarFile(f.getAbsolutePath()));
 
@@ -174,8 +179,6 @@ public abstract class ModChecker {
         } catch (IOException e) {
             AppLogger.error(e, ModChecker.class);
             return false;
-        } catch(Exception e){
-            AppLogger.error(e, ModChecker.class);
         }
         return true;
     }

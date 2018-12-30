@@ -41,13 +41,9 @@ public class ModVersionTableController {
         return new ArrayList<>(root.getItems());
     }
 
-    public List<TableColumn<ModVersion, ?>> getColumns(){
-        return root.getColumns();
-    }
+    public List<TableColumn<ModVersion, ?>> getColumns(){ return root.getColumns(); }
 
-    public TableView<ModVersion> getRoot(){
-        return root;
-    }
+    public TableView<ModVersion> getRoot(){ return root; }
 
 
 }

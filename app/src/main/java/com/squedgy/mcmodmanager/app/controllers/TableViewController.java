@@ -1,6 +1,7 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.AppLogger;
+import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
@@ -130,9 +131,9 @@ public class TableViewController {
                 //do something with the returned list
                 Platform.runLater(() -> {
 
-                    ModVersionTableController table;
+                    ModUpdaterController table;
                     try {
-                        table = new ModVersionTableController(l.toArray(new ModVersion[0]));
+                        table = new ModUpdaterController(l);
                     } catch (IOException e1) {
                         throw new RuntimeException();
                     }
