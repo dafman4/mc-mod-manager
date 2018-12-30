@@ -7,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
@@ -17,7 +18,9 @@ public class Startup extends Application {
     public static String MINECRAFT_VERSION = "1.12.2";
     private static Scene PARENT;
 
-
+    public static String getModsDir(){
+        return DOT_MINECRAFT_LOCATION + File.separator + "mods";
+    }
 
     @Override
     public void start(Stage stage) throws Exception {

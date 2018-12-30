@@ -78,6 +78,7 @@ public class ModUtils {
             if(f.isDirectory()){
                 ret.addAll(scanForMods(f));
             }else if(f.getName().endsWith(".jar")){
+                System.out.println(f.getName());
                 JarFile file = null;
                 try { file = new JarFile(f); }
                 catch (IOException e) { continue; }
@@ -89,14 +90,13 @@ public class ModUtils {
                 }
                 try {
                     String jarId;
-                    try {
-                        jarId = Cacher.getJarModId(file);
-                    }catch(IOException e1){
+                    try { jarId = Cacher.getJarModId(file); }
+                    catch(IOException e1){
                         AppLogger.debug("mod: " + file.getName() + " didn't contain an mcmod.info", Startup.class);
                         continue;
                     }
                     try{
-                        searchWithId(jarId, jarId, ret);
+                        searchWithId(jarId, jarId, f, ret);
                         continue;
                     }catch(ModIdNotFoundException ignored){ }
 
@@ -115,7 +115,7 @@ public class ModUtils {
                         root = root.get("modList");//this will be an array
                     }
 
-                    if(!checkNode(root, jarId, root.isArray() ? root.size() : 0, ret)){
+                    if(!checkNode(root, jarId, f, root.isArray() ? root.size() : 0, ret)){
                         addToList(ret, readNode(root.isArray() ? root.get(0) : root, file));
                         addBadJar(f.getName(), "Couldn't find a working mod Id within the mcmod.info");
                     }
@@ -125,18 +125,18 @@ public class ModUtils {
         return ret;
     }
 
-    private boolean checkNode(JsonNode array, String jarId, int length, List<ModVersion> ret){
+    private boolean checkNode(JsonNode array, String jarId, File jarFile, int length, List<ModVersion> ret){
         int i = 0;
         do{
             JsonNode root = length > 0 ? array.get(i) : array;
             i++;
             if(root == null) continue;
             try {
-                searchWithId(root.get("modid").textValue(), jarId, ret);
+                searchWithId(root.get("modid").textValue(), jarId, jarFile, ret);
                 return true;
             }catch(ModIdNotFoundException | ModIdFailedException ex2){
                 try{
-                    searchWithId(formatModName(root.get("name").textValue()), jarId, ret);
+                    searchWithId(formatModName(root.get("name").textValue()), jarId, jarFile, ret);
                     return true;
                 }catch (ModIdNotFoundException | ModIdFailedException ignored){}
             }
@@ -144,17 +144,27 @@ public class ModUtils {
         return false;
     }
 
-    private  void searchWithId(String id, String jarId, List<ModVersion> list) throws ModIdNotFoundException{
-        ModVersion v = CONFIG.getCachedMods().getMod(id);
+    private  void searchWithId(String id, String jarId, File file, List<ModVersion> list) throws ModIdNotFoundException{
+        try{
+            ModVersion v = CONFIG.getCachedMods().getMod(id);
 
-        if(v == null) v = ModChecker.getNewest(id, MINECRAFT_VERSION);
-        if(v.getDescription() == null) v = ModChecker.getNewest(v.getModId(), MINECRAFT_VERSION);
+            if(v == null || v.getDescription() == null){
+                v = ModChecker.getForVersion(id, MINECRAFT_VERSION)
+                    .getVersions()
+                    .stream()
+                    .filter(e -> e.getFileName().equals(file.getName()))
+                    .findFirst()
+                    .orElse(null);
+            }
 
+            if(v != null){
+                CONFIG.getCachedMods().addMod(jarId, v);
+                addToList(list, v);
+                return;
+            }
+        }catch(Exception e){ AppLogger.error(e, getClass());}
 
-        if(v != null){
-            CONFIG.getCachedMods().addMod(jarId, v);
-            addToList(list, v);
-        }else throw new ModIdNotFoundException("Id not found: " + id);
+        throw new ModIdNotFoundException("Id not found: " + id);
     }
 
     public  void addToList(List<ModVersion> list, ModVersion item){

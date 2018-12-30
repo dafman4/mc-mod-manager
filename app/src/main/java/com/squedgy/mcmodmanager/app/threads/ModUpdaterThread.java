@@ -2,13 +2,13 @@ package com.squedgy.mcmodmanager.app.threads;
 
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.app.Startup;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.squedgy.mcmodmanager.app.Startup.DOT_MINECRAFT_LOCATION;
 
 public class ModUpdaterThread extends Thread{
 
@@ -25,9 +25,8 @@ public class ModUpdaterThread extends Thread{
         Map<ModVersion,Boolean> param = new HashMap<>();
         updates.forEach(update -> {
             System.out.println("Attempting to download: " + update.getModId());
-            if(ModChecker.download(update, DOT_MINECRAFT_LOCATION, update.getMinecraftVersion())){
-                //delete after I'm sure this works
-                System.out.println(update);
+            if(ModChecker.download(update, Startup.getModsDir(), update.getMinecraftVersion())){
+
                 param.put(update, true);
             }else{
                 param.put(update, false);

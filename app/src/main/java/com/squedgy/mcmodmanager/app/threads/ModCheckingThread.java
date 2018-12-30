@@ -1,12 +1,17 @@
 package com.squedgy.mcmodmanager.app.threads;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
+import com.squedgy.utilities.datetime.DateUtilities;
 import javafx.util.Callback;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -28,24 +33,25 @@ public class ModCheckingThread extends Thread {
     @Override
     public void run() {
         IDS.forEach(id -> {
+            System.out.println();
+            System.out.println(id.getModId());
+            System.out.println(id.getDownloadUrl());
             try {
-                CurseForgeResponse resp;
+                ModVersion resp;
                 try{
-                    resp = ModChecker.getForVersion(id.getModId(), mc);
-                }catch(ModIdFailedException ignored){
-                    resp = ModChecker.getForVersion(id.getModName().toLowerCase().replace(' ', '-').replaceAll("[^-a-z0-9]", ""), mc);
+                    resp = ModChecker.getNewest(id.getModId(), mc);
+                }catch(ModIdNotFoundException ignored){
+                    resp = ModChecker.getNewest(id.getModName().toLowerCase().replace(' ', '-').replaceAll("[^-a-z0-9]", ""), mc);
                 }
-                resp.getVersions()
-                    .stream()
-                    .max(Comparator.comparing(ModVersion::getUploadedAt))
-                    .ifPresent( v -> {
-                        if(v.getUploadedAt().isAfter(id.getUploadedAt())){
-                            updateables.add(v);
-                        }
-                    });
+                System.out.println(resp.getUploadedAt());
+                System.out.println(id.getUploadedAt());
+                System.out.println();
+                if(resp != null && resp.getUploadedAt().isAfter(id.getUploadedAt())){
+                    updateables.add(resp);
+                }
             }catch(ModIdNotFoundException | NullPointerException e){  }
             catch (Exception e) {
-                e.printStackTrace();
+                AppLogger.error(e, getClass());
             }
         });
         callback.call(updateables);

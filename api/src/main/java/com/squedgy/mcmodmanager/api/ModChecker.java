@@ -12,6 +12,10 @@ import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -121,40 +125,42 @@ public abstract class ModChecker {
     }
 
     public static ModVersion getNewest(String mId, String mcV) throws ModIdNotFoundException{
-        ModVersion ret = null;
-        try { ret = getCurrentVersion(mId, mcV); }
-        catch( CacheRetrievalException ignored){ }
-        //If no cached type
-        if(ret == null){
-            try {
-                ret = getForVersion(mId, mcV)
-                    .getVersions()
-                    .stream()
-                    .max(Comparator.comparing(ModVersion::getUploadedAt))
-                    .orElse(null);
-            } catch (Exception ex) { }
+        try {
+            CurseForgeResponse resp = getForVersion(mId, mcV);
 
-            if(ret == null){
-                throw new ModIdNotFoundException("Couldn't find the mod Id : " + mId + ". It's not cached and DOESN'T match a Curse Forge mod. Talk to the mod author about having the Id within their mcmod.info file match their Curse Forge mod id.");
-            }
-        }
-
-        return ret;
+            ModVersion ret = resp
+                .getVersions()
+                .stream()
+                .max(Comparator.comparing(ModVersion::getUploadedAt))
+                .orElse(null);
+            new ObjectMapper().writeValue(new File(System.getProperty("user.home") + File.separator + "checker-debug" + File.separator + mId + ".json"), resp);
+            if(ret != null) return ret;
+        } catch (Exception ex) { }
+        throw new ModIdNotFoundException("Couldn't find the mod Id : " + mId + ". It's not cached and DOESN'T match a Curse Forge mod. Talk to the mod author about having the Id within their mcmod.info file match their Curse Forge mod id.");
     }
 
     public static boolean download(ModVersion v, String location, String mcVersion){
         URL u;
         try {
             u = new URL(v.getDownloadUrl() + "/file");
-
         } catch (MalformedURLException e) {
             AppLogger.error(e, ModChecker.class);
             return  false;
         }
-        HttpURLConnection connection;
+        HttpsURLConnection connection;
         try {
-             connection = (HttpURLConnection) u.openConnection();
-            if(connection.getResponseCode() > 299 || connection.getResponseCode() < 200) throw new IOException("Couldn't access the url :" + v.getDownloadUrl() + "/file");
+            connection = (HttpsURLConnection) u.openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
+            connection.setRequestMethod("GET");
+            connection.setDoOutput(true);
+            connection.connect();
+
+            System.out.println(connection);
+            connection.getHeaderFields().entrySet().forEach(System.out::println);
+            if(connection.getResponseCode() > 299 || connection.getResponseCode() < 200){
+                AppLogger.info("Couldn't access the url :" + v.getDownloadUrl() + "/file", ModChecker.class);
+                return false;
+            }
 
         } catch (IOException e) {
             AppLogger.error(e, ModChecker.class);
@@ -168,7 +174,7 @@ public abstract class ModChecker {
             FileOutputStream outFile = new FileOutputStream(f);
             ReadableByteChannel in = Channels.newChannel(connection.getInputStream());
             FileChannel out = outFile.getChannel()
-        ) {
+        ){
 
             out.transferFrom(in, 0, Long.MAX_VALUE);
             String modId = Cacher.getJarModId(new JarFile(f.getAbsolutePath()));
