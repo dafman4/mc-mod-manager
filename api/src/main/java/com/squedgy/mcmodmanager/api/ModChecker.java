@@ -154,9 +154,6 @@ public abstract class ModChecker {
             connection.setRequestMethod("GET");
             connection.setDoOutput(true);
             connection.connect();
-
-            System.out.println(connection);
-            connection.getHeaderFields().entrySet().forEach(System.out::println);
             if(connection.getResponseCode() > 299 || connection.getResponseCode() < 200){
                 AppLogger.info("Couldn't access the url :" + v.getDownloadUrl() + "/file", ModChecker.class);
                 return false;
@@ -168,20 +165,20 @@ public abstract class ModChecker {
         }
 
         boolean append = !v.getFileName().endsWith(".jar");
-        File f = new File(location + v.getFileName() + (append ? ".jar": ""));
-
+        String path = location + v.getFileName() + (append ? ".jar": "");
         try (
-            FileOutputStream outFile = new FileOutputStream(f);
+            FileOutputStream outFile = new FileOutputStream(new File(path));
             ReadableByteChannel in = Channels.newChannel(connection.getInputStream());
             FileChannel out = outFile.getChannel()
         ){
 
             out.transferFrom(in, 0, Long.MAX_VALUE);
-            String modId = Cacher.getJarModId(new JarFile(f.getAbsolutePath()));
+            String modId = Cacher.getJarModId(new JarFile(path));
 
             Cacher c = Cacher.getInstance(mcVersion);
 
             c.addMod(modId, v);
+            connection.disconnect();
         } catch (IOException e) {
             AppLogger.error(e, ModChecker.class);
             return false;

@@ -78,7 +78,7 @@ public class ModUtils {
             if(f.isDirectory()){
                 ret.addAll(scanForMods(f));
             }else if(f.getName().endsWith(".jar")){
-                System.out.println(f.getName());
+
                 JarFile file = null;
                 try { file = new JarFile(f); }
                 catch (IOException e) { continue; }

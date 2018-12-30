@@ -33,9 +33,9 @@ public class ModCheckingThread extends Thread {
     @Override
     public void run() {
         IDS.forEach(id -> {
-            System.out.println();
-            System.out.println(id.getModId());
-            System.out.println(id.getDownloadUrl());
+
+
+
             try {
                 ModVersion resp;
                 try{
@@ -43,9 +43,9 @@ public class ModCheckingThread extends Thread {
                 }catch(ModIdNotFoundException ignored){
                     resp = ModChecker.getNewest(id.getModName().toLowerCase().replace(' ', '-').replaceAll("[^-a-z0-9]", ""), mc);
                 }
-                System.out.println(resp.getUploadedAt());
-                System.out.println(id.getUploadedAt());
-                System.out.println();
+
+
+
                 if(resp != null && resp.getUploadedAt().isAfter(id.getUploadedAt())){
                     updateables.add(resp);
                 }

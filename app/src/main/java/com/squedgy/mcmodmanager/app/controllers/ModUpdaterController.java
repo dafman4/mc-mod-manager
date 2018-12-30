@@ -1,6 +1,7 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.threads.ModUpdaterThread;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -37,23 +39,37 @@ public class ModUpdaterController {
     }
 
     @FXML
-    public void updateAll(Event e){
-        System.out.println("Update All Called");
+    public void updateAll(Event e) throws IOException {
+
         if(updates == null || !updates.isAlive()){
+            Modal modal = new Modal();
+            modal.setContent(new LoadingController().getRoot());
+            modal.open(Startup.getParent().getWindow());
             updates = new ModUpdaterThread(table.getItems(), results -> {
 
                 //do other stuff as necessary later for now just let me know it stopped
                 Platform.runLater(() -> {
-                    try {
-                        Modal modal = new Modal();
-                        VBox v = new VBox();
-                        results.entrySet().forEach(entry -> {
-                            v.getChildren().add(new Label(entry.getKey().getModId() + ": " + entry.getValue()));
-                        });
-                        modal.setContent(v);
-                        modal.open(Startup.getParent().getWindow());
-                    }
-                    catch (IOException e1) { throw new RuntimeException(); }
+                    VBox v = new VBox();
+                    System.gc();
+                    results.forEach((key, value) ->{
+
+                        if(value.isResult()){
+                            try {
+                                String fileName = table.getItems().stream().filter(id -> id.getModId().equals(key.getModId())).findFirst().orElseThrow(() -> new ModIdNotFoundException("")).getFileName();
+                                System.out.println(fileName);
+                                File f = new File(Startup.getModsDir() + File.separator + fileName);
+                                value.setResult(f.delete());
+                                value.setReason(value.isResult() ? "Succeeded!" : "failed: couldn't delete the old file");
+                                if(!value.isResult()){
+                                    File neu = new File(Startup.getModsDir() + File.separator + key.getFileName());
+                                    value.setReason(neu.delete() ? value.getReason() : value.getReason() + " and I couldn't delete the new file");
+                                }
+                            }catch(ModIdNotFoundException ignored){ }
+
+                        }
+                        v.getChildren().add(new Label(key.getModId() + ": " + value.getReason()));
+                    });
+                    modal.setContent(v);
                 });
                 return null;
             });

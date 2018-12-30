@@ -58,7 +58,7 @@ public class TableViewController {
 
     @FXML
     public void initialize() throws IOException {
-        System.out.println(content.getChildren());
+
         root.setContent(new LoadingController().getRoot());
         Thread t = new Thread(() -> {
             try {
