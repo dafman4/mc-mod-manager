@@ -171,7 +171,8 @@ public abstract class ModChecker {
 			connection.setDoOutput(true);
 			connection.connect();
 			if (connection.getResponseCode() > 299 || connection.getResponseCode() < 200) {
-				AppLogger.info("Couldn't access the url :" + v.getDownloadUrl() + "/file", ModChecker.class);
+				AppLogger.info("Couldn't access the url :" + u, ModChecker.class);
+				AppLogger.info(connection.getContent().toString(), ModChecker.class);
 				return false;
 			}
 

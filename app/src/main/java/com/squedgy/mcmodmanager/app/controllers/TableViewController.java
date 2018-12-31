@@ -9,6 +9,7 @@ import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.threads.ModLoadingThread;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -27,6 +28,7 @@ import javafx.scene.web.WebView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,9 +59,6 @@ public class TableViewController {
 
 	public TableViewController() throws IOException {
 
-		StackTraceElement e = Thread.currentThread().getStackTrace()[4];
-		System.out.println(e.getFileName() + ": " + e.getLineNumber());
-
 		FXMLLoader loader = new FXMLLoader(getResource("main.fxml"));
 		loader.setController(this);
 		loader.load();
@@ -75,7 +74,7 @@ public class TableViewController {
 			table.addOnChange((obs, old, neu) -> {
 				updateObjectView("<h1>Loading...</h1>");
 				if (gathering == null || !gathering.isAlive()) {
-					System.out.println("gathering" + neu);
+
 					gathering = new ModInfoThread(neu, version -> {
 						Platform.runLater(() -> updateObjectView(version.getDescription()));
 						return null;
@@ -106,13 +105,11 @@ public class TableViewController {
 		t.start();
 	}
 
-	public ScrollPane getRoot() {
-		return root;
-	}
+	public ScrollPane getRoot() { return root; }
 
-	public void setItems(List<ModVersion> mods) {
-		table.setItems(FXCollections.observableArrayList(mods));
-	}
+	public void setItems(List<ModVersion> mods) { table.setItems(FXCollections.observableArrayList(mods)); }
+
+	public List<ModVersion> getItems() { return table.getItems(); }
 
 
 	private synchronized void updateObjectView(String description) {
@@ -126,13 +123,9 @@ public class TableViewController {
 	}
 
 	@FXML
-	public void setColumns(Event e) {
-		ModUtils.getInstance().CONFIG.writeColumnOrder(table.getColumns());
-	}
+	public void setColumns(Event e) { ModUtils.getInstance().CONFIG.writeColumnOrder(table.getColumns()); }
 
-	public void updateModList() {
-		table.setItems(FXCollections.observableArrayList(ModUtils.getInstance().getMods()));
-	}
+	public void updateModList() { setItems(Arrays.asList(ModUtils.getInstance().getMods())); }
 
 	@FXML
 	public void searchForUpdates(Event e) {

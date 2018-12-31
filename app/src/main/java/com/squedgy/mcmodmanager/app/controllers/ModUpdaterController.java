@@ -8,6 +8,7 @@ import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModUpdaterThread;
+import com.squedgy.mcmodmanager.app.threads.ThreadFailedException;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -53,28 +54,28 @@ public class ModUpdaterController {
 				//do other stuff as necessary later for now just let me know it stopped
 				VBox v = new VBox();
 				System.gc();
-				System.out.println(table.getItems().stream().map(vers -> vers.getModId() + "-" + vers.getFileName()).collect(Collectors.joining("\n\t")));
+
 				results.forEach((key, value) -> {
 					if (value.isResult()) {
 						try {
-
-							String fileName = table.getItems().stream().filter(id -> id.getModId().equals(key.getModId())).findFirst().orElseThrow(() -> new ModIdNotFoundException("")).getFileName();
+							String fileName = Startup.getInstance().getMainView().getItems().stream().filter(id -> id.getModId().equals(key.getModId())).findFirst().orElseThrow(() -> new ModIdNotFoundException("")).getFileName();
 							File newJar = new File(Startup.getModsDir() + File.separator + key.getFileName());
-							System.out.println(newJar.getAbsolutePath() + ": " + newJar.exists());
+
 							File f = new File(Startup.getModsDir() + File.separator + fileName);
 							value.setResult(f.delete());
 							value.setReason(value.isResult() ? "Succeeded!" : "failed: couldn't delete the old file");
 							if (!value.isResult()) {
-								File neu = new File(Startup.getModsDir() + File.separator + key.getFileName());
-								value.setReason(neu.delete() ? value.getReason() : value.getReason() + " and I couldn't delete the new file");
+								value.setReason(newJar.delete() ? value.getReason() : value.getReason() + " and I couldn't delete the new file");
 							} else {
 								try {
-									Config.getInstance().getCachedMods().addMod(Cacher.getJarModId(new JarFile(Startup.getModsDir() + File.separator + key.getFileName())), key);
+									Config.getInstance().getCachedMods().addMod(Cacher.getJarModId(new JarFile(newJar)), key);
 								} catch (IOException e1) {
 									AppLogger.error(e1, getClass());
 								}
 							}
-						} catch (ModIdNotFoundException ignored) { }
+						} catch (ModIdNotFoundException ignored) { } catch (IOException e1) {
+							throw new ThreadFailedException();
+						}
 
 					}
 					v.getChildren().add(new Label(key.getModId() + ": " + value.getReason()));

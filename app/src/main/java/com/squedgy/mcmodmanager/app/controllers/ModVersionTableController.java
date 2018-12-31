@@ -14,6 +14,7 @@ import javafx.scene.control.TableView;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
@@ -33,25 +34,23 @@ public class ModVersionTableController {
 		root.refresh();
 	}
 
-	public void addOnChange(ChangeListener<ModVersion> listener) {
-		root.getSelectionModel().selectedItemProperty().addListener(listener);
-	}
+	public void addOnChange(ChangeListener<ModVersion> listener) { root.getSelectionModel().selectedItemProperty().addListener(listener); }
 
-	public List<ModVersion> getItems() {
-		return new ArrayList<>(root.getItems());
-	}
+	public List<ModVersion> getItems() { return new ArrayList<>(root.getItems()); }
 
 	public void setItems(ObservableList<ModVersion> items) {
+		System.out.println("Setting items");
+		System.out.print("\t");
+		System.out.println(items.stream().map(m -> m.getModId() + ": " + m.getFileName()).collect(Collectors.joining("\n\t")));
 		root.setItems(items);
+		root.refresh();
 	}
 
 	public List<TableColumn<ModVersion, ?>> getColumns() {
 		return root.getColumns();
 	}
 
-	public TableView<ModVersion> getRoot() {
-		return root;
-	}
+	public TableView<ModVersion> getRoot() { return root; }
 
 
 }
