@@ -6,6 +6,8 @@ import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.CacheRetrievalException;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
+import com.squedgy.mcmodmanager.app.config.Config;
+import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.util.Callback;
 
 import java.util.Comparator;
@@ -28,13 +30,10 @@ public class ModInfoThread extends Thread {
 
 	@Override
 	public void run() {
-		ModVersion ret = null;
-		try {
-			ret = ModChecker.getCurrentVersion(toFind.getModId(), toFind.getMinecraftVersion());
-
+		ModVersion ret = Config.getInstance().getCachedMods().getMod(toFind.getModId());
+		if(ret != null) {
 			callback.call(ret);
 			return;
-		} catch (CacheRetrievalException ignored) {
 		}
 		CurseForgeResponse resp = null;
 		try {
@@ -42,23 +41,22 @@ public class ModInfoThread extends Thread {
 		} catch (ModIdFailedException e) {
 			try {
 				resp = ModChecker.getForVersion(
-					toFind.getModName()
-						.replace(' ', '-').toLowerCase()
-						.replaceAll("[^-a-z0-9]", ""),
+					ModUtils.formatModName(toFind.getModName()),
 					toFind.getMinecraftVersion()
 				);
 			} catch (Exception e1) {
-				AppLogger.error(e1, getClass());
+				AppLogger.error(e1.getMessage(), getClass());
 			}
 		} catch (Exception e) {
-			AppLogger.error(e, getClass());
+			AppLogger.error(e.getMessage(), getClass());
 		}
 
 		if (resp != null) {
+
 			ret = resp.getVersions()
 				.stream()
-				.filter(e -> e.getUploadedAt().toLocalDate().equals(toFind.getUploadedAt().toLocalDate()))
-				.min(Comparator.comparing(e -> Math.abs(e.getUploadedAt().toLocalTime().toSecondOfDay() - toFind.getUploadedAt().toLocalTime().toSecondOfDay())))
+				.filter(e -> e.getFileName().equals(toFind.getFileName()))
+				.findFirst()
 				.orElse(null);
 			if (ret != null) {
 				callback.call(ret);

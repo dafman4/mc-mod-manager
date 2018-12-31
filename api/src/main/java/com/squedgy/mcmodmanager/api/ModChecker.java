@@ -10,6 +10,7 @@ import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.CachingFailedException;
 import com.squedgy.mcmodmanager.api.response.CurseForgeResponseDeserializer;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
+import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -27,26 +28,13 @@ import java.util.stream.Collectors;
 
 public abstract class ModChecker {
 
-	private static final String CACHE_BASE = "cache/",
-		MOD_CACHE = CACHE_BASE + "mods/";
-	private static boolean check = false,
-		idChecked = false;
 	private static String currentRead = "", currentWrite = "";
 
-	public static String getCurrentRead() {
-		return currentRead;
-	}
-
-	public static String getCurrentWrite() {
-		return currentWrite;
-	}
-
-
-	public static CurseForgeResponse getForVersion(String mod, String version) throws ModIdNotFoundException, IOException {
+	public static CurseForgeResponse getForVersion(String mod, String version) throws ModIdFoundConnectionFailed, IOException {
 		return get(mod, new CurseForgeResponseDeserializer(version));
 	}
 
-	public static CurseForgeResponse get(String mod) throws ModIdNotFoundException, IOException {
+	public static CurseForgeResponse get(String mod) throws ModIdFoundConnectionFailed, IOException {
 		return get(mod, new CurseForgeResponseDeserializer());
 	}
 
@@ -86,34 +74,28 @@ public abstract class ModChecker {
 		}
 	}
 
-	private static CurseForgeResponse get(String mod, CurseForgeResponseDeserializer deserializer) throws ModIdNotFoundException, IOException {
+	private static CurseForgeResponse get(String mod, CurseForgeResponseDeserializer deserializer) throws IOException, ModIdFoundConnectionFailed {
 
 		URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/" + mod);
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
-
 		con.setRequestMethod("GET");
 		int responseCode = con.getResponseCode();
-		//If it's a 301 we should try with the new location
-		if (responseCode == 301) {
-			url = new URL(con.getHeaderField("location"));
+
+		if (responseCode >= 400 && responseCode < 500) {
+			url = new URL("https://api.cfwidget.com/mc-mods/minecraft/" + mod);
 			con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
 			responseCode = con.getResponseCode();
 		}
 
-		if (responseCode == 202 && !check) {
-			try {
-				TimeUnit.SECONDS.sleep(2);
-			} catch (InterruptedException ignored) {
-			}
-			check = true;
-			return get(mod, deserializer);
-		} else if ((responseCode == 400 || responseCode == 404) && idChecked) {
-			idChecked = false;
-			throw new ModIdNotFoundException(mod);
-		} else if (responseCode == 400 || responseCode == 404) {
-			idChecked = true;
-			throw new ModIdFailedException();
+		if (responseCode >= 400 && responseCode < 500) {
+			url = new URL("https://api.cfwidget.com/projects/" + mod);
+			con = (HttpURLConnection) url.openConnection();
+			con.setRequestMethod("GET");
+			responseCode = con.getResponseCode();
 		}
+
+		if(responseCode >= 400 && responseCode < 500) throw new IOException(mod + " couldn't be found/accessed");
 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
 			ObjectMapper mapper = new ObjectMapper()
@@ -130,12 +112,9 @@ public abstract class ModChecker {
 					CurseForgeResponse.class
 				);
 		} catch (FileNotFoundException e) {
-			throw new ModIdNotFoundException(mod);
+			throw new IOException(e.getMessage());
 		} catch (Exception e) {
-			throw new ModIdNotFoundException(String.format("Error with mod %s.", mod), e);
-		} finally {
-			check = false;
-			idChecked = false;
+			throw new ModIdFoundConnectionFailed(String.format("Unkown Error with mod %s.\n%s", mod, e.getMessage()), e);
 		}
 	}
 

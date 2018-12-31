@@ -7,10 +7,7 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
-import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
-import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
-import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
-import com.squedgy.mcmodmanager.api.response.Version;
+import com.squedgy.mcmodmanager.api.response.*;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.config.Config;
 
@@ -18,13 +15,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.nio.file.FileSystems;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -78,9 +73,9 @@ public class ModUtils {
 						continue;
 					} catch(ModIdNotFoundException e1) {
 						AppLogger.info(e1.getMessage(), getClass());
+						addBadJar(f.getName(), e1.getMessage());
 					}
 					//Otherwise read the mcmod.info as a json node and find the first working one as a stand-in
-					addBadJar(f.getName(), "Couldn't find a cached mod-id as well as the name, and mcmod.info modid(s) didn't match anything online");
 					JsonNode root;
 					try (BufferedReader r = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
 						root = new ObjectMapper()
@@ -131,49 +126,58 @@ public class ModUtils {
 	}
 
 	public IdResult getRealModId(JarFile file) throws ModIdNotFoundException{
-		;
+		List<Exception> issues = new LinkedList<>();
 		String[] ids = Cacher.getJarModIds(file);
 		String[] names = Cacher.getJarModNames(file);
 		IdResult ret = new IdResult();
-		ModVersion test;
-		for(String id : ids){
-			AppLogger.debug("trying: " + id, getClass());
-			test = matchesExistingId(id, new File(file.getName()).getName().replace('+', ' '));
-			if(test != null){
-				AppLogger.debug("MATCHED!", getClass());
-				ret.jarId = id;
-				ret.mod = test;
-				return ret;
+		ModVersion test = null;
+		try {
+			for (String id : ids) {
+				try { test = matchesExistingId(id, new File(file.getName()).getName().replace('+', ' ')); }
+				catch (IOException | ModIdNotFoundException e) { issues.add(e); }
+				if (test != null) {
+					ret.jarId = id;
+					ret.mod = test;
+					return ret;
+				}
+			}
+			for (String name : names) {
+				try { test = matchesExistingId(formatModName(name), new File(file.getName()).getName().replace('+', ' ')); }
+				catch (IOException | ModIdNotFoundException e) { issues.add(e); }
+				if (test != null) {
+					ret.jarId = formatModName(name);
+					ret.mod = test;
+					return ret;
+				}
+			}
+		}catch(ModIdFoundConnectionFailed e){
+			throw new ModIdNotFoundException(file.getName() + File.separator + " found a curse record, but it didn't contain a matching file");
+		}finally {
+			if(test == null) {
+				AppLogger.info("attemptable: " + Arrays.toString(ids) + Arrays.toString(names), getClass());
+				AppLogger.info("errors: " + issues, getClass());
 			}
 		}
-		for(String name: names){
-			AppLogger.debug("trying: " + formatModName(name), getClass());
-			test = matchesExistingId(formatModName(name), new File(file.getName()).getName().replace('+', ' '));
-			if(test != null){
-				AppLogger.debug("MATCHED!", getClass());
-				ret.jarId = formatModName(name);
-				ret.mod = test;
-				return ret;
-			}
-		}
-		throw new ModIdNotFoundException(file.getName() + " didn't contain a cached or online mod Id");
+		throw new ModIdNotFoundException(file.getName() + File.separator + "mcmod.info name/modid doesn't match curse forge id.");
 	}
 
-	public ModVersion matchesExistingId(String id, String fileName){
+	public ModVersion matchesExistingId(String id, String fileName) throws IOException, ModIdFoundConnectionFailed {
 		ModVersion ret = Config.getInstance().getCachedMods().getMod(id);
-		if(ret == null || !ret.getFileName().equals(fileName)){
-			try {
-				ret = ModChecker.getForVersion(ret == null ? id : ret.getModId(), MINECRAFT_VERSION)
-					.getVersions()
-					.stream()
-					.filter(v -> v.getFileName().replace('+', ' ').equals(fileName))
-					.findFirst()
-					.orElse(null);
-			} catch (Exception e) {
-				AppLogger.debug(e.getMessage(), getClass());
-				ret = null;
-			}
-		}
+		List<ModVersion> versions;
+		if(ret == null ){
+			versions = ModChecker.getForVersion(id, MINECRAFT_VERSION)
+				.getVersions();
+		}else if(!ret.getFileName().equals(fileName)){
+			versions = ModChecker.getForVersion(ret.getModId(), MINECRAFT_VERSION)
+				.getVersions();
+		}else return ret;
+
+		AppLogger.info("potential file matches: " + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining("|||")), getClass());
+		ret = versions
+			.stream()
+			.filter(v -> v.getFileName().replace('+', ' ').equals(fileName.replace('+', ' ' )))
+			.findFirst()
+			.orElseThrow(() -> new ModIdFoundConnectionFailed(id + " contained a working id, but there was no matching file"));
 		return ret;
 	}
 
@@ -222,13 +226,13 @@ public class ModUtils {
 				try {
 					CONFIG.getCachedMods().writeCache();
 				} catch (IOException e) {
-					AppLogger.error(e, Startup.class);
+					AppLogger.error(e.getMessage(), getClass());
 				}
 			}
 		}
 	}
 
-	public String formatModName(String name) {
+	public static String formatModName(String name) {
 		name = name.toLowerCase().replace(' ', '-');
 		if (name.contains(":")) name = name.substring(0, name.indexOf(':'));
 		name = name
