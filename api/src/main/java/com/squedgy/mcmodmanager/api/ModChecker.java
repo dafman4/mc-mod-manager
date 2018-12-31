@@ -189,11 +189,6 @@ public abstract class ModChecker {
 		) {
 
 			out.transferFrom(in, 0, Long.MAX_VALUE);
-			String modId = Cacher.getJarModId(new JarFile(path));
-
-			Cacher c = Cacher.getInstance(mcVersion);
-
-			c.addMod(modId, v);
 			connection.disconnect();
 		} catch (IOException e) {
 			AppLogger.error(e, ModChecker.class);

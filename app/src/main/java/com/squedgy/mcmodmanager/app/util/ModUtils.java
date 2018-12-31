@@ -155,7 +155,8 @@ public class ModUtils {
 		try {
 			ModVersion v = CONFIG.getCachedMods().getMod(id);
 
-			if (v == null || v.getDescription() == null) {
+			if (v == null || v.getDescription() == null || !v.getFileName().equals(file.getName())) {
+				if(v != null) id = v.getModId();
 				try {
 					v = ModChecker.getForVersion(id, MINECRAFT_VERSION)
 						.getVersions()

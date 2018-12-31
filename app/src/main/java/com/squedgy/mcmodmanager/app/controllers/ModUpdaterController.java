@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
@@ -52,12 +53,14 @@ public class ModUpdaterController {
 				//do other stuff as necessary later for now just let me know it stopped
 				VBox v = new VBox();
 				System.gc();
+				System.out.println(table.getItems().stream().map(vers -> vers.getModId() + "-" + vers.getFileName()).collect(Collectors.joining("\n\t")));
 				results.forEach((key, value) -> {
 					if (value.isResult()) {
-
 						try {
-							String fileName = table.getItems().stream().filter(id -> id.getModId().equals(key.getModId())).findFirst().orElseThrow(() -> new ModIdNotFoundException("")).getFileName();
 
+							String fileName = table.getItems().stream().filter(id -> id.getModId().equals(key.getModId())).findFirst().orElseThrow(() -> new ModIdNotFoundException("")).getFileName();
+							File newJar = new File(Startup.getModsDir() + File.separator + key.getFileName());
+							System.out.println(newJar.getAbsolutePath() + ": " + newJar.exists());
 							File f = new File(Startup.getModsDir() + File.separator + fileName);
 							value.setResult(f.delete());
 							value.setReason(value.isResult() ? "Succeeded!" : "failed: couldn't delete the old file");
@@ -66,17 +69,18 @@ public class ModUpdaterController {
 								value.setReason(neu.delete() ? value.getReason() : value.getReason() + " and I couldn't delete the new file");
 							} else {
 								try {
-										Config.getInstance().getCachedMods().addMod(Cacher.getJarModId(new JarFile(Startup.getModsDir() + File.separator + key.getFileName())), key);
+									Config.getInstance().getCachedMods().addMod(Cacher.getJarModId(new JarFile(Startup.getModsDir() + File.separator + key.getFileName())), key);
 								} catch (IOException e1) {
 									AppLogger.error(e1, getClass());
 								}
 							}
-						} catch (ModIdNotFoundException ignored) {
-						}
+						} catch (ModIdNotFoundException ignored) { }
 
 					}
 					v.getChildren().add(new Label(key.getModId() + ": " + value.getReason()));
 				});
+				try { Config.getInstance().getCachedMods().writeCache(); }
+				catch (IOException e1) { AppLogger.error(e1, getClass());}
 				Platform.runLater(() -> {
 					modal.setContent(v);
 					try {
