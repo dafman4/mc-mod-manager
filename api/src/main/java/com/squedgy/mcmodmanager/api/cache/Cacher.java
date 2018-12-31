@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 
@@ -39,27 +40,60 @@ public class Cacher {
 		return instance;
 	}
 
-	public static String getJarModId(JarFile file) throws IOException {
+	public static String[] getJarModNames(JarFile file){
 		ZipEntry e = file.getEntry("mcmod.info");
-		if (e != null && !e.isDirectory()) {
+		if(e != null && !e.isDirectory()){
 			ObjectMapper mapper = new ObjectMapper();
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
-				JsonNode root = mapper.readValue(
-					reader.lines().map(l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
+			try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
+				JsonNode root = mapper.readValue(reader.lines().map(
+					l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
 					JsonNode.class
 				);
-				if (root.isArray()) root = root.get(0);
-				else if (root.has("modList")) root = root.get("modList").get(0);
-				if (root.has("modid")) return root.get("modid").textValue();
-				if (root.has("name")) {
-					String name = root.get("name").textValue().toLowerCase().replace(' ', '-');
-					if (name.contains(":")) name = name.substring(0, name.indexOf(':'));
-					return name.replaceAll("[^-a-z0-9]", "");
-				}
-			} finally {
-			}
+				if(root.has("modList"))root = root.get("modList");
+
+				if(root.isArray()) return readNodeForNames((ArrayNode) root);
+				else return new String[] {root.get("name").textValue()};
+
+			}catch(IOException ignored ){ }
 		}
-		throw new IOException("JarFile mcmod.info did not have a modid");
+		return new String[0];
+	}
+
+	private static String[] readNodeForNames(ArrayNode node){
+		String[] ret = new String[node.size()];
+		for(int i = 0; i < node.size(); i++){
+			if(node.get(i).has("name")) ret[i] = node.get(i).get("name").textValue();
+			else ret[i] = null;
+		}
+		return ret;
+	}
+
+	private static String[] readNodeForIds(ArrayNode node){
+		String[] ret = new String[node.size()];
+		for(int i = 0; i < node.size(); i++){
+			if(node.get(i).has("modid")) ret[i] = node.get(i).get("modid").textValue();
+			else ret[i] = null;
+		}
+		return ret;
+	}
+
+	public static String[] getJarModIds(JarFile file) {
+		ZipEntry e = file.getEntry("mcmod.info");
+		if(e != null && !e.isDirectory()){
+			ObjectMapper mapper = new ObjectMapper();
+			try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
+				JsonNode root = mapper.readValue(reader.lines().map(
+					l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
+					JsonNode.class
+				);
+				if(root.has("modList"))root = root.get("modList");
+
+				if(root.isArray()) return readNodeForIds((ArrayNode) root);
+				else if(root.has("modid")) return new String[] {root.get("modid").textValue()};
+
+			}catch(IOException ignored ){ }
+		}
+		return new String[0];
 	}
 
 	public synchronized void loadCache(String mcVersion) {
@@ -93,14 +127,8 @@ public class Cacher {
 		}
 	}
 
-	public void addMod(String modId, ModVersion version) {
-		System.out.println("caching: " + modId + ", " + version.getFileName());
-		ModVersion v = cachedMods.put(modId, version);
-		System.out.println(modId + " used to have in cache: " + (v != null ? v.getFileName(): null));
-	}
+	public void addMod(String modId, ModVersion version) { cachedMods.put(modId, version); }
 
-	public ModVersion getMod(String modId) {
-		return cachedMods.get(modId);
-	}
+	public ModVersion getMod(String modId) { return cachedMods.get(modId); }
 
 }

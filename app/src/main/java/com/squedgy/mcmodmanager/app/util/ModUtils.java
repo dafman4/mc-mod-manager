@@ -53,13 +53,57 @@ public class ModUtils {
 		return instance;
 	}
 
-	public ModVersion readNode(JsonNode modInfo, JarFile modJar) throws ModIdFailedException {
-		System.out.println("reading node");
-		try {
-			ObjectMapper map = new ObjectMapper();
-			System.out.println(map.writerWithDefaultPrettyPrinter().writeValueAsString(map.readValue(modInfo.toString(), Object.class)));
+	public void scanForMods(File folder) {
+		for (File f : Objects.requireNonNull(folder.listFiles())) {
+			if (f.isDirectory()) scanForMods(f);
+			else if (f.getName().endsWith(".jar")) {
+				//Get it as a JarFile
+				JarFile file;
+				try { file = new JarFile(f); }
+				catch (IOException e) {
+					addBadJar(f.getName(), "file couldn't be loaded as a jar.");
+					continue;
+				}
+				//Ensure that an mcmod.info file exists
+				ZipEntry e = file.getEntry("mcmod.info");
+				if (e == null) {
+					addBadJar(f.getName(), "mcmod.info doesn't exist");
+					continue;
+				}
+				try {
+					//Attempt to find a cached or online ModVersion matching the installed one
+					try {
+						IdResult id = getRealModId(file);
+						addMod(id);
+						continue;
+					} catch(ModIdNotFoundException e1) {
+						AppLogger.info(e1.getMessage(), getClass());
+					}
+					//Otherwise read the mcmod.info as a json node and find the first working one as a stand-in
+					addBadJar(f.getName(), "Couldn't find a cached mod-id as well as the name, and mcmod.info modid(s) didn't match anything online");
+					JsonNode root;
+					try (BufferedReader r = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
+						root = new ObjectMapper()
+							.readValue(
+								r.lines().map(l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
+								JsonNode.class
+							);
+					} catch (JsonParseException e1) {
+						continue;
+					}
+					if (root.has("modList")) root = root.get("modList");//this will be an array
+
+					if(root.isArray()) checkNode(root, file, root.size());
+					else addMod(f.getName(), readNode(root, file));
+				} catch (Exception e2) {
+					AppLogger.error(e2, getClass());
+				}
+			}
 		}
-		catch (IOException ignored) { }
+	}
+
+	public ModVersion readNode(JsonNode modInfo, JarFile modJar) throws ModIdFailedException {
+
 		ModVersionFactory factory = new ModVersionFactory();
 		if (modInfo.has("name")) factory.withName(modInfo.get("name").textValue());
 		else throw new ModIdFailedException("Node doesn't have a name within the mcmod.info");
@@ -86,122 +130,86 @@ public class ModUtils {
 		return factory.build();
 	}
 
-	public void scanForMods(File folder) {
-		for (File f : Objects.requireNonNull(folder.listFiles())) {
-			if (f.isDirectory()) scanForMods(f);
-			else if (f.getName().endsWith(".jar")) {
-
-				JarFile file;
-				try {
-					file = new JarFile(f);
-				} catch (IOException e) {
-					continue;
-				}
-
-				ZipEntry e = file.getEntry("mcmod.info");
-				if (e == null) {
-					addBadJar(f.getName(), "mcmod.info doesn't exist");
-					continue;
-				}
-				try {
-					String jarId;
-					try {
-						jarId = Cacher.getJarModId(file);
-					} catch (IOException e1) {
-						AppLogger.debug("mod: " + file.getName() + " didn't contain an mcmod.info", Startup.class);
-						continue;
-					}
-					try {
-						searchWithId(jarId, jarId, f);
-						continue;
-					} catch (ModIdNotFoundException ignored) {
-					}
-
-					JsonNode root;
-					try (BufferedReader r = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
-						root = new ObjectMapper()
-							.readValue(
-								r.lines().map(l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
-								JsonNode.class
-							);
-					} catch (JsonParseException e1) {
-						addBadJar(jarId, "Error parsing Json");
-						continue;
-					}
-					if (root.has("modList")) root = root.get("modList");//this will be an array
-
-					if (!checkNode(root, jarId, f, root.isArray() ? root.size() : 0)) {
-						addMod(jarId, readNode(root.isArray() ? root.get(0) : root, file));
-						addBadJar(f.getName(), "Couldn't find a working mod Id within the mcmod.info");
-					}
-				} catch (Exception e2) {
-					AppLogger.error(e2, Startup.class);
-				}
+	public IdResult getRealModId(JarFile file) throws ModIdNotFoundException{
+		;
+		String[] ids = Cacher.getJarModIds(file);
+		String[] names = Cacher.getJarModNames(file);
+		IdResult ret = new IdResult();
+		ModVersion test;
+		for(String id : ids){
+			AppLogger.debug("trying: " + id, getClass());
+			test = matchesExistingId(id, new File(file.getName()).getName().replace('+', ' '));
+			if(test != null){
+				AppLogger.debug("MATCHED!", getClass());
+				ret.jarId = id;
+				ret.mod = test;
+				return ret;
 			}
 		}
+		for(String name: names){
+			AppLogger.debug("trying: " + formatModName(name), getClass());
+			test = matchesExistingId(formatModName(name), new File(file.getName()).getName().replace('+', ' '));
+			if(test != null){
+				AppLogger.debug("MATCHED!", getClass());
+				ret.jarId = formatModName(name);
+				ret.mod = test;
+				return ret;
+			}
+		}
+		throw new ModIdNotFoundException(file.getName() + " didn't contain a cached or online mod Id");
 	}
 
-	private boolean checkNode(JsonNode array, String jarId, File jarFile, int length) {
+	public ModVersion matchesExistingId(String id, String fileName){
+		ModVersion ret = Config.getInstance().getCachedMods().getMod(id);
+		if(ret == null || !ret.getFileName().equals(fileName)){
+			try {
+				ret = ModChecker.getForVersion(ret == null ? id : ret.getModId(), MINECRAFT_VERSION)
+					.getVersions()
+					.stream()
+					.filter(v -> v.getFileName().replace('+', ' ').equals(fileName))
+					.findFirst()
+					.orElse(null);
+			} catch (Exception e) {
+				AppLogger.debug(e.getMessage(), getClass());
+				ret = null;
+			}
+		}
+		return ret;
+	}
+
+	private void checkNode(JsonNode array, JarFile jarFile, int length) {
 		int i = 0;
 		do {
-			JsonNode root = length > 0 ? array.get(i) : array;
-			i++;
-			if (root == null) continue;
 			try {
-				searchWithId(root.get("modid").textValue(), jarId, jarFile);
-				return true;
-			} catch (ModIdNotFoundException | ModIdFailedException ex2) {
-				try {
-					searchWithId(formatModName(root.get("name").textValue()), jarId, jarFile);
-					return true;
-				} catch (ModIdNotFoundException | ModIdFailedException ignored) {
-				}
-			}
-		} while (i < length);
-		return false;
-	}
-
-	private void searchWithId(String id, String jarId, File file) throws ModIdNotFoundException {
-		try {
-			ModVersion v = CONFIG.getCachedMods().getMod(id);
-			if (v == null || v.getDescription() == null || !v.getFileName().equals(file.getName())) {
-				if(v != null){
-					id = v.getModId();
-				}
-				try {
-					v = ModChecker.getForVersion(id, MINECRAFT_VERSION)
-						.getVersions()
-						.stream()
-						.filter(e -> e.getFileName().equals(file.getName()))
-						.findFirst()
-						.orElseThrow(() -> new ModIdNotFoundException(""));
-					((Version) v).setModId(id);
-				} catch (ModIdNotFoundException | ModIdFailedException ignore) {
-				}
-			}
-
-			if (v != null) {
-				addMod(jarId, v);
+				JsonNode root = length > 0 ? array.get(i) : array;
+				i++;
+				if (root == null) continue;
+				ModVersion v = readNode(root, jarFile);
+				addMod(jarFile.getName(), v);
 				return;
-			}
-		} catch (Exception e) {
-			AppLogger.error(e, getClass());
-		}
-
-		throw new ModIdNotFoundException("Id not found: " + id);
+			}catch(Exception ignored){}
+		} while (i < length);
 	}
+
+	private void addMod(IdResult mod){ addMod(mod.jarId, mod.mod); }
 
 	public void addMod(String modId, ModVersion mod) {
-		StackTraceElement elements = Thread.currentThread().getStackTrace()[2];
-		System.out.println("Adding " + modId + ": "+ mod.getFileName());
-		System.out.println(elements.getFileName() + ": " + elements.getLineNumber());
 		Config.getInstance().getCachedMods().addMod(modId, mod);
 		mods.put(modId, mod);
+	}
+
+	public ModVersion getMod(String id){
+		return mods.get(id);
 	}
 
 	public ModVersion[] getMods() {
 		if (mods.size() == 0) setMods();
 		return mods.values().toArray(new ModVersion[0]);
+	}
+
+	public String getKey(ModVersion m){
+		for(Map.Entry<String, ModVersion> e : mods.entrySet()) if(m.equals(e.getValue())) return e.getKey();
+		return null;
 	}
 
 	public void setMods() {
@@ -229,7 +237,13 @@ public class ModUtils {
 		return name;
 	}
 
-	public void addBadJar(String file, String reason) {
-		badJars.put(file, reason);
+	public void addBadJar(String file, String reason) { badJars.put(file, reason); }
+
+	public static class IdResult{
+		public ModVersion mod;
+		public String jarId;
+
+		public IdResult(){ }
+
 	}
 }

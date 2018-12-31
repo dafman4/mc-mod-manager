@@ -25,7 +25,6 @@ public class JsonModVersionSerializer extends StdSerializer<Map<String, ModVersi
 	@Override
 	public void serialize(Map<String, ModVersion> map, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		ObjectNode root = new ObjectNode(JsonNodeFactory.instance);
-		System.out.println("serializing: " + map.keySet());
 		map.forEach((key, value) -> {
 			if(value != null) {
 				ObjectNode n = new ObjectNode(JsonNodeFactory.instance);

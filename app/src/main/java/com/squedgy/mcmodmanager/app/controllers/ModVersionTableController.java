@@ -39,9 +39,6 @@ public class ModVersionTableController {
 	public List<ModVersion> getItems() { return new ArrayList<>(root.getItems()); }
 
 	public void setItems(ObservableList<ModVersion> items) {
-		System.out.println("Setting items");
-		System.out.print("\t");
-		System.out.println(items.stream().map(m -> m.getModId() + ": " + m.getFileName()).collect(Collectors.joining("\n\t")));
 		root.setItems(items);
 		root.refresh();
 	}

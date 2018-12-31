@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
@@ -58,18 +59,25 @@ public class ModUpdaterController {
 				results.forEach((key, value) -> {
 					if (value.isResult()) {
 						try {
-							String fileName = Startup.getInstance().getMainView().getItems().stream().filter(id -> id.getModId().equals(key.getModId())).findFirst().orElseThrow(() -> new ModIdNotFoundException("")).getFileName();
-							File newJar = new File(Startup.getModsDir() + File.separator + key.getFileName());
-
-							File f = new File(Startup.getModsDir() + File.separator + fileName);
-							value.setResult(f.delete());
-							value.setReason(value.isResult() ? "Succeeded!" : "couldn't delete the old file");
-							if (!value.isResult()) {
-								value.setReason(newJar.delete() ? value.getReason() : value.getReason() + " and I couldn't delete the new file");
+							ModVersion old = ModUtils.getInstance().getMod(key.getModId());
+							if(old == null){
+							}else {
 							}
-						} catch (ModIdNotFoundException ignored) { } catch (IOException e1) {
-							throw new ThreadFailedException();
-						}
+							File newJar = new File(Startup.getModsDir() + File.separator + key.getFileName());
+							if(old != null) {
+								File f = new File(Startup.getModsDir() + File.separator + old.getFileName());
+								value.setResult(f.delete());
+								value.setReason(value.isResult() ? "Succeeded!" : "couldn't delete the old file");
+							}
+							if (old == null || !value.isResult()) {
+								value.setResult(false);
+								if(newJar.delete()){
+									value.setReason("Couldn't locate/delete previous file, deleted new one to ensure runnability of MC");
+								}else{
+									value.setReason("Couldn't delete the new file after not locating/deleting the old.\nYou should delete " + Startup.getModsDir() + File.separator + key.getFileName() + " to have no issues.");
+								}
+							}
+						} catch (Exception e1) {}
 
 					}
 					v.getChildren().add(new Label(key.getModId() + ": " + value.getReason()));

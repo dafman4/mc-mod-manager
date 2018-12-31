@@ -3,6 +3,7 @@ package com.squedgy.mcmodmanager.api.response;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Version implements ModVersion {
 
@@ -37,7 +38,7 @@ public class Version implements ModVersion {
 		return fileName;
 	}
 
-	void setFileName(String fileName) {
+	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
 
@@ -113,7 +114,21 @@ public class Version implements ModVersion {
 			",uploadedAt=" + uploadedAt +
 			",modName='" + modName + '\'' +
 			",modId='" + modId + '\'' +
-			",description='" + description + '\''
+			",description='" + description.replace('\n', ' ') + '\''
 			+ '}';
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Version version = (Version) o;
+		return modId.equals(version.modId) &&
+			modName.equals(version.modName);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(modId, modName);
 	}
 }

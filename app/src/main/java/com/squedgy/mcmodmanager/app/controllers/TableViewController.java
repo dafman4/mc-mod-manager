@@ -2,6 +2,7 @@ package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.api.response.Version;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.components.PublicNode;
@@ -73,8 +74,7 @@ public class TableViewController {
 
 			table.addOnChange((obs, old, neu) -> {
 				updateObjectView("<h1>Loading...</h1>");
-				if (gathering == null || !gathering.isAlive()) {
-
+				if ((gathering == null || !gathering.isAlive()) && neu != null) {
 					gathering = new ModInfoThread(neu, version -> {
 						Platform.runLater(() -> updateObjectView(version.getDescription()));
 						return null;
@@ -161,7 +161,7 @@ public class TableViewController {
 			});
 			checking.start();
 		} else {
-			AppLogger.info("checking is still alive!", getClass());
+
 		}
 	}
 

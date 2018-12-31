@@ -4,9 +4,12 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
+import com.squedgy.mcmodmanager.api.response.Version;
+import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,7 +38,8 @@ public class ModCheckingThread extends Thread {
 				} catch (ModIdNotFoundException ignored) {
 					resp = ModChecker.getNewest(id.getModName().toLowerCase().replace(' ', '-').replaceAll("[^-a-z0-9]", ""), mc);
 				}
-
+				String key = ModUtils.getInstance().getKey(resp);
+				((Version)resp).setModId(key);
 
 				if (resp != null && resp.getUploadedAt().isAfter(id.getUploadedAt())) {
 					updateables.add(resp);

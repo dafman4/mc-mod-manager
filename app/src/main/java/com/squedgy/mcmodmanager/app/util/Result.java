@@ -4,14 +4,14 @@ public class Result {
 
 	private boolean result;
 	private String reason;
+	private final String oldFile;
 
-	public Result(boolean result) {
-		this(result, "" + result);
-	}
+	public Result(boolean result, String oldFile) { this(result, oldFile, "" + result); }
 
-	public Result(boolean result, String reason) {
-		this.reason = result ? reason : "failed: " + reason;
+	public Result(boolean result, String oldFile, String reason) {
+		this.reason = reason;
 		this.result = result;
+		this.oldFile = oldFile;
 	}
 
 	public boolean isResult() {
@@ -30,5 +30,17 @@ public class Result {
 
 	public void setReason(String reason) {
 		this.reason = reason;
+	}
+
+	@Override
+	public String toString() {
+		return "Result{" +
+			"result=" + result +
+			", reason='" + reason + '\'' +
+			'}';
+	}
+
+	public String getOldFile() {
+		return oldFile;
 	}
 }

@@ -27,9 +27,9 @@ public class ModUpdaterThread extends Thread {
 		Map<ModVersion, Result> param = new HashMap<>();
 		updates.forEach(update -> {
 			if (ModChecker.download(update, Startup.getModsDir() + File.separator, update.getMinecraftVersion())) {
-				param.put(update, new Result(true));
+				param.put(update, new Result(true, update.getFileName()));
 			} else {
-				param.put(update, new Result(false, "failed: Couldn't download"));
+				param.put(update, new Result(false, update.getFileName(), "failed: Couldn't download"));
 			}
 		});
 		callback.call(param);

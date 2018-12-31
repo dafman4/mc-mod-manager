@@ -6,7 +6,7 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class AppLogger {
 
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LogManager.getLogger(AppLogger.class);
 
 	public static void info(String message, Class<?> clazz) {
 		logger.info(getFormattedClassString(clazz) + message);

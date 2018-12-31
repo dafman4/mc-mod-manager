@@ -76,7 +76,7 @@ public abstract class ModChecker {
 			File f = new File(dotMinecraft + File.separator + fromCurse.getFileName());
 			if (f.exists()) {
 				Cacher c = Cacher.getInstance(mcVersion);
-				c.addMod(Cacher.getJarModId(new JarFile(f)), fromCurse);
+				c.addMod(modId, fromCurse);
 			}
 		} catch (Exception e) {
 			AppLogger.error(e, ModChecker.class);
@@ -156,46 +156,45 @@ public abstract class ModChecker {
 	}
 
 	public static boolean download(ModVersion v, String location, String mcVersion) {
-		URL u;
 		try {
-			u = new URL(v.getDownloadUrl() + "/file");
-		} catch (MalformedURLException e) {
-			AppLogger.error(e, ModChecker.class);
-			return false;
-		}
-		HttpsURLConnection connection;
-		try {
-			connection = (HttpsURLConnection) u.openConnection();
-			connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0");
+			URL u = new URL(v.getDownloadUrl() + "/file");
+
+			HttpsURLConnection connection = (HttpsURLConnection) u.openConnection();
+			connection.setRequestProperty("User-Agent", getUserAgentForOs());
 			connection.setRequestMethod("GET");
 			connection.setDoOutput(true);
 			connection.connect();
 			if (connection.getResponseCode() > 299 || connection.getResponseCode() < 200) {
 				AppLogger.info("Couldn't access the url :" + u, ModChecker.class);
-				AppLogger.info(connection.getContent().toString(), ModChecker.class);
+				connection.getHeaderFields().forEach((key, field) -> {
+					AppLogger.info(key + ": " + field, ModChecker.class);
+				});
 				return false;
 			}
 
-		} catch (IOException e) {
+			boolean append = !v.getFileName().endsWith(".jar");
+			String path = (location + v.getFileName() + (append ? ".jar" : "")).replace('+', ' ');
+			try (
+				FileOutputStream outFile = new FileOutputStream(new File(path));
+				ReadableByteChannel in = Channels.newChannel(connection.getInputStream());
+				FileChannel out = outFile.getChannel()
+			) {
+
+				out.transferFrom(in, 0, Long.MAX_VALUE);
+				connection.disconnect();
+				return true;
+			}
+		}catch(Exception e){
 			AppLogger.error(e, ModChecker.class);
 			return false;
 		}
+	}
 
-		boolean append = !v.getFileName().endsWith(".jar");
-		String path = location + v.getFileName() + (append ? ".jar" : "");
-		try (
-			FileOutputStream outFile = new FileOutputStream(new File(path));
-			ReadableByteChannel in = Channels.newChannel(connection.getInputStream());
-			FileChannel out = outFile.getChannel()
-		) {
-
-			out.transferFrom(in, 0, Long.MAX_VALUE);
-			connection.disconnect();
-		} catch (IOException e) {
-			AppLogger.error(e, ModChecker.class);
-			return false;
-		}
-		return true;
+	private static String getUserAgentForOs(){
+		String os = System.getProperty("os.name");
+		if (os.matches(".*[Ww]indows.*")) return "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0";
+		else if (os.matches(".*[Mm]ac [Oo][Ss].*")) return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0";
+		else return "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0";
 	}
 
 }
