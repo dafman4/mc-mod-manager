@@ -26,7 +26,14 @@ public class Modal {
 
 	private Stage stage;
 
-	public Modal() throws IOException {
+	private static Modal instance;
+
+	public static Modal getInstance() throws IOException {
+		if(instance == null) instance = new Modal();
+		return instance;
+	}
+
+	private Modal() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modal.fxml"));
 		loader.setController(this);
 		loader.load();

@@ -47,7 +47,7 @@ public class ModUpdaterController {
 	public void updateAll(Event e) throws IOException {
 
 		if (updates == null || !updates.isAlive()) {
-			Modal modal = new Modal();
+			Modal modal = Modal.getInstance();
 			modal.setContent(new LoadingController().getRoot());
 			modal.open(Startup.getParent().getWindow());
 			updates = new ModUpdaterThread(table.getItems(), results -> {

@@ -133,7 +133,7 @@ public class TableViewController {
 			Modal modal;
 			LoadingController c;
 			try {
-				modal = new Modal();
+				modal = Modal.getInstance();
 				c = new LoadingController();
 			} catch (IOException e1) {
 				throw new RuntimeException();
@@ -168,7 +168,7 @@ public class TableViewController {
 	@FXML
 	public void showBadJars(Event e) throws IOException {
 
-		Modal m = new Modal();
+		Modal m = Modal.getInstance();
 
 		TableView<PublicNode> t = new TableView<>();
 		ObservableList<PublicNode> list = FXCollections.observableArrayList(ModUtils.viewBadJars().entrySet().stream().map(PublicNode::new).collect(Collectors.toList()));
