@@ -12,13 +12,15 @@ import java.util.Comparator;
 
 public class ModInfoThread extends Thread {
 
-    private final ModVersion toFind;
-    private final Callback<ModVersion, ?> callback;
-    private final Callback<Void,?> couldntFind;
+	private final ModVersion toFind;
+	private final Callback<ModVersion, ?> callback;
+	private final Callback<Void, ?> couldntFind;
 
-	public ModInfoThread(ModVersion toFind, Callback<ModVersion, ?> callback){ this(toFind, callback, null); }
+	public ModInfoThread(ModVersion toFind, Callback<ModVersion, ?> callback) {
+		this(toFind, callback, null);
+	}
 
-	public ModInfoThread(ModVersion toFind, Callback<ModVersion, ?> callback, Callback<Void,?> couldntFind){
+	public ModInfoThread(ModVersion toFind, Callback<ModVersion, ?> callback, Callback<Void, ?> couldntFind) {
 		this.couldntFind = couldntFind;
 		this.toFind = toFind;
 		this.callback = callback;
@@ -27,17 +29,17 @@ public class ModInfoThread extends Thread {
 	@Override
 	public void run() {
 		ModVersion ret = null;
-		try{
+		try {
 			ret = ModChecker.getCurrentVersion(toFind.getModId(), toFind.getMinecraftVersion());
 
 			callback.call(ret);
 			return;
+		} catch (CacheRetrievalException ignored) {
 		}
-		catch ( CacheRetrievalException ignored){ }
 		CurseForgeResponse resp = null;
 		try {
 			resp = ModChecker.getForVersion(toFind.getModId(), toFind.getMinecraftVersion());
-		}catch(ModIdFailedException e){
+		} catch (ModIdFailedException e) {
 			try {
 				resp = ModChecker.getForVersion(
 					toFind.getModName()
@@ -51,14 +53,14 @@ public class ModInfoThread extends Thread {
 		} catch (Exception e) {
 			AppLogger.error(e, getClass());
 		}
-		
-		if(resp != null){
+
+		if (resp != null) {
 			ret = resp.getVersions()
 				.stream()
 				.filter(e -> e.getUploadedAt().toLocalDate().equals(toFind.getUploadedAt().toLocalDate()))
 				.min(Comparator.comparing(e -> Math.abs(e.getUploadedAt().toLocalTime().toSecondOfDay() - toFind.getUploadedAt().toLocalTime().toSecondOfDay())))
 				.orElse(null);
-			if (ret != null){
+			if (ret != null) {
 				callback.call(ret);
 				return;
 			}

@@ -12,27 +12,26 @@ import java.util.List;
 import java.util.Map;
 
 
-public class ModUpdaterThread extends Thread{
+public class ModUpdaterThread extends Thread {
 
-    private final List<ModVersion> updates;
-    private final Callback<Map<ModVersion, Result>, Void> callback;
+	private final List<ModVersion> updates;
+	private final Callback<Map<ModVersion, Result>, Void> callback;
 
-    public ModUpdaterThread(List<ModVersion> updates, Callback<Map<ModVersion, Result>, Void> callback){
-        this.updates = updates;
-        this.callback = callback;
-    }
+	public ModUpdaterThread(List<ModVersion> updates, Callback<Map<ModVersion, Result>, Void> callback) {
+		this.updates = updates;
+		this.callback = callback;
+	}
 
-    @Override
-    public void run() {
-        Map<ModVersion,Result> param = new HashMap<>();
-        updates.forEach(update -> {
-            if(ModChecker.download(update, Startup.getModsDir() + File.separator, update.getMinecraftVersion())){
-                param.put(update, new Result(true));
-            }else{
-                param.put(update, new Result(false, "failed: Couldn't download"));
-            }
-        });
-
-        new Thread(() -> callback.call(param)).start();
-    }
+	@Override
+	public void run() {
+		Map<ModVersion, Result> param = new HashMap<>();
+		updates.forEach(update -> {
+			if (ModChecker.download(update, Startup.getModsDir() + File.separator, update.getMinecraftVersion())) {
+				param.put(update, new Result(true));
+			} else {
+				param.put(update, new Result(false, "failed: Couldn't download"));
+			}
+		});
+		callback.call(param);
+	}
 }

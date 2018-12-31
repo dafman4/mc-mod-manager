@@ -1,34 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.HBox?>
+
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 <?import java.net.URL?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.layout.VBox?>
-
-<ScrollPane fx:id="root" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="com.squedgy.mcmodmanager.app.controllers.TableViewController">
-    <stylesheets>
-        <URL value="@main.css"/>
-        <URL value="@table-view.css"/>
-    </stylesheets>
-    <VBox fx:id="content">
-        <HBox fx:id="buttons" styleClass="button-list">
-            <Button text="Save Columns" fx:id="columns" onMouseReleased="#setColumns"/>
-            <Button text="Check for Updates" fx:id="updates" onMouseReleased="#searchForUpdates"/>
-            <Button text="Bad Jars" fx:id="badJars" onMouseReleased="#showBadJars" />
-        </HBox>
-        <GridPane fx:id="listGrid" prefWidth="${root.width}"><WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-            <columnConstraints>
-                <ColumnConstraints hgrow="ALWAYS" />
-                <ColumnConstraints hgrow="NEVER" minWidth="4.0"/>
-                <ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0" />
-            </columnConstraints>
-            <rowConstraints>
-                <RowConstraints vgrow="ALWAYS" />
-            </rowConstraints>
-        </GridPane>
-    </VBox>
+<ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea">
+	<stylesheets>
+		<URL value="@main.css"/>
+		<URL value="@table-view.css"/>
+	</stylesheets>
+	<VBox fx:id="content">
+		<HBox fx:id="buttons" styleClass="button-list">
+			<Button text="Save Columns" fx:id="columns" onMouseReleased="#setColumns"/>
+			<Button text="Check for Updates" fx:id="updates" onMouseReleased="#searchForUpdates"/>
+			<Button text="Bad Jars" fx:id="badJars" onMouseReleased="#showBadJars"/>
+		</HBox>
+		<GridPane fx:id="listGrid" prefWidth="${root.width}">
+			<WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+			<columnConstraints>
+				<ColumnConstraints hgrow="ALWAYS"/>
+				<ColumnConstraints hgrow="NEVER" minWidth="4.0"/>
+				<ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0"/>
+			</columnConstraints>
+			<rowConstraints>
+				<RowConstraints vgrow="ALWAYS"/>
+			</rowConstraints>
+		</GridPane>
+	</VBox>
 </ScrollPane>

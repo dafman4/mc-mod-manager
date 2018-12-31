@@ -4,76 +4,116 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 
 import java.time.LocalDateTime;
 
-public class Version implements ModVersion{
+public class Version implements ModVersion {
 
-    private long id;
-    private String fileName;
-    private String typeOfRelease;
-    private String minecraftVersion;
-    private String downloadUrl;
-    private LocalDateTime uploadedAt;
-    private String modId;
-    private String modName;
-    private String description;
+	private long id;
+	private String fileName;
+	private String typeOfRelease;
+	private String minecraftVersion;
+	private String downloadUrl;
+	private LocalDateTime uploadedAt;
+	private String modId;
+	private String modName;
+	private String description;
 
-    public String getMinecraftVersion() { return minecraftVersion; }
+	public String getMinecraftVersion() {
+		return minecraftVersion;
+	}
 
-    void setMinecraftVersion(String minecraftVersion) { this.minecraftVersion = minecraftVersion; }
+	void setMinecraftVersion(String minecraftVersion) {
+		this.minecraftVersion = minecraftVersion;
+	}
 
-    @Override
-    public LocalDateTime getUploadedAt() { return this.uploadedAt; }
+	@Override
+	public LocalDateTime getUploadedAt() {
+		return this.uploadedAt;
+	}
 
-    void setUploadedAt(LocalDateTime uploadedAt){ this.uploadedAt = uploadedAt; }
+	void setUploadedAt(LocalDateTime uploadedAt) {
+		this.uploadedAt = uploadedAt;
+	}
 
-    public String getFileName() { return fileName; }
+	public String getFileName() {
+		return fileName;
+	}
 
-    void setFileName(String fileName) { this.fileName = fileName; }
+	void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
 
-    public String getTypeOfRelease() { return typeOfRelease; }
+	public String getTypeOfRelease() {
+		return typeOfRelease;
+	}
 
-    void setTypeOfRelease(String typeOfRelease) { this.typeOfRelease = typeOfRelease; }
+	void setTypeOfRelease(String typeOfRelease) {
+		this.typeOfRelease = typeOfRelease;
+	}
 
-    public long getId() { return id; }
+	public long getId() {
+		return id;
+	}
 
-    void setId(long id) { this.id = id; }
+	void setId(long id) {
+		this.id = id;
+	}
 
-    public String getDownloadUrl() { return downloadUrl; }
+	public String getDownloadUrl() {
+		return downloadUrl;
+	}
 
-    void setDownloadUrl(String downloadUrl) { this.downloadUrl = downloadUrl; }
+	void setDownloadUrl(String downloadUrl) {
+		this.downloadUrl = downloadUrl;
+	}
 
-    @Override
-    public int compareTo(ModVersion o) { return uploadedAt.compareTo(o.getUploadedAt()); }
+	@Override
+	public int compareTo(ModVersion o) {
+		return uploadedAt.compareTo(o.getUploadedAt());
+	}
 
-    @Override
-    public String getModName() { return modName; }
+	@Override
+	public String getModName() {
+		return modName;
+	}
 
-    @Override
-    public String getModId() { return modId; }
+	public void setModName(String modName) {
+		this.modName = modName;
+	}
 
-    @Override
-    public String getDescription() { return description; }
+	@Override
+	public String getModId() {
+		return modId;
+	}
 
-    @Override
-    public boolean isHtmlDescription() { return true; }
+	public void setModId(String modId) {
+		this.modId = modId;
+	}
 
-    public void setDescription(String description) { this.description = description; }
+	@Override
+	public String getDescription() {
+		return description;
+	}
 
-    public void setModName(String modName) { this.modName = modName; }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public void setModId(String modId) { this.modId = modId; }
+	@Override
+	public boolean isHtmlDescription() {
+		return true;
+	}
 
-    @Override
-    public String toString() {
-        return "Version{" +
-                "minecraftVersion='" + minecraftVersion + '\'' +
-                ",fileName='" + fileName + '\'' +
-                ",typeOfRelease='" + typeOfRelease + '\'' +
-                ",id=" + id +
-                ",downloadUrl='" + downloadUrl + '\'' +
-                ",uploadedAt=" + uploadedAt +
-                ",modName='" + modName + '\'' +
-                ",modId='" + modId + '\'' +
-                ",description='" + description + '\''
-                + '}';
-    }
+	@Override
+	public String toString() {
+		return "Version{" +
+			"minecraftVersion='" + minecraftVersion + '\'' +
+			",fileName='" + fileName + '\'' +
+			",typeOfRelease='" + typeOfRelease + '\'' +
+			",id=" + id +
+			",downloadUrl='" + downloadUrl + '\'' +
+			",uploadedAt=" + uploadedAt +
+			",modName='" + modName + '\'' +
+			",modId='" + modId + '\'' +
+			",description='" + description + '\''
+			+ '}';
+	}
 }

@@ -1,21 +1,21 @@
-buildscript{
-    repositories{ mavenCentral() }
+buildscript {
+	repositories { mavenCentral() }
 }
 
-dependencies{
-    compile project(':api')
-    compile group: 'com.squedgy', name: 'my-utilities', version:'1.0'
+dependencies {
+	compile project(':api')
+	compile group: 'com.squedgy', name: 'my-utilities', version: '1.0'
 }
 
-jar{
-    manifest{
-        attributes(
-            'Main-Class': 'com.squedgy.mcmodmanager.app.MainController'
-        )
-    }
+jar {
+	manifest {
+		attributes(
+			'Main-Class': 'com.squedgy.mcmodmanager.app.MainController'
+		)
+	}
 }
 
-fatJar{
-    dependsOn(":api:fatJar")
-    fatJar
+fatJar {
+	dependsOn(":api:fatJar")
+	fatJar
 }

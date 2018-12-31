@@ -1,63 +1,73 @@
 package com.squedgy.mcmodmanager.app;
 
+import com.squedgy.mcmodmanager.app.controllers.TableViewController;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Objects;
 
 public class Startup extends Application {
 
-    public static String DOT_MINECRAFT_LOCATION;
-    public static String MINECRAFT_VERSION = "1.12.2";
-    private static Scene PARENT;
+	public static String DOT_MINECRAFT_LOCATION;
+	public static String MINECRAFT_VERSION = "1.12.2";
+	private static Scene PARENT;
+	private static Startup instance;
+	private static TableViewController MAIN_VIEW;
 
-    public static String getModsDir(){
-        return DOT_MINECRAFT_LOCATION + File.separator + "mods";
-    }
+	public Startup() throws IOException {
+		if (MAIN_VIEW == null) MAIN_VIEW = new TableViewController();
+		if (PARENT == null) PARENT = new Scene(MAIN_VIEW.getRoot());
+	}
 
-    @Override
-    public void start(Stage stage) throws Exception {
-        URL fxml = Objects.requireNonNull(getResource("main.fxml"));
+	public static String getModsDir() {
+		return DOT_MINECRAFT_LOCATION + File.separator + "mods";
+	}
 
-        FXMLLoader fxmlLoader = new FXMLLoader(fxml);
-        Parent root = fxmlLoader.load();
+	public static Startup getInstance() throws IOException {
+		if (instance == null) instance = new Startup();
+		return instance;
+	}
 
-        PARENT = new Scene(root);
+	public static void main(String[] args) throws IOException {
+		String os = System.getProperty("os.name");
+		ModUtils c = ModUtils.getInstance();
 
-        stage.setTitle("Minecraft Mod Manager");
-        stage.setScene(PARENT);
-        stage.show();
-        stage.setMinHeight(500);
-        stage.setMinWidth(700);
+		//If custom set, otherwise looking for defaults
+		if (c.CONFIG.getProperty("mc-dir") != null) DOT_MINECRAFT_LOCATION = c.CONFIG.getProperty("mc-dir");
+		else if (os.matches(".*[Ww]indows.*"))
+			DOT_MINECRAFT_LOCATION = System.getenv("APPDATA") + File.separator + ".minecraft";
+		else if (os.matches(".*[Mm]ac [Oo][Ss].*"))
+			DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + File.separator + "Library" + File.separator + "Application Support" + File.separator + "minecraft";
+		else DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + File.separator + ".minecraft";
 
-    }
+		launch(args);
+	}
 
-    public static void main(String[] args) {
-        String os = System.getProperty("os.name");
-        ModUtils c = ModUtils.getInstance();
+	public static URL getResource(String resource) {
+		return Thread.currentThread().getContextClassLoader().getResource(resource);
+	}
 
-        //If custom set, otherwise looking for defaults
-        if(c.CONFIG.getProperty("mc-dir") != null) DOT_MINECRAFT_LOCATION = c.CONFIG.getProperty("mc-dir");
-        else if (os.matches(".*[Ww]indows.*")) DOT_MINECRAFT_LOCATION = System.getenv("APPDATA") + "\\.minecraft\\";
-        else if (os.matches(".*[Mm]ac [Oo][Ss].*")) DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + "/Library/Application Support/minecraft";
-        else DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + "/.minecraft";
+	public static Scene getParent() {
+		return PARENT;
+	}
 
-        launch(args);
-    }
+	public TableViewController getMainView() {
+		return MAIN_VIEW;
+	}
 
-    public static URL getResource(String resource){
-        return Thread.currentThread().getContextClassLoader().getResource(resource);
-    }
+	@Override
+	public void start(Stage stage) throws IOException {
 
-    public static Scene getParent(){
-        return PARENT;
-    }
+		getInstance();
+		stage.setTitle("Minecraft Mod Manager");
+		stage.setScene(PARENT);
+		stage.show();
+		stage.setMinHeight(500);
+		stage.setMinWidth(700);
+	}
 
 }

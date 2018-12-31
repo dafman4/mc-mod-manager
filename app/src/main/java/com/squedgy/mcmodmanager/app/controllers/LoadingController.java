@@ -11,38 +11,40 @@ import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
 public class LoadingController {
 
-    @FXML
-    private WebView root;
-    private static Stage s;
+	private static Stage s;
+	@FXML
+	private WebView root;
 
-    public LoadingController() throws IOException {
-        FXMLLoader loader = new FXMLLoader(getResource("components/loading.fxml"));
-        loader.setController(this);
-        loader.load();
-        root.getEngine().loadContent(
-            "<style>" +
-                "body{" +
-                "background-color:#222;" +
-                "color:#ccc;" +
-                "} " +
-                "@keyframes spin{" +
-                "from{transform:rotate(0deg);} " +
-                "to{transform:rotate(360deg);} " +
-                "} " +
-                ".img {" +
-                "background: url(\"" + getResource("components/img/loading.png") + "\") center center no-repeat;" +
-                "background-size:contain;" +
-                "animation:spin 3s linear infinite;" +
-                "min-height:100px;" +
-                "min-width:100px;" +
-                "} " +
-                "</style>" +
-                "<div style=\"display:flex;justify-content:center;align-items:center;height:100%;\">" +
-                "<div class='img' id='img'></div>" +
-                "</div>"
-        );
-    }
+	public LoadingController() throws IOException {
+		FXMLLoader loader = new FXMLLoader(getResource("components/loading.fxml"));
+		loader.setController(this);
+		loader.load();
+		root.getEngine().loadContent(
+			"<style>" +
+				"body{" +
+				"background-color:#222;" +
+				"color:#ccc;" +
+				"} " +
+				"@keyframes spin{" +
+				"from{transform:rotate(0deg);} " +
+				"to{transform:rotate(360deg);} " +
+				"} " +
+				".img {" +
+				"background: url(\"" + getResource("components/img/loading.png") + "\") center center no-repeat;" +
+				"background-size:contain;" +
+				"animation:spin 3s linear infinite;" +
+				"min-height:100px;" +
+				"min-width:100px;" +
+				"} " +
+				"</style>" +
+				"<div style=\"display:flex;justify-content:center;align-items:center;height:100%;\">" +
+				"<div class='img' id='img'></div>" +
+				"</div>"
+		);
+	}
 
-    public WebView getRoot(){ return root; }
+	public WebView getRoot() {
+		return root;
+	}
 
 }
