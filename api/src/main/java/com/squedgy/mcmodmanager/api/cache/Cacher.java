@@ -75,7 +75,7 @@ public class Cacher {
 				.readValue(new File(fileName), ref);
 		} catch (FileNotFoundException e) {
 			cachedMods = new HashMap<>();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			AppLogger.error(e, getClass());
 			cachedMods = new HashMap<>();
 		}
@@ -94,7 +94,9 @@ public class Cacher {
 	}
 
 	public void addMod(String modId, ModVersion version) {
-		cachedMods.put(modId, version);
+		System.out.println("caching: " + modId + ", " + version.getFileName());
+		ModVersion v = cachedMods.put(modId, version);
+		System.out.println(modId + " used to have in cache: " + (v != null ? v.getFileName(): null));
 	}
 
 	public ModVersion getMod(String modId) {

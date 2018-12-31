@@ -19,5 +19,6 @@ app/test
 
 **/logs
 **/config
-**/cache
+cache
+!**/src/**
 local.properties

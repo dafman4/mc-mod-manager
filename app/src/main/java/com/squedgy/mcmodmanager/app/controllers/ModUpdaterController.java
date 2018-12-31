@@ -9,6 +9,7 @@ import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModUpdaterThread;
 import com.squedgy.mcmodmanager.app.threads.ThreadFailedException;
+import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -51,7 +52,6 @@ public class ModUpdaterController {
 			modal.setContent(new LoadingController().getRoot());
 			modal.open(Startup.getParent().getWindow());
 			updates = new ModUpdaterThread(table.getItems(), results -> {
-				//do other stuff as necessary later for now just let me know it stopped
 				VBox v = new VBox();
 				System.gc();
 
@@ -63,15 +63,9 @@ public class ModUpdaterController {
 
 							File f = new File(Startup.getModsDir() + File.separator + fileName);
 							value.setResult(f.delete());
-							value.setReason(value.isResult() ? "Succeeded!" : "failed: couldn't delete the old file");
+							value.setReason(value.isResult() ? "Succeeded!" : "couldn't delete the old file");
 							if (!value.isResult()) {
 								value.setReason(newJar.delete() ? value.getReason() : value.getReason() + " and I couldn't delete the new file");
-							} else {
-								try {
-									Config.getInstance().getCachedMods().addMod(Cacher.getJarModId(new JarFile(newJar)), key);
-								} catch (IOException e1) {
-									AppLogger.error(e1, getClass());
-								}
 							}
 						} catch (ModIdNotFoundException ignored) { } catch (IOException e1) {
 							throw new ThreadFailedException();
@@ -80,8 +74,7 @@ public class ModUpdaterController {
 					}
 					v.getChildren().add(new Label(key.getModId() + ": " + value.getReason()));
 				});
-				try { Config.getInstance().getCachedMods().writeCache(); }
-				catch (IOException e1) { AppLogger.error(e1, getClass());}
+				ModUtils.getInstance().setMods();
 				Platform.runLater(() -> {
 					modal.setContent(v);
 					try {

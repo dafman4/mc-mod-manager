@@ -10,6 +10,7 @@ import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
+import com.squedgy.mcmodmanager.api.response.Version;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.config.Config;
 
@@ -53,6 +54,12 @@ public class ModUtils {
 	}
 
 	public ModVersion readNode(JsonNode modInfo, JarFile modJar) throws ModIdFailedException {
+		System.out.println("reading node");
+		try {
+			ObjectMapper map = new ObjectMapper();
+			System.out.println(map.writerWithDefaultPrettyPrinter().writeValueAsString(map.readValue(modInfo.toString(), Object.class)));
+		}
+		catch (IOException ignored) { }
 		ModVersionFactory factory = new ModVersionFactory();
 		if (modInfo.has("name")) factory.withName(modInfo.get("name").textValue());
 		else throw new ModIdFailedException("Node doesn't have a name within the mcmod.info");
@@ -69,6 +76,9 @@ public class ModUtils {
 
 		if (modInfo.has("url")) factory.withUrl(modInfo.get("url").textValue());
 		else factory.withUrl("");
+
+		if (modInfo.has("description")) factory.withDescription(modInfo.get("description").textValue());
+		else factory.withDescription("<h1>Couldn't find a description</h1>");
 
 		modJar.stream().min(Comparator.comparing(ZipEntry::getLastModifiedTime))
 			.ifPresent(e -> factory.uploadedAt(LocalDateTime.ofInstant(e.getLastModifiedTime().toInstant(), ZoneId.systemDefault())));
@@ -154,22 +164,23 @@ public class ModUtils {
 	private void searchWithId(String id, String jarId, File file) throws ModIdNotFoundException {
 		try {
 			ModVersion v = CONFIG.getCachedMods().getMod(id);
-
 			if (v == null || v.getDescription() == null || !v.getFileName().equals(file.getName())) {
-				if(v != null) id = v.getModId();
+				if(v != null){
+					id = v.getModId();
+				}
 				try {
 					v = ModChecker.getForVersion(id, MINECRAFT_VERSION)
 						.getVersions()
 						.stream()
 						.filter(e -> e.getFileName().equals(file.getName()))
 						.findFirst()
-						.orElse(null);
+						.orElseThrow(() -> new ModIdNotFoundException(""));
+					((Version) v).setModId(id);
 				} catch (ModIdNotFoundException | ModIdFailedException ignore) {
 				}
 			}
 
 			if (v != null) {
-				CONFIG.getCachedMods().addMod(jarId, v);
 				addMod(jarId, v);
 				return;
 			}
@@ -181,6 +192,10 @@ public class ModUtils {
 	}
 
 	public void addMod(String modId, ModVersion mod) {
+		StackTraceElement elements = Thread.currentThread().getStackTrace()[2];
+		System.out.println("Adding " + modId + ": "+ mod.getFileName());
+		System.out.println(elements.getFileName() + ": " + elements.getLineNumber());
+		Config.getInstance().getCachedMods().addMod(modId, mod);
 		mods.put(modId, mod);
 	}
 
@@ -189,7 +204,8 @@ public class ModUtils {
 		return mods.values().toArray(new ModVersion[0]);
 	}
 
-	private void setMods() {
+	public void setMods() {
+		mods.clear();
 		File f = new File(DOT_MINECRAFT_LOCATION);
 		if (f.exists() && f.isDirectory()) {
 			f = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
