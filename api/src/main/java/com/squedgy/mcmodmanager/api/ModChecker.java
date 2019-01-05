@@ -114,7 +114,7 @@ public abstract class ModChecker {
 		} catch (FileNotFoundException e) {
 			throw new IOException(e.getMessage());
 		} catch (Exception e) {
-			throw new ModIdFoundConnectionFailed(String.format("Unkown Error with mod %s.\n%s", mod, e.getMessage()), e);
+			throw new ModIdFoundConnectionFailed(String.format("Unknown Error with mod %s: %s", mod, e.getMessage()), e);
 		}
 	}
 

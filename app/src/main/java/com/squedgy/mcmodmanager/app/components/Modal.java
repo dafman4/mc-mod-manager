@@ -3,6 +3,7 @@ package com.squedgy.mcmodmanager.app.components;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
@@ -41,24 +42,25 @@ public class Modal {
 		holder.prefHeightProperty().bind(root.heightProperty().subtract(2));
 		root.minWidthProperty().setValue(500);
 		root.minHeightProperty().setValue(300);
+		holder.setPadding(new Insets(5,5,5,5));
 	}
 
 	public void setContent(Control node) {
-		root.setContent(node);
-		node.prefWidthProperty().bind(root.widthProperty().subtract(2));
-		node.prefHeightProperty().bind(root.heightProperty().subtract(2));
+		holder.getChildren().setAll(node);
+		node.prefWidthProperty().bind(holder.widthProperty());
+		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(Region node) {
-		root.setContent(node);
-		node.prefWidthProperty().bind(root.widthProperty().subtract(2));
-		node.prefHeightProperty().bind(root.heightProperty().subtract(2));
+		holder.getChildren().setAll(node);
+		node.prefWidthProperty().bind(holder.widthProperty());
+		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(WebView node) {
-		root.setContent(node);
-		node.prefWidthProperty().bind(root.widthProperty().subtract(2));
-		node.prefHeightProperty().bind(root.heightProperty().subtract(2));
+		holder.getChildren().setAll(node);
+		node.prefWidthProperty().bind(holder.widthProperty());
+		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public ScrollPane getRoot() {

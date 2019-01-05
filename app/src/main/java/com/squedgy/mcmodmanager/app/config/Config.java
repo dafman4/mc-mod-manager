@@ -43,17 +43,13 @@ public class Config {
 		return instance;
 	}
 
-	public Cacher getCachedMods() {
-		return cachedMods;
-	}
+	public Cacher getCachedMods() { return cachedMods; }
 
-	public String getProperty(String key) {
-		return CONFIG.get(key);
-	}
+	public String getProperty(String key) { return CONFIG.get(key); }
 
-	public String setProperty(String key, String prop) {
-		return CONFIG.put(key, prop);
-	}
+	public String setProperty(String key, String prop) { return CONFIG.put(key, prop); }
+
+	public void deleteProperty(String key){ CONFIG.remove(key); }
 
 	public Map<String, String> readProps() throws Exception {
 		return readProps(CONFIG_FILE_PATH);
@@ -65,14 +61,12 @@ public class Config {
 		return READER.read();
 	}
 
-	public void writeProps() {
-		writeProps(CONFIG_FILE_PATH, CONFIG);
-	}
+	public void writeProps() { writeProps(CONFIG_FILE_PATH, CONFIG); }
 
 	public <T> void writeProps(Map<String, T> config) {
 		//Props = CONFIG
 		Map<String, String> props = new HashMap<>(CONFIG);
-		//Add all the new props (therefore overriding existing if necessary
+		//Add all the new props (therefore overriding existing if necessary)
 		props.putAll(
 			config.entrySet()
 				.stream()

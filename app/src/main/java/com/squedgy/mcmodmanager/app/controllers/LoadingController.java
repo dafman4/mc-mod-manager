@@ -11,7 +11,6 @@ import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
 public class LoadingController {
 
-	private static Stage s;
 	@FXML
 	private WebView root;
 

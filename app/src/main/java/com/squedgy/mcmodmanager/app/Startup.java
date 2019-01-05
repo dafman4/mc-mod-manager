@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Startup extends Application {
@@ -49,6 +50,14 @@ public class Startup extends Application {
 
 	public static URL getResource(String resource) {
 		return Thread.currentThread().getContextClassLoader().getResource(resource);
+	}
+
+	public static URL getOustideLocalResource(String path) throws MalformedURLException {
+		return new File(path).toURI().toURL();
+	}
+
+	public static URL getHttpResource(String link) throws MalformedURLException {
+		return new URL(link);
 	}
 
 	public static Scene getParent() {

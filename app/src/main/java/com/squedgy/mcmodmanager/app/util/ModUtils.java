@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
@@ -198,13 +199,13 @@ public class ModUtils {
 	private void addMod(IdResult mod){ addMod(mod.jarId, mod.mod); }
 
 	public void addMod(String modId, ModVersion mod) {
-		Config.getInstance().getCachedMods().addMod(modId, mod);
+		//if doesn't contain a / or a \ (files at that point)
+		if(!modId.contains("/") && !modId.contains("\\")) Config.getInstance().getCachedMods().addMod(modId, mod);
+		else AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
 		mods.put(modId, mod);
 	}
 
-	public ModVersion getMod(String id){
-		return mods.get(id);
-	}
+	public ModVersion getMod(String id){ return mods.get(id); }
 
 	public ModVersion[] getMods() {
 		if (mods.size() == 0) setMods();

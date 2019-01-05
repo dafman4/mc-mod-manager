@@ -64,8 +64,9 @@ public class TableViewController {
 		loader.setController(this);
 		loader.load();
 
+		WebView w = new LoadingController().getRoot();
 
-		root.setContent(new LoadingController().getRoot());
+		root.setContent(w);
 		ModLoadingThread t = new ModLoadingThread((mods) -> {
 			try {
 				table = new ModVersionTableController(mods.toArray(new ModVersion[0]));
