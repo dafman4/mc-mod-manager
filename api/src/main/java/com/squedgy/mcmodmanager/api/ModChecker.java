@@ -8,22 +8,19 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.CacheRetrievalException;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.CachingFailedException;
+import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
 import com.squedgy.mcmodmanager.api.response.CurseForgeResponseDeserializer;
-import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Comparator;
-import java.util.concurrent.TimeUnit;
-import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 public abstract class ModChecker {
@@ -47,7 +44,7 @@ public abstract class ModChecker {
 		while (currentWrite.equals(mod + "." + mcVersion)) ;
 		try {
 			setReadWrite(() -> currentRead = mod + "." + mcVersion);
-			ret = Cacher.getInstance(mcVersion).getMod(mod);
+			ret = Cacher.reading(Cacher.MOD_CACHE_DIRECTORY + mcVersion + ".json", new JsonModVersionDeserializer()).getItem(mod);
 		} catch (Exception e) {
 			throw new CacheRetrievalException();
 		} finally {
@@ -63,8 +60,9 @@ public abstract class ModChecker {
 			setReadWrite(() -> currentWrite = modId + "." + fromCurse);
 			File f = new File(dotMinecraft + File.separator + fromCurse.getFileName());
 			if (f.exists()) {
-				Cacher c = Cacher.getInstance(mcVersion);
-				c.addMod(modId, fromCurse);
+				Cacher c = Cacher.reading(Cacher.MOD_CACHE_DIRECTORY + mcVersion + ".json");
+				c.putItem(modId, fromCurse);
+				c.writeCache();
 			}
 		} catch (Exception e) {
 			AppLogger.error(e, ModChecker.class);

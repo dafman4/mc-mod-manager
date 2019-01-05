@@ -63,9 +63,7 @@ public class Modal {
 		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
-	public ScrollPane getRoot() {
-		return root;
-	}
+	public ScrollPane getRoot() { return root; }
 
 	public void open(Window owner) {
 		setUp(owner);

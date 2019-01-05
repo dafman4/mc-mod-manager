@@ -52,12 +52,16 @@ public class Startup extends Application {
 		return Thread.currentThread().getContextClassLoader().getResource(resource);
 	}
 
-	public static URL getOustideLocalResource(String path) throws MalformedURLException {
-		return new File(path).toURI().toURL();
+	public static URL getOustideLocalResource(String path) {
+		File f = new File(path);
+		if(!f.toPath().getParent().toFile().exists()) if(!f.toPath().getParent().toFile().mkdirs()) return null;
+		try { return f.toURI().toURL(); }
+		catch (MalformedURLException e) { return null; }
 	}
 
-	public static URL getHttpResource(String link) throws MalformedURLException {
-		return new URL(link);
+	public static URL getHttpResource(String link) {
+		try { return new URL(link); }
+		catch (MalformedURLException e) { return null; }
 	}
 
 	public static Scene getParent() {

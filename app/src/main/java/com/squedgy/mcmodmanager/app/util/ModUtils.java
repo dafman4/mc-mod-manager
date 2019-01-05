@@ -3,25 +3,25 @@ package com.squedgy.mcmodmanager.app.util;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.api.cache.Cacher;
-import com.squedgy.mcmodmanager.api.response.*;
-import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
+import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
+import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
+import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
 import com.squedgy.mcmodmanager.app.config.Config;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.nio.file.FileSystems;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
 import java.util.jar.JarFile;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
@@ -33,6 +33,7 @@ public class ModUtils {
 
 	private static final Map<String, String> badJars = new HashMap<>();
 	private static final Map<String, ModVersion> mods = new HashMap<>();
+	public static final String NO_MOD_INFO = "mcmod.info doesn't exist";
 	private static ModUtils instance;
 	public final Config CONFIG;
 
@@ -63,7 +64,7 @@ public class ModUtils {
 				//Ensure that an mcmod.info file exists
 				ZipEntry e = file.getEntry("mcmod.info");
 				if (e == null) {
-					addBadJar(f.getName(), "mcmod.info doesn't exist");
+					addBadJar(f.getName(), NO_MOD_INFO);
 					continue;
 				}
 				try {
@@ -128,8 +129,8 @@ public class ModUtils {
 
 	public IdResult getRealModId(JarFile file) throws ModIdNotFoundException{
 		List<Exception> issues = new LinkedList<>();
-		String[] ids = Cacher.getJarModIds(file);
-		String[] names = Cacher.getJarModNames(file);
+		String[] ids = getJarModIds(file);
+		String[] names = getJarModNames(file);
 		IdResult ret = new IdResult();
 		ModVersion test = null;
 		try {
@@ -163,7 +164,7 @@ public class ModUtils {
 	}
 
 	public ModVersion matchesExistingId(String id, String fileName) throws IOException, ModIdFoundConnectionFailed {
-		ModVersion ret = Config.getInstance().getCachedMods().getMod(id);
+		ModVersion ret = Config.getInstance().getCachedMods().getItem(id);
 		List<ModVersion> versions;
 		if(ret == null ){
 			versions = ModChecker.getForVersion(id, MINECRAFT_VERSION)
@@ -200,7 +201,7 @@ public class ModUtils {
 
 	public void addMod(String modId, ModVersion mod) {
 		//if doesn't contain a / or a \ (files at that point)
-		if(!modId.contains("/") && !modId.contains("\\")) Config.getInstance().getCachedMods().addMod(modId, mod);
+		if(!modId.contains("/") && !modId.contains("\\")) Config.getInstance().getCachedMods().putItem(modId, mod);
 		else AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
 		mods.put(modId, mod);
 	}
@@ -250,5 +251,63 @@ public class ModUtils {
 
 		public IdResult(){ }
 
+	}
+
+
+
+	public static String[] getJarModNames(JarFile file){
+		ZipEntry e = file.getEntry("mcmod.info");
+		if(e != null && !e.isDirectory()){
+			ObjectMapper mapper = new ObjectMapper();
+			try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
+				JsonNode root = mapper.readValue(reader.lines().map(
+					l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
+					JsonNode.class
+				);
+				if(root.has("modList"))root = root.get("modList");
+
+				if(root.isArray()) return readNodeForNames((ArrayNode) root);
+				else return new String[] {root.get("name").textValue()};
+
+			}catch(IOException ignored ){ }
+		}
+		return new String[0];
+	}
+
+	private static String[] readNodeForNames(ArrayNode node){
+		String[] ret = new String[node.size()];
+		for(int i = 0; i < node.size(); i++){
+			if(node.get(i).has("name")) ret[i] = node.get(i).get("name").textValue();
+			else ret[i] = null;
+		}
+		return ret;
+	}
+
+	private static String[] readNodeForIds(ArrayNode node){
+		String[] ret = new String[node.size()];
+		for(int i = 0; i < node.size(); i++){
+			if(node.get(i).has("modid")) ret[i] = node.get(i).get("modid").textValue();
+			else ret[i] = null;
+		}
+		return ret;
+	}
+
+	public static String[] getJarModIds(JarFile file) {
+		ZipEntry e = file.getEntry("mcmod.info");
+		if(e != null && !e.isDirectory()){
+			ObjectMapper mapper = new ObjectMapper();
+			try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
+				JsonNode root = mapper.readValue(reader.lines().map(
+					l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
+					JsonNode.class
+				);
+				if(root.has("modList"))root = root.get("modList");
+
+				if(root.isArray()) return readNodeForIds((ArrayNode) root);
+				else if(root.has("modid")) return new String[] {root.get("modid").textValue()};
+
+			}catch(IOException ignored ){ }
+		}
+		return new String[0];
 	}
 }

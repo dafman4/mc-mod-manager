@@ -1,109 +1,55 @@
 package com.squedgy.mcmodmanager.api.cache;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.DeserializerFactory;
+import com.fasterxml.jackson.databind.deser.Deserializers;
+import com.fasterxml.jackson.databind.deser.std.JsonNodeDeserializer;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.jar.JarFile;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
 
-public class Cacher {
+public class Cacher <ValueType>{
 
 	public static final String MOD_CACHE_DIRECTORY = "cache" + File.separator;
-	private static Cacher instance;
-	private Map<String, ModVersion> cachedMods;
+	private Map<String, ValueType> cachedMods;
 	private String fileName;
 
-	private Cacher(String mcVersion) {
+	private Cacher(String file, JsonDeserializer<Map<String,ValueType>> deserializer) {
+		fileName = file;
+		loadCache(deserializer);
+	}
+
+	private Cacher(String file){
+		fileName = file;
+		cachedMods = loadCache();
+	}
+
+	public static <T>  Cacher<T> reading(String file, JsonDeserializer<Map<String,T>> deserializer) {
+		return new Cacher<>(file, deserializer);
+	}
+
+	public static Cacher<JsonNode> reading(String file){
+		return new Cacher<>(file);
+	}
+
+	public synchronized void loadCache(JsonDeserializer<Map<String,ValueType>> deserializer) {
 		try {
-			fileName = MOD_CACHE_DIRECTORY + mcVersion + ".json";
-			loadCache(mcVersion);
-		} catch (Exception e) {
-			AppLogger.error(e, getClass());
-			throw new RuntimeException();
-		}
-
-	}
-
-	public static Cacher getInstance(String mc) {
-		if (instance == null) {
-			instance = new Cacher(mc);
-		}
-		return instance;
-	}
-
-	public static String[] getJarModNames(JarFile file){
-		ZipEntry e = file.getEntry("mcmod.info");
-		if(e != null && !e.isDirectory()){
-			ObjectMapper mapper = new ObjectMapper();
-			try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
-				JsonNode root = mapper.readValue(reader.lines().map(
-					l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
-					JsonNode.class
-				);
-				if(root.has("modList"))root = root.get("modList");
-
-				if(root.isArray()) return readNodeForNames((ArrayNode) root);
-				else return new String[] {root.get("name").textValue()};
-
-			}catch(IOException ignored ){ }
-		}
-		return new String[0];
-	}
-
-	private static String[] readNodeForNames(ArrayNode node){
-		String[] ret = new String[node.size()];
-		for(int i = 0; i < node.size(); i++){
-			if(node.get(i).has("name")) ret[i] = node.get(i).get("name").textValue();
-			else ret[i] = null;
-		}
-		return ret;
-	}
-
-	private static String[] readNodeForIds(ArrayNode node){
-		String[] ret = new String[node.size()];
-		for(int i = 0; i < node.size(); i++){
-			if(node.get(i).has("modid")) ret[i] = node.get(i).get("modid").textValue();
-			else ret[i] = null;
-		}
-		return ret;
-	}
-
-	public static String[] getJarModIds(JarFile file) {
-		ZipEntry e = file.getEntry("mcmod.info");
-		if(e != null && !e.isDirectory()){
-			ObjectMapper mapper = new ObjectMapper();
-			try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
-				JsonNode root = mapper.readValue(reader.lines().map(
-					l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()),
-					JsonNode.class
-				);
-				if(root.has("modList"))root = root.get("modList");
-
-				if(root.isArray()) return readNodeForIds((ArrayNode) root);
-				else if(root.has("modid")) return new String[] {root.get("modid").textValue()};
-
-			}catch(IOException ignored ){ }
-		}
-		return new String[0];
-	}
-
-	public synchronized void loadCache(String mcVersion) {
-		try {
-			TypeReference<Map<String, ModVersion>> ref = new TypeReference<Map<String, ModVersion>>() {
-			};
+			TypeReference<Map<String, ModVersion>> ref = new TypeReference<Map<String, ModVersion>>() {};
 			SimpleModule module = new SimpleModule();
-			Class<Map<String, ModVersion>> clz;
-			clz = (Class<Map<String, ModVersion>>) (Class) Map.class;
-			module.addDeserializer(clz, new JsonModVersionDeserializer());
+			Class<Map<String, ValueType>> clz;
+			clz = (Class<Map<String, ValueType>>) (Class) Map.class;
+			module.addDeserializer(clz, deserializer);
 			cachedMods = new ObjectMapper()
 				.registerModule(module)
 				.readValue(new File(fileName), ref);
@@ -113,6 +59,23 @@ public class Cacher {
 			AppLogger.error(e, getClass());
 			cachedMods = new HashMap<>();
 		}
+	}
+
+	public synchronized <T> Map<String,T> loadCache(){
+		HashMap<String, T> ret = new HashMap<>();
+		try{
+			new ObjectMapper()
+				.readTree(new File(fileName))
+				.fields()
+				.forEachRemaining(field -> ret.put(field.getKey(), (T)field.getValue()));
+			return ret;
+		}catch(FileNotFoundException e){
+			ret.clear();
+		}catch(Exception e){
+			AppLogger.error(e, getClass());
+			ret.clear();
+		}
+		return ret;
 	}
 
 	public synchronized void writeCache() throws IOException {
@@ -127,8 +90,8 @@ public class Cacher {
 		}
 	}
 
-	public void addMod(String modId, ModVersion version) { cachedMods.put(modId, version); }
+	public void putItem(String modId, ValueType version) { cachedMods.put(modId, version); }
 
-	public ModVersion getMod(String modId) { return cachedMods.get(modId); }
+	public ValueType getItem(String modId) { return cachedMods.get(modId); }
 
 }

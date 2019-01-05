@@ -4,13 +4,10 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.api.cache.CacheRetrievalException;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.util.Callback;
-
-import java.util.Comparator;
 
 public class ModInfoThread extends Thread {
 
@@ -30,7 +27,7 @@ public class ModInfoThread extends Thread {
 
 	@Override
 	public void run() {
-		ModVersion ret = Config.getInstance().getCachedMods().getMod(toFind.getModId());
+		ModVersion ret = Config.getInstance().getCachedMods().getItem(toFind.getModId());
 		if(ret != null) {
 			callback.call(ret);
 			return;

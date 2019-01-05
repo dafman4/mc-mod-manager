@@ -1,8 +1,6 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.api.response.Version;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.components.PublicNode;
@@ -10,7 +8,6 @@ import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.threads.ModLoadingThread;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -190,6 +187,13 @@ public class TableViewController {
 		m.setContent(t);
 		m.open(Startup.getParent().getWindow());
 		t.getStyleClass().add("mod-table");
+	}
+
+	@FXML
+	public void setJarIds(Event e) throws IOException {
+		Modal m = Modal.getInstance();
+
+
 	}
 
 }

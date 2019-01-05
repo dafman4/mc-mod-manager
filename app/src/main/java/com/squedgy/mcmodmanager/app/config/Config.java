@@ -3,10 +3,13 @@ package com.squedgy.mcmodmanager.app.config;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
+import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
+import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
 import javafx.scene.control.TableColumn;
 
+import java.io.File;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
@@ -17,23 +20,24 @@ import static com.squedgy.mcmodmanager.app.Startup.MINECRAFT_VERSION;
 
 public class Config {
 
-	public static final String CONFIG_DIRECTORY = "config/";
+	public static final String CONFIG_DIRECTORY = "config" + File.separator;
 	public static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY + "manager.json";
+	public static final String CACHE_DIRECTORY = "cache" + File.separator;
 	private static final String TABLE_CONFIG = "table.";
 	private static final JsonFileFormat format = new JsonFileFormat();
 	private static final FileReader<Map<String, String>> READER = new FileReader<>(CONFIG_FILE_PATH, format);
 	private static final FileWriter<Map<String, String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH, format, false);
 	private static Map<String, String> CONFIG;
 	private static Config instance;
-	private final Cacher cachedMods;
+	private Cacher<ModVersion> cachedMods;
 
 	private Config() {
 		try {
 			CONFIG = readProps();
+			setCacher(MINECRAFT_VERSION);
 		} catch (Exception e) {
 			CONFIG = new HashMap<>();
 		}
-		cachedMods = Cacher.getInstance(MINECRAFT_VERSION);
 	}
 
 	public static Config getInstance() {
@@ -43,7 +47,7 @@ public class Config {
 		return instance;
 	}
 
-	public Cacher getCachedMods() { return cachedMods; }
+	public Cacher<ModVersion> getCachedMods() { return cachedMods; }
 
 	public String getProperty(String key) { return CONFIG.get(key); }
 
@@ -108,6 +112,10 @@ public class Config {
 		//Add CONFIG so it's all nice and dandy
 		props.putAll(CONFIG);
 		writeProps(CONFIG_FILE_PATH, props);
+	}
+
+	public void setCacher(String mcVersion){
+		cachedMods = Cacher.reading(CACHE_DIRECTORY + MINECRAFT_VERSION + ".json", new JsonModVersionDeserializer());
 	}
 
 }

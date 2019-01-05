@@ -17,7 +17,7 @@ import static com.squedgy.mcmodmanager.api.abstractions.ModVersion.*;
 
 public class JsonModVersionDeserializer extends StdDeserializer<Map<String, ModVersion>> {
 
-	protected JsonModVersionDeserializer() {
+	public JsonModVersionDeserializer() {
 		super(JsonModVersionSerializer.DEFAULT_TYPE);
 	}
 
