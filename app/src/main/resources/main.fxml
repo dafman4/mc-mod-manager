@@ -16,6 +16,7 @@
 			<Button text="Check for Updates" fx:id="updates" onMouseReleased="#searchForUpdates"/>
 			<Button text="Bad Jars" fx:id="badJars" onMouseReleased="#showBadJars"/>
 			<Button text="Set Ids" fx:id="jarIds" onMouseReleased="#setJarIds"/>
+			<Button text="Add Mod(s)" fx:id="newMods" onMouseReleased="#setJarIds"/>
 		</HBox>
 		<GridPane fx:id="listGrid" prefWidth="${root.width}">
 			<WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0"/>

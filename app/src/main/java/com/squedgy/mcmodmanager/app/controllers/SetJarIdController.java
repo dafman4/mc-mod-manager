@@ -7,6 +7,7 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.Version;
 import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,7 +35,6 @@ public class SetJarIdController {
 
 	@FXML
 	public void initialize(){
-
 		ModUtils.viewBadJars().forEach((id, reason) -> {
 			if(!reason.equals(ModUtils.NO_MOD_INFO)){
 				ModVersion version = id.mod;

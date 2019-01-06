@@ -1,5 +1,6 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
@@ -55,12 +56,25 @@ public class TableViewController {
 	private ModCheckingThread checking;
 	private ModInfoThread gathering;
 
-	public TableViewController() throws IOException {
+	private static TableViewController instance;
 
+	public static TableViewController getInstance() throws IOException {
+		if(instance == null) instance = new TableViewController();
+		return instance;
+	}
+
+	private TableViewController() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("main.fxml"));
 		loader.setController(this);
 		loader.load();
+	}
 
+	@FXML
+	public void initialize() throws IOException {
+		loadMods();
+	}
+
+	public void loadMods() throws IOException {
 		WebView w = new LoadingController().getRoot();
 
 		root.setContent(w);
@@ -168,28 +182,8 @@ public class TableViewController {
 
 		Modal m = Modal.getInstance();
 
-		TableView<PublicNode> t = new TableView<>();
-		ObservableList<PublicNode> list = FXCollections.observableArrayList(ModUtils.viewBadJars().entrySet().stream().map(PublicNode::new).collect(Collectors.toList()));
-		t.setItems(list);
-		ObservableList<TableColumn<PublicNode, String>> columns = FXCollections.observableArrayList();
-
-		TableColumn<PublicNode, String> toAdd = new TableColumn<>();
-		toAdd.setText("File");
-		toAdd.setCellValueFactory(item ->{
-			ModVersion v = item.getValue().getKey();
-			return new SimpleStringProperty(v != null ? v.getFileName() : "A mod");
-		});
-		columns.add(toAdd);
-		toAdd = new TableColumn<>();
-		toAdd.setText("Reason");
-		columns.add(toAdd);
-		toAdd.setCellValueFactory(item -> new SimpleStringProperty(item.getValue().getValue()));
-		t.getColumns().setAll(columns);
-		t.refresh();
-
-		m.setContent(t);
+		m.setContent(new BadJarsController().getRoot());
 		m.open(Startup.getParent().getWindow());
-		t.getStyleClass().add("mod-table");
 	}
 
 	@FXML
@@ -199,6 +193,16 @@ public class TableViewController {
 		m.setContent(new SetJarIdController().getRoot());
 
 		m.openAndWait(Startup.getParent().getWindow());
+		m.setAfterClose(e2 -> {
+			try { loadMods(); }
+			catch (IOException e1) { AppLogger.error(e1, getClass()); }
+		});
+	}
+
+	@FXML
+	public void newMods(Event e) throws IOException{
+		Modal m = Modal.getInstance();
+
 
 	}
 

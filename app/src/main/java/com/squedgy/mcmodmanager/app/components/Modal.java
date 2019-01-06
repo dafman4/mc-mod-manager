@@ -1,6 +1,7 @@
 package com.squedgy.mcmodmanager.app.components;
 
 
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -13,6 +14,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
@@ -31,6 +33,7 @@ public class Modal {
 
 	public static Modal getInstance() throws IOException {
 		if(instance == null) instance = new Modal();
+		instance.setAfterClose(e -> {});
 		return instance;
 	}
 
@@ -68,6 +71,10 @@ public class Modal {
 	public void open(Window owner) {
 		setUp(owner);
 		stage.show();
+	}
+
+	public void setAfterClose(EventHandler<WindowEvent> e){
+		if(stage != null) stage.onCloseRequestProperty().setValue(e);
 	}
 
 	public void openAndWait(Window window) {

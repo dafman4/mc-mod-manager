@@ -114,7 +114,7 @@ public class Version implements ModVersion {
 			",uploadedAt=" + uploadedAt +
 			",modName='" + modName + '\'' +
 			",modId='" + modId + '\'' +
-			",description='" + description.replace('\n', ' ') + '\''
+			",description='" + (description != null ? description.replace('\n', ' '): "null") + '\''
 			+ '}';
 	}
 
