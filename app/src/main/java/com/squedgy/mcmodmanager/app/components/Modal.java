@@ -23,20 +23,12 @@ import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
 public class Modal {
 
+	private static Modal instance;
 	@FXML
 	public ScrollPane root;
 	@FXML
 	public VBox holder;
-
 	private Stage stage;
-
-	private static Modal instance;
-
-	public static Modal getInstance() throws IOException {
-		if(instance == null) instance = new Modal();
-		instance.setAfterClose(e -> {});
-		return instance;
-	}
 
 	private Modal() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modal.fxml"));
@@ -46,7 +38,14 @@ public class Modal {
 		holder.prefHeightProperty().bind(root.heightProperty().subtract(2));
 		root.minWidthProperty().setValue(500);
 		root.minHeightProperty().setValue(300);
-		holder.setPadding(new Insets(5,5,5,5));
+		holder.setPadding(new Insets(5, 5, 5, 5));
+	}
+
+	public static Modal getInstance() throws IOException {
+		if (instance == null) instance = new Modal();
+		instance.setAfterClose(e -> {
+		});
+		return instance;
 	}
 
 	public void setContent(Control node) {
@@ -67,23 +66,25 @@ public class Modal {
 		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
-	public void bindMinHeight(ObservableNumberValue v){
+	public void bindMinHeight(ObservableNumberValue v) {
 		root.minHeightProperty().bind(v);
 	}
 
-	public void bindMinWidth(ObservableNumberValue v){
+	public void bindMinWidth(ObservableNumberValue v) {
 		root.minWidthProperty().bind(v);
 	}
 
-	public ScrollPane getRoot() { return root; }
+	public ScrollPane getRoot() {
+		return root;
+	}
 
 	public void open(Window owner) {
 		setUp(owner);
 		stage.show();
 	}
 
-	public void setAfterClose(EventHandler<WindowEvent> e){
-		if(stage != null) stage.onCloseRequestProperty().setValue(e);
+	public void setAfterClose(EventHandler<WindowEvent> e) {
+		if (stage != null) stage.onCloseRequestProperty().setValue(e);
 	}
 
 	public void openAndWait(Window window) {

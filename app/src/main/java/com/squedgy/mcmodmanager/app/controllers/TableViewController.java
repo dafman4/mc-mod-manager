@@ -4,22 +4,17 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
-import com.squedgy.mcmodmanager.app.components.PublicNode;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.threads.ModLoadingThread;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -29,12 +24,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
 public class TableViewController {
 
+	private static TableViewController instance;
 	private ModVersionTableController table;
 	@FXML
 	private Button columns;
@@ -52,21 +47,18 @@ public class TableViewController {
 	private VBox content;
 	@FXML
 	private HBox buttons;
-
 	private ModCheckingThread checking;
 	private ModInfoThread gathering;
-
-	private static TableViewController instance;
-
-	public static TableViewController getInstance() throws IOException {
-		if(instance == null) instance = new TableViewController();
-		return instance;
-	}
 
 	private TableViewController() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("main.fxml"));
 		loader.setController(this);
 		loader.load();
+	}
+
+	public static TableViewController getInstance() throws IOException {
+		if (instance == null) instance = new TableViewController();
+		return instance;
 	}
 
 	@FXML
@@ -117,12 +109,17 @@ public class TableViewController {
 		t.start();
 	}
 
-	public ScrollPane getRoot() { return root; }
+	public ScrollPane getRoot() {
+		return root;
+	}
 
-	public void setItems(List<ModVersion> mods) { table.setItems(FXCollections.observableArrayList(mods)); }
+	public List<ModVersion> getItems() {
+		return table.getItems();
+	}
 
-	public List<ModVersion> getItems() { return table.getItems(); }
-
+	public void setItems(List<ModVersion> mods) {
+		table.setItems(FXCollections.observableArrayList(mods));
+	}
 
 	private synchronized void updateObjectView(String description) {
 		objectView.getEngine().loadContent(
@@ -135,9 +132,13 @@ public class TableViewController {
 	}
 
 	@FXML
-	public void setColumns(Event e) { ModUtils.getInstance().CONFIG.writeColumnOrder(table.getColumns()); }
+	public void setColumns(Event e) {
+		ModUtils.getInstance().CONFIG.writeColumnOrder(table.getColumns());
+	}
 
-	public void updateModList() { setItems(Arrays.asList(ModUtils.getInstance().getMods())); }
+	public void updateModList() {
+		setItems(Arrays.asList(ModUtils.getInstance().getMods()));
+	}
 
 	@FXML
 	public void searchForUpdates(Event e) {
@@ -195,13 +196,16 @@ public class TableViewController {
 
 		m.openAndWait(Startup.getParent().getWindow());
 		m.setAfterClose(e2 -> {
-			try { loadMods(); }
-			catch (IOException e1) { AppLogger.error(e1, getClass()); }
+			try {
+				loadMods();
+			} catch (IOException e1) {
+				AppLogger.error(e1, getClass());
+			}
 		});
 	}
 
 	@FXML
-	public void newMods(Event e) throws IOException{
+	public void newMods(Event e) throws IOException {
 		Modal m = Modal.getInstance();
 
 

@@ -1,11 +1,9 @@
 package com.squedgy.mcmodmanager.app.config;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
-import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
 import javafx.scene.control.TableColumn;
@@ -48,13 +46,21 @@ public class Config {
 		return instance;
 	}
 
-	public Cacher<ModVersion> getCachedMods() { return cachedMods; }
+	public Cacher<ModVersion> getCachedMods() {
+		return cachedMods;
+	}
 
-	public String getProperty(String key) { return CONFIG.get(key); }
+	public String getProperty(String key) {
+		return CONFIG.get(key);
+	}
 
-	public String setProperty(String key, String prop) { return CONFIG.put(key, prop); }
+	public String setProperty(String key, String prop) {
+		return CONFIG.put(key, prop);
+	}
 
-	public void deleteProperty(String key){ CONFIG.remove(key); }
+	public void deleteProperty(String key) {
+		CONFIG.remove(key);
+	}
 
 	public Map<String, String> readProps() throws Exception {
 		return readProps(CONFIG_FILE_PATH);
@@ -66,7 +72,9 @@ public class Config {
 		return READER.read();
 	}
 
-	public void writeProps() { writeProps(CONFIG_FILE_PATH, CONFIG); }
+	public void writeProps() {
+		writeProps(CONFIG_FILE_PATH, CONFIG);
+	}
 
 	public <T> void writeProps(Map<String, T> config) {
 		//Props = CONFIG
@@ -115,7 +123,7 @@ public class Config {
 		writeProps(CONFIG_FILE_PATH, props);
 	}
 
-	public void setCacher(String mcVersion){
+	public void setCacher(String mcVersion) {
 		cachedMods = Cacher.reading(CACHE_DIRECTORY + MINECRAFT_VERSION + ".json", new JsonModVersionDeserializer());
 	}
 

@@ -2,11 +2,13 @@ package com.squedgy.mcmodmanager.app.util;
 
 public class Result {
 
+	private final String oldFile;
 	private boolean result;
 	private String reason;
-	private final String oldFile;
 
-	public Result(boolean result, String oldFile) { this(result, oldFile, "" + result); }
+	public Result(boolean result, String oldFile) {
+		this(result, oldFile, "" + result);
+	}
 
 	public Result(boolean result, String oldFile, String reason) {
 		this.reason = reason;

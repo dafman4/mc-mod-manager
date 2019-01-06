@@ -17,8 +17,8 @@ import java.net.URL;
 
 public class Startup extends Application {
 
-	public static String DOT_MINECRAFT_LOCATION;
 	public static final String CUSTOM_DIR = "mc-dir";
+	public static String DOT_MINECRAFT_LOCATION;
 	public static String MINECRAFT_VERSION = "1.12.2";
 	private static Scene PARENT;
 	private static Startup instance;
@@ -51,13 +51,13 @@ public class Startup extends Application {
 		else DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + File.separator + ".minecraft";
 
 		File dotMc = new File(DOT_MINECRAFT_LOCATION);
-		if(!dotMc.exists() || !dotMc.toPath().resolve("mods").toFile().exists()){
+		if (!dotMc.exists() || !dotMc.toPath().resolve("mods").toFile().exists()) {
 			DOT_MINECRAFT_LOCATION = null;
-			while(!chooseMinecraftDirectory()) chooseMinecraftDirectory();
+			while (!chooseMinecraftDirectory()) chooseMinecraftDirectory();
 		}
 
 
-		if(DOT_MINECRAFT_LOCATION != null) launch(args);
+		if (DOT_MINECRAFT_LOCATION != null) launch(args);
 		else AppLogger.info("Minecraft Directory not set, shutting down.", Startup.class);
 	}
 
@@ -79,13 +79,13 @@ public class Startup extends Application {
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 		int result = chooser.showSaveDialog(null);
-		if(result == JFileChooser.APPROVE_OPTION){
+		if (result == JFileChooser.APPROVE_OPTION) {
 			File f = new File(chooser.getSelectedFile().getAbsolutePath());
-									if(f.exists() && f.toPath().resolve("mods").toFile().exists()){
+			if (f.exists() && f.toPath().resolve("mods").toFile().exists()) {
 				DOT_MINECRAFT_LOCATION = f.getAbsolutePath();
 				Config.getInstance().setProperty(CUSTOM_DIR, DOT_MINECRAFT_LOCATION);
 				Config.getInstance().writeProps();
-			}else return false;
+			} else return false;
 		}
 		return true;
 	}
@@ -96,14 +96,20 @@ public class Startup extends Application {
 
 	public static URL getOustideLocalResource(String path) {
 		File f = new File(path);
-		if(!f.toPath().getParent().toFile().exists()) if(!f.toPath().getParent().toFile().mkdirs()) return null;
-		try { return f.toURI().toURL(); }
-		catch (MalformedURLException e) { return null; }
+		if (!f.toPath().getParent().toFile().exists()) if (!f.toPath().getParent().toFile().mkdirs()) return null;
+		try {
+			return f.toURI().toURL();
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 
 	public static URL getHttpResource(String link) {
-		try { return new URL(link); }
-		catch (MalformedURLException e) { return null; }
+		try {
+			return new URL(link);
+		} catch (MalformedURLException e) {
+			return null;
+		}
 	}
 
 	public static Scene getParent() {

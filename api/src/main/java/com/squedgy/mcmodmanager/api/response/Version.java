@@ -35,7 +35,7 @@ public class Version implements ModVersion {
 	}
 
 	public String getFileName() {
-		return fileName;
+		return (fileName == null ? fileName : fileName.replace('+', ' '));
 	}
 
 	public void setFileName(String fileName) {
@@ -114,7 +114,7 @@ public class Version implements ModVersion {
 			",uploadedAt=" + uploadedAt +
 			",modName='" + modName + '\'' +
 			",modId='" + modId + '\'' +
-			",description='" + (description != null ? description.replace('\n', ' '): "null") + '\''
+			",description='" + (description != null ? description.replace('\n', ' ') : "null") + '\''
 			+ '}';
 	}
 

@@ -3,7 +3,6 @@ package com.squedgy.mcmodmanager.app.controllers;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.web.WebView;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 

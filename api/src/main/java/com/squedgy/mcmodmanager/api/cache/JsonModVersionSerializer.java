@@ -26,9 +26,9 @@ public class JsonModVersionSerializer extends StdSerializer<Map<String, ModVersi
 	public void serialize(Map<String, ModVersion> map, JsonGenerator gen, SerializerProvider provider) throws IOException {
 		ObjectNode root = new ObjectNode(JsonNodeFactory.instance);
 		map.forEach((key, value) -> {
-			if(value != null) {
+			if (value != null) {
 				ObjectNode n = new ObjectNode(JsonNodeFactory.instance);
-				try{
+				try {
 					n.put(JSON_KEY_FILE_NAME, value.getFileName());
 					n.put(JSON_KEY_MOD_NAME, value.getModName());
 					n.put(JSON_KEY_DESCRIPTION, value.getDescription().replaceAll("\\r\\n|\\r|\\n", ""));
@@ -39,7 +39,8 @@ public class JsonModVersionSerializer extends StdSerializer<Map<String, ModVersi
 					n.put(JSON_KEY_RELEASE_TYPE, value.getTypeOfRelease());
 					n.put(JSON_KEY_UPLOADED_AT, value.getUploadedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
 					root.set(key, n);
-				}catch(Exception ignored){}
+				} catch (Exception ignored) {
+				}
 			}
 		});
 		gen.setPrettyPrinter(new DefaultPrettyPrinter()).getCodec().writeTree(gen, root);

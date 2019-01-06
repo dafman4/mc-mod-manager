@@ -1,7 +1,6 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.app.Startup;
-import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.components.PublicNode;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,7 +14,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import static com.squedgy.mcmodmanager.app.Startup.DOT_MINECRAFT_LOCATION;
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
 public class BadJarsController {
@@ -33,7 +31,7 @@ public class BadJarsController {
 	public void initialize() throws IOException {
 		root.setItems(FXCollections.observableArrayList(ModUtils.viewBadJars().entrySet().stream().map(PublicNode::new).collect(Collectors.toList())));
 		TableColumn<PublicNode, String> one = new TableColumn<>();
-		one.setCellValueFactory(v ->{
+		one.setCellValueFactory(v -> {
 			String fileName = v.getValue().getKey().getFileName();
 			return new SimpleStringProperty(fileName.contains(File.separator) ? fileName.substring((Startup.getModsDir() + File.separator).length()) : fileName);
 		});
@@ -48,6 +46,8 @@ public class BadJarsController {
 		root.refresh();
 	}
 
-	public TableView getRoot(){ return root; }
+	public TableView getRoot() {
+		return root;
+	}
 
 }

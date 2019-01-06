@@ -93,7 +93,7 @@ public abstract class ModChecker {
 			responseCode = con.getResponseCode();
 		}
 
-		if(responseCode >= 400 && responseCode < 500) throw new IOException(mod + " couldn't be found/accessed");
+		if (responseCode >= 400 && responseCode < 500) throw new IOException(mod + " couldn't be found/accessed");
 
 		try (BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
 			ObjectMapper mapper = new ObjectMapper()
@@ -146,11 +146,14 @@ public abstract class ModChecker {
 				connection.getHeaderFields().forEach((key, field) -> {
 					AppLogger.info(key + ": " + field, ModChecker.class);
 				});
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
+					AppLogger.info("\n" + reader.lines().collect(Collectors.joining("\n")), ModChecker.class);
+				}
 				return false;
 			}
 
 			boolean append = !v.getFileName().endsWith(".jar");
-			String path = (location + v.getFileName() + (append ? ".jar" : "")).replace('+', ' ');
+			String path = (location + v.getFileName() + (append ? ".jar" : ""));
 			try (
 				FileOutputStream outFile = new FileOutputStream(new File(path));
 				ReadableByteChannel in = Channels.newChannel(connection.getInputStream());
@@ -161,16 +164,18 @@ public abstract class ModChecker {
 				connection.disconnect();
 				return true;
 			}
-		}catch(Exception e){
+		} catch (Exception e) {
 			AppLogger.error(e, ModChecker.class);
 			return false;
 		}
 	}
 
-	private static String getUserAgentForOs(){
+	private static String getUserAgentForOs() {
 		String os = System.getProperty("os.name");
-		if (os.matches(".*[Ww]indows.*")) return "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0";
-		else if (os.matches(".*[Mm]ac [Oo][Ss].*")) return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0";
+		if (os.matches(".*[Ww]indows.*"))
+			return "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:65.0) Gecko/20100101 Firefox/65.0";
+		else if (os.matches(".*[Mm]ac [Oo][Ss].*"))
+			return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0";
 		else return "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0";
 	}
 

@@ -7,7 +7,6 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.Version;
 import com.squedgy.mcmodmanager.app.Startup;
-import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -34,18 +33,18 @@ public class SetJarIdController {
 	}
 
 	@FXML
-	public void initialize(){
+	public void initialize() {
 		ModUtils.viewBadJars().forEach((id, reason) -> {
-			if(!reason.equals(ModUtils.NO_MOD_INFO)){
+			if (!reason.equals(ModUtils.NO_MOD_INFO)) {
 				ModVersion version = id.mod;
-				if(version != null) {
+				if (version != null) {
 					HBox holder = new HBox();
 
 					Label label = new Label(version.getModName() + ":");
-					HBox.setMargin(label, new Insets(5,5,5,5));
+					HBox.setMargin(label, new Insets(5, 5, 5, 5));
 					label.fontProperty().setValue(new Font(16));
 					TextInputControl input = new TextField(version.getModId());
-					HBox.setMargin(input, new Insets(5,5,5,5));
+					HBox.setMargin(input, new Insets(5, 5, 5, 5));
 					Button b = new Button("Save");
 					b.onMouseReleasedProperty().setValue(e -> {
 						try {
@@ -55,16 +54,19 @@ public class SetJarIdController {
 								.filter(v -> v.getFileName().equals(version.getFileName()))
 								.findFirst()
 								.orElse(null);
-							if(found == null){
+							if (found == null) {
 								b.setText("Ignore Failure, and Save");
-								((Version)id.mod).setModId(input.getText());
-								b.onMouseReleasedProperty().setValue( e1 -> {
+								((Version) id.mod).setModId(input.getText());
+								b.onMouseReleasedProperty().setValue(e1 -> {
 									ModUtils.getInstance().addMod(id.jarId, id.mod);
-									try { ModUtils.getInstance().CONFIG.getCachedMods().writeCache(); }
-									catch (IOException e2) { AppLogger.error(e2.getMessage(), getClass()); }
+									try {
+										ModUtils.getInstance().CONFIG.getCachedMods().writeCache();
+									} catch (IOException e2) {
+										AppLogger.error(e2.getMessage(), getClass());
+									}
 								});
-							}else{
-								((Version)found).setModId(input.getText());
+							} else {
+								((Version) found).setModId(input.getText());
 								ModUtils.getInstance().addMod(id.jarId, found);
 								ModUtils.getInstance().CONFIG.getCachedMods().writeCache();
 								holder.getChildren().setAll(label, new Label(input.getText()), new Label("- success"));
@@ -73,7 +75,7 @@ public class SetJarIdController {
 							AppLogger.error(modIdFoundConnectionFailed.getMessage(), getClass());
 						}
 					});
-					HBox.setMargin(b, new Insets(5,5,5,5));
+					HBox.setMargin(b, new Insets(5, 5, 5, 5));
 
 					holder.getChildren().addAll(label, input, b);
 
@@ -83,6 +85,8 @@ public class SetJarIdController {
 		});
 	}
 
-	public VBox getRoot(){ return root;}
+	public VBox getRoot() {
+		return root;
+	}
 
 }

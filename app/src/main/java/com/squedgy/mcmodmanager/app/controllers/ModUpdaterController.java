@@ -2,13 +2,9 @@ package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.api.cache.Cacher;
-import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
-import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModUpdaterThread;
-import com.squedgy.mcmodmanager.app.threads.ThreadFailedException;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.application.Platform;
 import javafx.event.Event;
@@ -20,10 +16,8 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.jar.JarFile;
-import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
@@ -60,27 +54,36 @@ public class ModUpdaterController {
 					if (value.isResult()) {
 						try {
 							ModVersion old = ModUtils.getInstance().getMod(key.getModId());
-							if(old == null){
-							}else {
+							if (old == null) {
+							} else {
 							}
 							File newJar = new File(Startup.getModsDir() + File.separator + key.getFileName());
-							if(old != null) {
+							AppLogger.info((old != null ? old.getFileName() : null) + "|||" + key.getFileName(), getClass());
+							if (old != null) {
 								File f = new File(Startup.getModsDir() + File.separator + old.getFileName());
+								if (!f.exists()) {
+									f = new File(Startup.getModsDir() + File.separator + old.getFileName().replace(' ', '+'));
+								}
 								value.setResult(f.delete());
 								value.setReason(value.isResult() ? "Succeeded!" : "couldn't delete the old file");
 							}
 							if (old == null || !value.isResult()) {
-								value.setResult(false);
-								if(newJar.delete()){
+								if (newJar.delete()) {
 									value.setReason("Couldn't locate/delete previous file, deleted new one to ensure runnability of MC");
-								}else{
+								} else {
 									value.setReason("Couldn't delete the new file after not locating/deleting the old.\nYou should delete " + Startup.getModsDir() + File.separator + key.getFileName() + " to have no issues.");
 								}
 							}
-						} catch (Exception e1) {}
+
+							if(value.isResult()){
+								String jarId = ModUtils.getJarModId(new JarFile(newJar));
+								ModUtils.getInstance().addMod(jarId, key);
+							}
+						} catch (Exception e1) {
+						}
 
 					}
-					v.getChildren().add(new Label(key.getModId() + ": " + value.getReason()));
+					v.getChildren().add(new Label(key.getModId() + " - " + (value.isResult() ? "Succeeded" : "Failed" + ": " + value.getReason())));
 				});
 				ModUtils.getInstance().setMods();
 				Platform.runLater(() -> {
