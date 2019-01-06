@@ -81,9 +81,7 @@ public class Startup extends Application {
 		int result = chooser.showSaveDialog(null);
 		if(result == JFileChooser.APPROVE_OPTION){
 			File f = new File(chooser.getSelectedFile().getAbsolutePath());
-			System.out.println(f.getAbsolutePath());
-			System.out.println(f.toPath().resolve("mods").toFile().exists());
-			if(f.exists() && f.toPath().resolve("mods").toFile().exists()){
+									if(f.exists() && f.toPath().resolve("mods").toFile().exists()){
 				DOT_MINECRAFT_LOCATION = f.getAbsolutePath();
 				Config.getInstance().setProperty(CUSTOM_DIR, DOT_MINECRAFT_LOCATION);
 				Config.getInstance().writeProps();

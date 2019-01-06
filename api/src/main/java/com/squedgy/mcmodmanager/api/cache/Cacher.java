@@ -94,8 +94,7 @@ public class Cacher <ValueType>{
 	public void putItem(String modId, ValueType version) { cachedMods.put(modId, version); }
 
 	public ValueType getItem(String modId) {
-		AppLogger.debug(String.format("getting %s", modId), getClass());
-		return cachedMods.get(modId);
+				return cachedMods.get(modId);
 	}
 
 }

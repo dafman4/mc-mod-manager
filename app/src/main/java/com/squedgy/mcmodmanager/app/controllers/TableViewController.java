@@ -181,9 +181,10 @@ public class TableViewController {
 	public void showBadJars(Event e) throws IOException {
 
 		Modal m = Modal.getInstance();
-
-		m.setContent(new BadJarsController().getRoot());
+		BadJarsController c = new BadJarsController();
+		m.setContent(c.getRoot());
 		m.open(Startup.getParent().getWindow());
+
 	}
 
 	@FXML

@@ -1,6 +1,7 @@
 package com.squedgy.mcmodmanager.app.components;
 
 
+import javafx.beans.value.ObservableNumberValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -64,6 +65,14 @@ public class Modal {
 		holder.getChildren().setAll(node);
 		node.prefWidthProperty().bind(holder.widthProperty());
 		node.prefHeightProperty().bind(holder.heightProperty());
+	}
+
+	public void bindMinHeight(ObservableNumberValue v){
+		root.minHeightProperty().bind(v);
+	}
+
+	public void bindMinWidth(ObservableNumberValue v){
+		root.minWidthProperty().bind(v);
 	}
 
 	public ScrollPane getRoot() { return root; }

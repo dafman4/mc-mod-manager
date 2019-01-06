@@ -36,8 +36,7 @@ public class ModUtils {
 	public final Config CONFIG;
 
 	private ModUtils() {
-		AppLogger.info("new ModUtils", getClass());
-		CONFIG = Config.getInstance();
+				CONFIG = Config.getInstance();
 	}
 
 	public static Map<IdResult, String> viewBadJars() {
@@ -246,8 +245,7 @@ public class ModUtils {
 			f = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
 			if (f.exists() && f.isDirectory()) {
 				scanForMods(f);
-				AppLogger.info("\n" + mods.entrySet().stream().map(e -> e.getValue().getModId()).collect(Collectors.joining("\n")) + "\n", getClass());
-				try {
+								try {
 					CONFIG.getCachedMods().writeCache();
 				} catch (IOException e) {
 					AppLogger.error(e.getMessage(), getClass());

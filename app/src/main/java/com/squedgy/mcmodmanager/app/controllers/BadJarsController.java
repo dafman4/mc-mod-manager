@@ -1,6 +1,7 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.components.PublicNode;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.beans.property.SimpleStringProperty;
@@ -29,7 +30,7 @@ public class BadJarsController {
 	}
 
 	@FXML
-	public void initialize(){
+	public void initialize() throws IOException {
 		root.setItems(FXCollections.observableArrayList(ModUtils.viewBadJars().entrySet().stream().map(PublicNode::new).collect(Collectors.toList())));
 		TableColumn<PublicNode, String> one = new TableColumn<>();
 		one.setCellValueFactory(v ->{
