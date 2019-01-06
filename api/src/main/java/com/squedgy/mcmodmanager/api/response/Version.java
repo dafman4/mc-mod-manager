@@ -123,8 +123,8 @@ public class Version implements ModVersion {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Version version = (Version) o;
-		return modId.equals(version.modId) &&
-			modName.equals(version.modName);
+		return (Objects.equals(modId, version.modId)) &&
+			Objects.equals(modName, version.modName);
 	}
 
 	@Override

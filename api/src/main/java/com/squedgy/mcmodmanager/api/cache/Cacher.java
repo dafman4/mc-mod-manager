@@ -18,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Cacher <ValueType>{
 
@@ -45,7 +46,7 @@ public class Cacher <ValueType>{
 
 	public synchronized void loadCache(JsonDeserializer<Map<String,ValueType>> deserializer) {
 		try {
-			TypeReference<Map<String, ModVersion>> ref = new TypeReference<Map<String, ModVersion>>() {};
+			TypeReference<Map<String, ValueType>> ref = new TypeReference<Map<String, ValueType>>() {};
 			SimpleModule module = new SimpleModule();
 			Class<Map<String, ValueType>> clz;
 			clz = (Class<Map<String, ValueType>>) (Class) Map.class;
@@ -92,6 +93,9 @@ public class Cacher <ValueType>{
 
 	public void putItem(String modId, ValueType version) { cachedMods.put(modId, version); }
 
-	public ValueType getItem(String modId) { return cachedMods.get(modId); }
+	public ValueType getItem(String modId) {
+		AppLogger.debug(String.format("getting %s", modId), getClass());
+		return cachedMods.get(modId);
+	}
 
 }

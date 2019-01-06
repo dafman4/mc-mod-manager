@@ -1,5 +1,6 @@
 package com.squedgy.mcmodmanager.app.config;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;

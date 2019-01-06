@@ -4,6 +4,7 @@
     -back:#222;
     -active:#444;
     -border-cell:#aaa;
+    -border:#7a7a7a;
 }
 .root, .stack-pane, .viewport{
     -fx-background-color: -back;
@@ -33,7 +34,7 @@
 
 .button{
     -fx-background-color:#2b2b2b;
-    -fx-border-color:#7a7a7a;
+    -fx-border-color:-border;
     -fx-border-radius:2em;
     -fx-background-radius:2em;
     -fx-min-width:10em;
@@ -42,4 +43,9 @@
     -fx-border-color:#aaa;
     -fx-border-width:1px;
     -fx-background-color:#353535;
+}
+
+.text-field, .text-box{
+	-fx-background-color:-back;
+	-fx-border-color: -border;
 }

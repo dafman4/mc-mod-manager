@@ -175,7 +175,10 @@ public class TableViewController {
 
 		TableColumn<PublicNode, String> toAdd = new TableColumn<>();
 		toAdd.setText("File");
-		toAdd.setCellValueFactory(item -> new SimpleStringProperty(item.getValue().getKey()));
+		toAdd.setCellValueFactory(item ->{
+			ModVersion v = item.getValue().getKey();
+			return new SimpleStringProperty(v != null ? v.getFileName() : "A mod");
+		});
 		columns.add(toAdd);
 		toAdd = new TableColumn<>();
 		toAdd.setText("Reason");
@@ -193,6 +196,9 @@ public class TableViewController {
 	public void setJarIds(Event e) throws IOException {
 		Modal m = Modal.getInstance();
 
+		m.setContent(new SetJarIdController().getRoot());
+
+		m.openAndWait(Startup.getParent().getWindow());
 
 	}
 

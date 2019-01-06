@@ -7,10 +7,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
-import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
-import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
-import com.squedgy.mcmodmanager.api.response.ModVersionFactory;
+import com.squedgy.mcmodmanager.api.response.*;
+import com.squedgy.mcmodmanager.app.components.PublicNode;
 import com.squedgy.mcmodmanager.app.config.Config;
 
 import java.io.BufferedReader;
@@ -31,17 +29,18 @@ import static com.squedgy.mcmodmanager.app.Startup.MINECRAFT_VERSION;
 public class ModUtils {
 
 
-	private static final Map<String, String> badJars = new HashMap<>();
+	private static final Map<IdResult, String> badJars = new HashMap<IdResult, String>();
 	private static final Map<String, ModVersion> mods = new HashMap<>();
 	public static final String NO_MOD_INFO = "mcmod.info doesn't exist";
 	private static ModUtils instance;
 	public final Config CONFIG;
 
 	private ModUtils() {
+		AppLogger.info("new ModUtils", getClass());
 		CONFIG = Config.getInstance();
 	}
 
-	public static Map<String, String> viewBadJars() {
+	public static Map<IdResult, String> viewBadJars() {
 		return new HashMap<>(badJars);
 	}
 
@@ -58,24 +57,34 @@ public class ModUtils {
 				JarFile file;
 				try { file = new JarFile(f); }
 				catch (IOException e) {
-					addBadJar(f.getName(), "file couldn't be loaded as a jar.");
+					Version v = new Version();
+					v.setFileName(f.getName());
+					addBadJar(new IdResult(v, f.getName()), "file couldn't be loaded as a jar.");
 					continue;
 				}
 				//Ensure that an mcmod.info file exists
 				ZipEntry e = file.getEntry("mcmod.info");
 				if (e == null) {
-					addBadJar(f.getName(), NO_MOD_INFO);
+					Version v = new Version();
+					v.setFileName(file.getName());
+					addBadJar(new IdResult(v, file.getName()), NO_MOD_INFO);
 					continue;
 				}
 				try {
-					//Attempt to find a cached or online ModVersion matching the installed one
+					String jarId = getJarModId(file);
+					ModVersion v = this.CONFIG.getCachedMods().getItem(jarId);
+					if(v != null){
+						addMod(jarId, v);
+						continue;
+					}
+
+					//Attempt to find an online ModVersion matching the installed one
 					try {
 						IdResult id = getRealModId(file);
 						addMod(id);
 						continue;
 					} catch(ModIdNotFoundException e1) {
 						AppLogger.info(e1.getMessage(), getClass());
-						addBadJar(f.getName(), e1.getMessage());
 					}
 					//Otherwise read the mcmod.info as a json node and find the first working one as a stand-in
 					JsonNode root;
@@ -86,12 +95,14 @@ public class ModUtils {
 								JsonNode.class
 							);
 					} catch (JsonParseException e1) {
+
+						addBadJar(new IdResult(null, getJarModId(file)), e1.getMessage());
 						continue;
 					}
 					if (root.has("modList")) root = root.get("modList");//this will be an array
 
 					if(root.isArray()) checkNode(root, file, root.size());
-					else addMod(f.getName(), readNode(root, file));
+					else addMod(getJarModId(file), readNode(root, file), true, "Couldn't find a curse forge match.");
 				} catch (Exception e2) {
 					AppLogger.error(e2, getClass());
 				}
@@ -129,6 +140,7 @@ public class ModUtils {
 
 	public IdResult getRealModId(JarFile file) throws ModIdNotFoundException{
 		List<Exception> issues = new LinkedList<>();
+		String jarId = getJarModId(file);
 		String[] ids = getJarModIds(file);
 		String[] names = getJarModNames(file);
 		IdResult ret = new IdResult();
@@ -138,7 +150,7 @@ public class ModUtils {
 				try { test = matchesExistingId(id, new File(file.getName()).getName().replace('+', ' ')); }
 				catch (IOException | ModIdNotFoundException e) { issues.add(e); }
 				if (test != null) {
-					ret.jarId = id;
+					ret.jarId = jarId;
 					ret.mod = test;
 					return ret;
 				}
@@ -147,7 +159,7 @@ public class ModUtils {
 				try { test = matchesExistingId(formatModName(name), new File(file.getName()).getName().replace('+', ' ')); }
 				catch (IOException | ModIdNotFoundException e) { issues.add(e); }
 				if (test != null) {
-					ret.jarId = formatModName(name);
+					ret.jarId = jarId;
 					ret.mod = test;
 					return ret;
 				}
@@ -191,7 +203,7 @@ public class ModUtils {
 				i++;
 				if (root == null) continue;
 				ModVersion v = readNode(root, jarFile);
-				addMod(jarFile.getName(), v);
+				addMod(getJarModId(jarFile), v, true, "Couldn't find a curse forge match for any guessed ids");
 				return;
 			}catch(Exception ignored){}
 		} while (i < length);
@@ -200,8 +212,17 @@ public class ModUtils {
 	private void addMod(IdResult mod){ addMod(mod.jarId, mod.mod); }
 
 	public void addMod(String modId, ModVersion mod) {
-		//if doesn't contain a / or a \ (files at that point)
-		if(!modId.contains("/") && !modId.contains("\\")) Config.getInstance().getCachedMods().putItem(modId, mod);
+		addMod(modId, mod, false, null);
+	}
+
+	public void addMod(String modId, ModVersion mod, boolean bad, String issue){
+		//if it's a bad mod we probably shouldn't cache it
+		if(bad){
+			AppLogger.info("adding bad mod: " + modId, getClass());
+			addBadJar(new IdResult(mod, modId), issue);
+			//if doesn't contain a / or a \ (files at that point)
+		}
+		else if(!modId.contains("/") && !modId.contains("\\")) Config.getInstance().getCachedMods().putItem(modId, mod);
 		else AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
 		mods.put(modId, mod);
 	}
@@ -225,6 +246,7 @@ public class ModUtils {
 			f = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
 			if (f.exists() && f.isDirectory()) {
 				scanForMods(f);
+				AppLogger.info("\n" + mods.entrySet().stream().map(e -> e.getValue().getModId()).collect(Collectors.joining("\n")) + "\n", getClass());
 				try {
 					CONFIG.getCachedMods().writeCache();
 				} catch (IOException e) {
@@ -243,7 +265,7 @@ public class ModUtils {
 		return name;
 	}
 
-	public void addBadJar(String file, String reason) { badJars.put(file, reason); }
+	public void addBadJar(IdResult node, String reason) { badJars.put(node, reason); }
 
 	public static class IdResult{
 		public ModVersion mod;
@@ -251,9 +273,12 @@ public class ModUtils {
 
 		public IdResult(){ }
 
+		public IdResult(ModVersion v, String id){
+			this.mod = v;
+			this.jarId = id;
+		}
+
 	}
-
-
 
 	public static String[] getJarModNames(JarFile file){
 		ZipEntry e = file.getEntry("mcmod.info");
@@ -309,5 +334,24 @@ public class ModUtils {
 			}catch(IOException ignored ){ }
 		}
 		return new String[0];
+	}
+
+	private String getJarModId(JarFile file) {
+		ZipEntry e = file.getEntry("mcmod.info");
+		if(e != null && !e.isDirectory()){
+			ObjectMapper mapper = new ObjectMapper();
+			try(BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))){
+				JsonNode root = mapper.readValue(
+					reader.lines().map(
+						l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()
+					),
+					JsonNode.class
+				);
+				if(root.has("modList")) root = root.get("modList");
+				if(root.isArray()) root = root.get(0);
+				if(root.has("modid")) return root.get("modid").textValue();
+			} catch (IOException ignored) { }
+		}
+		return null;
 	}
 }
