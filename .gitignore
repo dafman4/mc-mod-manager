@@ -22,3 +22,5 @@ app/test
 cache
 !**/src/**
 local.properties
+
+FiddlerKeystore

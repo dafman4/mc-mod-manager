@@ -12,15 +12,30 @@ import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
 import com.squedgy.mcmodmanager.api.response.CurseForgeResponseDeserializer;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.protocol.HttpContext;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class ModChecker {
@@ -134,34 +149,50 @@ public abstract class ModChecker {
 
 	public static boolean download(ModVersion v, String location, String mcVersion) {
 		try {
-			URL u = new URL(v.getDownloadUrl() + "/file");
+			String url = v.getDownloadUrl();
+			int i = url.indexOf("://");
+			String scheme = url.substring(0, i);
+			url = url.substring(i + "://".length());
+			int slash = url.indexOf('/');
+			String host = url.substring(0, slash);
+			String path = url.substring(slash) + "/file";
 
-			HttpsURLConnection connection = (HttpsURLConnection) u.openConnection();
-			connection.setRequestProperty("User-Agent", getUserAgentForOs());
-			connection.setRequestMethod("GET");
-			connection.setDoOutput(true);
-			connection.connect();
-			if (connection.getResponseCode() > 299 || connection.getResponseCode() < 200) {
-				AppLogger.info("Couldn't access the url :" + u, ModChecker.class);
-				connection.getHeaderFields().forEach((key, field) -> {
-					AppLogger.info(key + ": " + field, ModChecker.class);
-				});
-				try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()))) {
-					AppLogger.info("\n" + reader.lines().collect(Collectors.joining("\n")), ModChecker.class);
-				}
+			System.out.println(scheme);
+			System.out.println(host);
+			System.out.println(path);
+
+			HttpGet get = new HttpGet(new URI(scheme, host, path, null));
+			HttpClient client = HttpClients.custom()
+				.setRoutePlanner(new DefaultProxyRoutePlanner(new HttpHost("127.0.0.1", 8888, "http")))
+				.setRedirectStrategy(new RedirectStrategy() {
+					@Override
+					public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
+						return false;
+					}
+
+					@Override
+					public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
+						return null;
+					}
+				})
+				.build();
+			HttpResponse response = client.execute(get);
+			System.out.println(response.getStatusLine());
+			int responseCode = response.getStatusLine().getStatusCode();
+			if (responseCode > 299 || responseCode < 200) {
+				AppLogger.info("Couldn't access the url :" + response.getFirstHeader("Host"), ModChecker.class);
 				return false;
 			}
 
 			boolean append = !v.getFileName().endsWith(".jar");
-			String path = (location + v.getFileName() + (append ? ".jar" : ""));
+			String fileLocation = (location + v.getFileName() + (append ? ".jar" : ""));
 			try (
-				FileOutputStream outFile = new FileOutputStream(new File(path));
-				ReadableByteChannel in = Channels.newChannel(connection.getInputStream());
+				FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
+				ReadableByteChannel in = Channels.newChannel(response.getEntity().getContent());
 				FileChannel out = outFile.getChannel()
 			) {
 
 				out.transferFrom(in, 0, Long.MAX_VALUE);
-				connection.disconnect();
 				return true;
 			}
 		} catch (Exception e) {

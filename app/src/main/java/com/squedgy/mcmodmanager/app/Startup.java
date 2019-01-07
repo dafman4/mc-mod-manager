@@ -39,6 +39,10 @@ public class Startup extends Application {
 	}
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
+		System.out.println(System.getProperty("javax.net.ssl.trustStore"));
+		File f = new File(System.getProperty("javax.net.ssl.trustStore"));
+		System.out.println(f.exists());
+		System.out.println(System.getProperty("javax.net.ssl.trustStorePassword"));
 		String os = System.getProperty("os.name");
 		ModUtils c = ModUtils.getInstance();
 

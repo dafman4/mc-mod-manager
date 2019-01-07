@@ -2,7 +2,6 @@ package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.event.Event;
@@ -13,7 +12,6 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static com.squedgy.mcmodmanager.app.Startup.*;
 
