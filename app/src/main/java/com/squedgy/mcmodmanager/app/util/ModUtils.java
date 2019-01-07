@@ -29,14 +29,12 @@ public class ModUtils {
 
 
 	public static final String NO_MOD_INFO = "mcmod.info doesn't exist";
-	private static final Map<IdResult, String> badJars = new HashMap<IdResult, String>();
+	private static final Map<IdResult, String> badJars = new HashMap<>();
 	private static final Map<String, ModVersion> mods = new HashMap<>();
 	private static ModUtils instance;
 	public final Config CONFIG;
 
-	private ModUtils() {
-		CONFIG = Config.getInstance();
-	}
+	private ModUtils() { CONFIG = Config.getInstance(); }
 
 	public static Map<IdResult, String> viewBadJars() {
 		return new HashMap<>(badJars);

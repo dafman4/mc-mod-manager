@@ -14,6 +14,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -32,11 +33,11 @@ public class TableViewController {
 	private static TableViewController instance;
 	private ModVersionTableController table;
 	@FXML
-	private Button columns;
+	private MenuItem columns;
 	@FXML
-	private Button updates;
+	private MenuItem updates;
 	@FXML
-	private Button badJars;
+	private MenuItem badJars;
 	@FXML
 	private WebView objectView;
 	@FXML
@@ -206,9 +207,10 @@ public class TableViewController {
 
 	@FXML
 	public void newMods(Event e) throws IOException {
+		System.out.println("new mods");
 		Modal m = Modal.getInstance();
-
-
+		m.setContent(new NewModsController().getRoot());
+		m.openAndWait(Startup.getParent().getWindow());
 	}
 
 }
