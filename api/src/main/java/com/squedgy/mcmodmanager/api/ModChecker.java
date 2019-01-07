@@ -20,16 +20,14 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.protocol.HttpContext;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -164,15 +162,25 @@ public abstract class ModChecker {
 			HttpGet get = new HttpGet(new URI(scheme, host, path, null));
 			HttpClient client = HttpClients.custom()
 				.setRoutePlanner(new DefaultProxyRoutePlanner(new HttpHost("127.0.0.1", 8888, "http")))
-				.setRedirectStrategy(new RedirectStrategy() {
+				.setRedirectStrategy(new DefaultRedirectStrategy() {
 					@Override
-					public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
-						return false;
-					}
-
-					@Override
-					public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
-						return null;
+					protected URI createLocationURI(String location) throws ProtocolException {
+						String split1 = "://", split2 = "/";
+						int index1 = location.indexOf(split1), index2;
+						String method = location.substring(0, index1);
+						location = location.substring(index1 + split1.length());
+						index2 = location.indexOf(split2);
+						String host = location.substring(0, index2);
+						String path = location.substring(index2);
+						System.out.println(method + " " + host + " " + path);
+						int hostSplit = host.indexOf(':');
+						try {
+							URI ret = new URI(method, null, host.substring(0, hostSplit), Integer.valueOf(host.substring(hostSplit + 1)), path, null, null);
+							System.out.println(ret);
+							return ret;
+						} catch (URISyntaxException e) {
+							throw new ProtocolException("Issue making URI from individual pieces", e);
+						}
 					}
 				})
 				.build();
