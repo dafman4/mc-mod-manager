@@ -12,30 +12,32 @@ import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
 import com.squedgy.mcmodmanager.api.response.CurseForgeResponseDeserializer;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import org.apache.http.*;
 import org.apache.http.ProtocolException;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.DefaultRedirectStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HttpContext;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class ModChecker {
@@ -88,7 +90,6 @@ public abstract class ModChecker {
 	}
 
 	private static CurseForgeResponse get(String mod, CurseForgeResponseDeserializer deserializer) throws IOException, ModIdFoundConnectionFailed {
-
 		URL url = new URL("https://api.cfwidget.com/minecraft/mc-mods/" + mod);
 		HttpURLConnection con = (HttpURLConnection) url.openConnection();
 		con.setRequestMethod("GET");
@@ -147,57 +148,67 @@ public abstract class ModChecker {
 		throw new ModIdNotFoundException("Couldn't find the mod Id : " + mId + ". It's not cached and DOESN'T match a Curse Forge mod. Talk to the mod author about having the Id within their mcmod.info file match their Curse Forge mod id.");
 	}
 
-	public static boolean download(ModVersion v, String location, String mcVersion) {
+	public static URI buildURI(String url) throws URISyntaxException {
+		int i = url.indexOf("://");
+		String scheme = url.substring(0, i);
+		url = url.substring(i + "://".length());
+		int slash = url.indexOf('/');
+		String host = url.substring(0, slash);
+		String path = url.substring(slash) + "/file";
+		//The first one encodes, the second fixes any encoding encoded item issues
+		//Things like Pam's Harvest Craft don't work without both...
+		return new URI(new URI(scheme, host, path, null).toString().replaceAll("%25([0-9]{2})", "%$1"));
+	}
+
+	public static InputStream download(ModVersion v) {
+		CloseableHttpClient client = null;
 		try {
-			String url = v.getDownloadUrl();
-			int i = url.indexOf("://");
-			String scheme = url.substring(0, i);
-			url = url.substring(i + "://".length());
-			int slash = url.indexOf('/');
-			String host = url.substring(0, slash);
-			String path = url.substring(slash) + "/file";
-
-			System.out.println(scheme);
-			System.out.println(host);
-			System.out.println(path);
-
-			HttpGet get = new HttpGet(new URI(scheme, host, path, null));
-			HttpClient client = HttpClients.custom()
-				.setRoutePlanner(new DefaultProxyRoutePlanner(new HttpHost("127.0.0.1", 8888, "http")))
-				.setRedirectStrategy(new RedirectStrategy() {
+			HttpGet get = new HttpGet(buildURI(v.getDownloadUrl()));
+			get.setHeader(new BasicHeader(HttpHeaders.USER_AGENT, getUserAgentForOs()));
+			HttpClientBuilder clientBuilder = HttpClients.custom()
+				.setRedirectStrategy(new DefaultRedirectStrategy() {
 					@Override
-					public boolean isRedirected(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
-						return false;
+					protected URI createLocationURI(String location) throws ProtocolException {
+						try {
+							return buildURI(location);
+						} catch (Exception e) {
+							return null;
+						}
 					}
+				}).setDefaultRequestConfig(
+					RequestConfig.custom()
+					.setCookieSpec(CookieSpecs.STANDARD)
+					.build()
+				);
+			//If proxy then add it
+			if (System.getProperty("https.proxyPort") != null && System.getProperty("https.proxyHost") != null){
+				System.out.println("adding proxy");
+				clientBuilder.setProxy(new HttpHost(System.getProperty("https.proxyHost"), Integer.valueOf(System.getProperty("https.proxyPort"))));
+			}
 
-					@Override
-					public HttpUriRequest getRedirect(HttpRequest request, HttpResponse response, HttpContext context) throws ProtocolException {
-						return null;
-					}
-				})
-				.build();
+			client = clientBuilder.build();
 			HttpResponse response = client.execute(get);
-			System.out.println(response.getStatusLine());
 			int responseCode = response.getStatusLine().getStatusCode();
 			if (responseCode > 299 || responseCode < 200) {
-				AppLogger.info("Couldn't access the url :" + response.getFirstHeader("Host"), ModChecker.class);
-				return false;
+				System.out.println(response.getStatusLine());
+				AppLogger.info("Couldn't access the url code(" + responseCode + ") :" + get.getURI().toURL().toString(), ModChecker.class);
+				response.getEntity().writeTo(System.out);
+				System.out.println();
+				return null;
 			}
 
-			boolean append = !v.getFileName().endsWith(".jar");
-			String fileLocation = (location + v.getFileName() + (append ? ".jar" : ""));
-			try (
-				FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
-				ReadableByteChannel in = Channels.newChannel(response.getEntity().getContent());
-				FileChannel out = outFile.getChannel()
-			) {
-
-				out.transferFrom(in, 0, Long.MAX_VALUE);
-				return true;
+			try {
+				return response.getEntity().getContent();
+			} catch (IOException e) {
+				return null;
 			}
-		} catch (Exception e) {
-			AppLogger.error(e, ModChecker.class);
-			return false;
+		} catch (IOException | URISyntaxException e) {
+			return null;
+		}finally{
+			if(client != null) {
+				try { client.close();
+				} catch (IOException ignored) { }
+			}
 		}
 	}
 
@@ -209,5 +220,4 @@ public abstract class ModChecker {
 			return "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:65.0) Gecko/20100101 Firefox/65.0";
 		else return "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:65.0) Gecko/20100101 Firefox/65.0";
 	}
-
 }

@@ -38,11 +38,7 @@ public class Startup extends Application {
 		return instance;
 	}
 
-	public static void main(String[] args) throws IOException, ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-		System.out.println(System.getProperty("javax.net.ssl.trustStore"));
-		File f = new File(System.getProperty("javax.net.ssl.trustStore"));
-		System.out.println(f.exists());
-		System.out.println(System.getProperty("javax.net.ssl.trustStorePassword"));
+	public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 		String os = System.getProperty("os.name");
 		ModUtils c = ModUtils.getInstance();
 
@@ -68,17 +64,13 @@ public class Startup extends Application {
 	public static boolean chooseMinecraftDirectory() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		JFileChooser chooser = new JFileChooser();
-
+		chooser.setAcceptAllFileFilterUsed(false);
 		chooser.setFileFilter(new FileFilter() {
 			@Override
-			public boolean accept(File f) {
-				return f.isDirectory();
-			}
+			public boolean accept(File f) { return f.isDirectory(); }
 
 			@Override
-			public String getDescription() {
-				return "Directories";
-			}
+			public String getDescription() { return "Directories"; }
 		});
 		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 

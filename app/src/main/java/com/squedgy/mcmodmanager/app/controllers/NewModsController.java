@@ -3,6 +3,7 @@ package com.squedgy.mcmodmanager.app.controllers;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
+import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -12,6 +13,7 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import static com.squedgy.mcmodmanager.app.Startup.*;
 
@@ -33,14 +35,13 @@ public class NewModsController {
 
 	@FXML
 	public void addMods(Event e){
-		String[] ids = mods.getText().split("([^-a-zA-Z0-9]|\n|\r\n|\r)+");
+		String[] ids = mods.getText().split("([^-a-zA-Z0-9]|[\r\n])+");
 		for(String id : ids){
 			ModVersion v = null;
 			try {
 				v = ModChecker.getNewest(id, MINECRAFT_VERSION);
-				if(ModChecker.download(v, DOT_MINECRAFT_LOCATION + File.separator + "mods", MINECRAFT_VERSION)){
-
-				}
+				String output = Startup.getModsDir() + File.separator;
+				InputStream stream = ModChecker.download(v);
 
 			}catch(ModIdNotFoundException ignored){}
 			if( v !=null ) ModUtils.getInstance().addMod(id, v);
