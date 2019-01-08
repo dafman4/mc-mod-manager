@@ -22,10 +22,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.cookie.Cookie;
-import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.message.BasicHeader;
@@ -163,6 +160,7 @@ public abstract class ModChecker {
 	public static InputStream download(ModVersion v) {
 		CloseableHttpClient client = null;
 		try {
+<<<<<<< HEAD
 			HttpGet get = new HttpGet(buildURI(v.getDownloadUrl()));
 			get.setHeader(new BasicHeader(HttpHeaders.USER_AGENT, getUserAgentForOs()));
 			HttpClientBuilder clientBuilder = HttpClients.custom()
@@ -187,6 +185,45 @@ public abstract class ModChecker {
 			}
 
 			client = clientBuilder.build();
+=======
+			String url = v.getDownloadUrl();
+			int i = url.indexOf("://");
+			String scheme = url.substring(0, i);
+			url = url.substring(i + "://".length());
+			int slash = url.indexOf('/');
+			String host = url.substring(0, slash);
+			String path = url.substring(slash) + "/file";
+
+			System.out.println(scheme);
+			System.out.println(host);
+			System.out.println(path);
+
+			HttpGet get = new HttpGet(new URI(scheme, host, path, null));
+			HttpClient client = HttpClients.custom()
+				.setRoutePlanner(new DefaultProxyRoutePlanner(new HttpHost("127.0.0.1", 8888, "http")))
+				.setRedirectStrategy(new DefaultRedirectStrategy() {
+					@Override
+					protected URI createLocationURI(String location) throws ProtocolException {
+						String split1 = "://", split2 = "/";
+						int index1 = location.indexOf(split1), index2;
+						String method = location.substring(0, index1);
+						location = location.substring(index1 + split1.length());
+						index2 = location.indexOf(split2);
+						String host = location.substring(0, index2);
+						String path = location.substring(index2);
+						System.out.println(method + " " + host + " " + path);
+						int hostSplit = host.indexOf(':');
+						try {
+							URI ret = new URI(method, null, host.substring(0, hostSplit), Integer.valueOf(host.substring(hostSplit + 1)), path, null, null);
+							System.out.println(ret);
+							return ret;
+						} catch (URISyntaxException e) {
+							throw new ProtocolException("Issue making URI from individual pieces", e);
+						}
+					}
+				})
+				.build();
+>>>>>>> 9c8f477a99e0c5d2ba6864d2b78cacf1fbf5ee36
 			HttpResponse response = client.execute(get);
 			int responseCode = response.getStatusLine().getStatusCode();
 			if (responseCode > 299 || responseCode < 200) {
