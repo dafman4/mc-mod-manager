@@ -1,5 +1,6 @@
 package com.squedgy.mcmodmanager.app.config;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
@@ -35,6 +36,7 @@ public class Config {
 			CONFIG = readProps();
 			setCacher(MINECRAFT_VERSION);
 		} catch (Exception e) {
+			AppLogger.error(e.getMessage(), getClass());
 			CONFIG = new HashMap<>();
 		}
 	}
@@ -100,9 +102,11 @@ public class Config {
 
 
 	public int compareColumns(String a, String b) {
-		Integer one = Integer.getInteger(getProperty(TABLE_CONFIG + a)),
-			two = Integer.getInteger(getProperty(TABLE_CONFIG + b));
-
+		Integer one = null, two = null;
+		try { one = Integer.valueOf(getProperty(TABLE_CONFIG + a));
+		}catch( NumberFormatException ignore) {}
+		try { two = Integer.valueOf(getProperty(TABLE_CONFIG + b));
+		}catch( NumberFormatException ignore) {}
 		if (one == null && two == null) return 0;
 		else if (one == null) return -1;
 		else if (two == null) return 1;

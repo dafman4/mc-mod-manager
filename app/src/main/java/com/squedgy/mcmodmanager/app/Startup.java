@@ -51,14 +51,28 @@ public class Startup extends Application {
 		else DOT_MINECRAFT_LOCATION = System.getProperty("user.home") + File.separator + ".minecraft";
 
 		File dotMc = new File(DOT_MINECRAFT_LOCATION);
-		if (!dotMc.exists() || !dotMc.toPath().resolve("mods").toFile().exists()) {
+		if (!dotMc.exists() || !dotMc.isDirectory() || !allSubDirsMatch(dotMc, "mods", "versions","resourcepacks")) {
 			DOT_MINECRAFT_LOCATION = null;
 			while (!chooseMinecraftDirectory()) chooseMinecraftDirectory();
+			dotMc = new File(DOT_MINECRAFT_LOCATION);
 		}
 
 
-		if (DOT_MINECRAFT_LOCATION != null) launch(args);
+
+		if (DOT_MINECRAFT_LOCATION != null && allSubDirsMatch(dotMc, "mods", "versions","resourcepacks")) launch(args);
+
 		else AppLogger.info("Minecraft Directory not set, shutting down.", Startup.class);
+	}
+
+	public static boolean allSubDirsMatch(File dir, String... subDirs){
+		if(dir.exists() && dir.isDirectory()){
+			for(String s : subDirs){
+				File f = dir.toPath().resolve(s).toFile();
+				if(!f.exists() || !f.isDirectory()) return false;
+			}
+		}
+
+		return true;
 	}
 
 	public static boolean chooseMinecraftDirectory() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
@@ -77,10 +91,11 @@ public class Startup extends Application {
 		int result = chooser.showSaveDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File f = new File(chooser.getSelectedFile().getAbsolutePath());
-			if (f.exists() && f.toPath().resolve("mods").toFile().exists()) {
+
+			if (f.exists() && allSubDirsMatch(f, "mods", "versions","resourcepacks")) {
 				DOT_MINECRAFT_LOCATION = f.getAbsolutePath();
-				Config.getInstance().setProperty(CUSTOM_DIR, DOT_MINECRAFT_LOCATION);
-				Config.getInstance().writeProps();
+				ModUtils.getInstance().CONFIG.setProperty(CUSTOM_DIR, DOT_MINECRAFT_LOCATION);
+				ModUtils.getInstance().CONFIG.writeProps();
 			} else return false;
 		}
 		return true;

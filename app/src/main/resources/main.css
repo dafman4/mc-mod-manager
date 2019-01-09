@@ -44,8 +44,12 @@
     -fx-border-width:1px;
     -fx-background-color:#353535;
 }
+.menu-bar, .context-menu, .text-area .content{
+	-fx-background-color:-back;
+	-fx-border-color:rgba(0,0,0,0) rgba(0,0,0,0) -border rgba(0,0,0,0);
+}
 
-.text-field, .text-box, .menu-bar, .context-menu, .text-area .content{
+.text-field, .text-box{
 	-fx-background-color:-back;
 	-fx-border-color: -border;
 }

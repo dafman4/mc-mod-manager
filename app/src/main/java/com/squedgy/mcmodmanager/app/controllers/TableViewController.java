@@ -33,10 +33,6 @@ public class TableViewController {
 	private static TableViewController instance;
 	private ModVersionTableController table;
 	@FXML
-	private MenuItem columns;
-	@FXML
-	private MenuItem updates;
-	@FXML
 	private MenuItem badJars;
 	@FXML
 	private WebView objectView;
@@ -46,8 +42,6 @@ public class TableViewController {
 	private ScrollPane root;
 	@FXML
 	private VBox content;
-	@FXML
-	private HBox buttons;
 	private ModCheckingThread checking;
 	private ModInfoThread gathering;
 
@@ -207,7 +201,6 @@ public class TableViewController {
 
 	@FXML
 	public void newMods(Event e) throws IOException {
-		System.out.println("new mods");
 		Modal m = Modal.getInstance();
 		m.setContent(new NewModsController().getRoot());
 		m.openAndWait(Startup.getParent().getWindow());

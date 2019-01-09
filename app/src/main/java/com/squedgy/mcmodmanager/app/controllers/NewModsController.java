@@ -11,9 +11,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
+import java.util.Objects;
 
 import static com.squedgy.mcmodmanager.app.Startup.*;
 
@@ -35,17 +37,24 @@ public class NewModsController {
 
 	@FXML
 	public void addMods(Event e){
+		//A mod id consists of "-" and alpha-numerical, things that aren't those are the delimiters
 		String[] ids = mods.getText().split("([^-a-zA-Z0-9]|[\r\n])+");
 		for(String id : ids){
-			ModVersion v = null;
-			try {
+			ModVersion v = ModUtils.getInstance().getMod(id);
+			if(v == null) {
 				v = ModChecker.getNewest(id, MINECRAFT_VERSION);
 				String output = Startup.getModsDir() + File.separator;
-				InputStream stream = ModChecker.download(v);
-
-			}catch(ModIdNotFoundException ignored){}
-			if( v !=null ) ModUtils.getInstance().addMod(id, v);
+				try(
+					FileOutputStream outFile = new FileOutputStream(output);
+					ReadableByteChannel in = Channels.newChannel(ModChecker.download(v));
+					FileChannel out = outFile.getChannel()
+				) {
+					out.transferFrom(in, 0, Long.MAX_VALUE);
+				} catch (ModIdNotFoundException | IOException ignored) { v = null; }
+				if (v != null) ModUtils.getInstance().addMod(id, v);
+			}
 		}
+		e.consume();
 	}
 
 	public VBox getRoot() { return root; }

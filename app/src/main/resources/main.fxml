@@ -12,7 +12,7 @@
 	</stylesheets>
 	<VBox fx:id="content">
 		<MenuBar>
-			<Menu text="Add">
+			<Menu text="Add" >
 				<MenuItem text="Mods" onAction="#newMods"/>
 			</Menu>
 			<Menu text="View">

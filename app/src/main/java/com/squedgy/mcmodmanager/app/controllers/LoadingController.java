@@ -20,7 +20,7 @@ public class LoadingController {
 		root.getEngine().loadContent(
 			"<style>" +
 				"body{" +
-				"background-color:#222;" +
+			"background-color:#222;" +
 				"color:#ccc;" +
 				"} " +
 				"@keyframes spin{" +
@@ -41,8 +41,6 @@ public class LoadingController {
 		);
 	}
 
-	public WebView getRoot() {
-		return root;
-	}
+	public WebView getRoot() {return root; }
 
 }

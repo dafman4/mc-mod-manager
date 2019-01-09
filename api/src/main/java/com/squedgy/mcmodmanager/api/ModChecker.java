@@ -149,7 +149,7 @@ public abstract class ModChecker {
 		String host = url.substring(0, slash);
 		String path = url.substring(slash);
 		//The first one encodes, the second fixes any encoding encoded item issues
-		//Things like Pam's Harvest Craft don't work without both...
+		//Things like Pam's Harvest Craft don't work without this method...
 		URI ret = new URI(new URI(scheme, host, path, null).toString().replaceAll("%25{2}([2-9A-Fa-f]{2})", "%$1"));
 		return ret;
 	}
@@ -176,7 +176,6 @@ public abstract class ModChecker {
 				);
 			//If proxy then add it
 			if (System.getProperty("https.proxyPort") != null && System.getProperty("https.proxyHost") != null){
-				System.out.println("adding proxy");
 				clientBuilder.setProxy(new HttpHost(System.getProperty("https.proxyHost"), Integer.valueOf(System.getProperty("https.proxyPort"))));
 			}
 
@@ -184,10 +183,8 @@ public abstract class ModChecker {
 			HttpResponse response = client.execute(get);
 			int responseCode = response.getStatusLine().getStatusCode();
 			if (responseCode > 299 || responseCode < 200) {
-				System.out.println(response.getStatusLine());
 				AppLogger.info("Couldn't access the url code(" + responseCode + ") :" + get.getURI().toURL().toString(), ModChecker.class);
 				response.getEntity().writeTo(System.out);
-				System.out.println();
 				return null;
 			}
 

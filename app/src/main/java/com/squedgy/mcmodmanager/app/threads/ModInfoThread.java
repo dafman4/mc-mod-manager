@@ -27,7 +27,7 @@ public class ModInfoThread extends Thread {
 
 	@Override
 	public void run() {
-		ModVersion ret = Config.getInstance().getCachedMods().getItem(toFind.getModId());
+		ModVersion ret = ModUtils.getInstance().CONFIG.getCachedMods().getItem(toFind.getModId());
 		if (ret != null) {
 			callback.call(ret);
 			return;

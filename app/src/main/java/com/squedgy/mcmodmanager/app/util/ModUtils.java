@@ -239,7 +239,7 @@ public class ModUtils {
 	}
 
 	public ModVersion matchesExistingId(String id, String fileName) throws IOException, ModIdFoundConnectionFailed {
-		ModVersion ret = Config.getInstance().getCachedMods().getItem(id);
+		ModVersion ret = CONFIG.getCachedMods().getItem(id);
 		List<ModVersion> versions;
 		if (ret == null) {
 			versions = ModChecker.getForVersion(id, MINECRAFT_VERSION)
@@ -288,7 +288,7 @@ public class ModUtils {
 			addBadJar(new IdResult(mod, modId), issue);
 			//if doesn't contain a / or a \ (files at that point)
 		} else if (!modId.contains("/") && !modId.contains("\\"))
-			Config.getInstance().getCachedMods().putItem(modId, mod);
+			CONFIG.getCachedMods().putItem(modId, mod);
 		else
 			AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
 		mods.put(modId, mod);
