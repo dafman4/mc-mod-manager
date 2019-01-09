@@ -8,13 +8,16 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.*;
+import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.config.Config;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
@@ -22,8 +25,7 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
-import static com.squedgy.mcmodmanager.app.Startup.DOT_MINECRAFT_LOCATION;
-import static com.squedgy.mcmodmanager.app.Startup.MINECRAFT_VERSION;
+import static com.squedgy.mcmodmanager.app.Startup.*;
 
 public class ModUtils {
 
@@ -31,6 +33,7 @@ public class ModUtils {
 	public static final String NO_MOD_INFO = "mcmod.info doesn't exist";
 	private static final Map<IdResult, String> badJars = new HashMap<>();
 	private static final Map<String, ModVersion> mods = new HashMap<>();
+	private static final Map<String, ModVersion> inactiveMods = new HashMap<>();
 	private static ModUtils instance;
 	public final Config CONFIG;
 
@@ -112,9 +115,24 @@ public class ModUtils {
 		return new String[0];
 	}
 
-	public void scanForMods(File folder) {
+	public void deactivateMod(ModVersion mod) throws IOException {
+		String key = this.getKey(mod);
+		File f = new File(DOT_MINECRAFT_LOCATION + File.separator + MINECRAFT_VERSION);
+		if(!f.exists()) if(!f.mkdirs()) throw new IOException("couldn't make the de-active mods folder");
+		File modFile = new File(Startup.getModsDir() + File.separator + mod.getFileName());
+		if(modFile.exists()){
+			Files.move(modFile.toPath(), f.toPath().resolve(mod.getFileName()));
+			inactiveMods.put(key, mods.remove(key));
+		}
+	}
+
+	public boolean modActive(ModVersion value) {
+		return mods.values().stream().map(ModVersion::getModId).anyMatch(e -> e.equals(value.getModId()));
+	}
+
+	public void scanForMods(File folder, boolean isActive) {
 		for (File f : Objects.requireNonNull(folder.listFiles())) {
-			if (f.isDirectory()) scanForMods(f);
+			if (f.isDirectory()) scanForMods(f, isActive);
 			else if (f.getName().endsWith(".jar")) {
 				//Get it as a JarFile
 				String fileName = f.getName().replace('+', ' ');
@@ -140,7 +158,7 @@ public class ModUtils {
 					try {
 						ModVersion v = matchesExistingId(jarId, fileName);
 						if (v != null) {
-							addMod(jarId, v);
+							addMod(jarId, v, isActive);
 							continue;
 						}
 					}catch(IOException | ModIdFoundConnectionFailed ignored){ }
@@ -148,7 +166,7 @@ public class ModUtils {
 					//Attempt to find an online ModVersion matching the installed one
 					try {
 						IdResult id = getRealModId(file);
-						addMod(id);
+						addMod(id, isActive);
 						continue;
 					} catch (ModIdNotFoundException e1) {
 						AppLogger.info(e1.getMessage(), getClass());
@@ -168,8 +186,8 @@ public class ModUtils {
 					}
 					if (root.has("modList")) root = root.get("modList");//this will be an array
 
-					if (root.isArray()) checkNode(root, file, root.size());
-					else addMod(getJarModId(file), readNode(root, file), true, "Couldn't find a curse forge match.");
+					if (root.isArray()) checkNode(root, file, root.size(), isActive);
+					else addMod(getJarModId(file), readNode(root, file), true, "Couldn't find a curse forge match.", isActive);
 				} catch (Exception e2) {
 					AppLogger.error(e2, getClass());
 				}
@@ -258,7 +276,7 @@ public class ModUtils {
 		return ret;
 	}
 
-	private void checkNode(JsonNode array, JarFile jarFile, int length) {
+	private void checkNode(JsonNode array, JarFile jarFile, int length, boolean active) {
 		int i = 0;
 		do {
 			try {
@@ -266,32 +284,33 @@ public class ModUtils {
 				i++;
 				if (root == null) continue;
 				ModVersion v = readNode(root, jarFile);
-				addMod(getJarModId(jarFile), v, true, "Couldn't find a curse forge match for any guessed ids");
+				addMod(getJarModId(jarFile), v, true, "Couldn't find a curse forge match for any guessed ids", active);
 				return;
 			} catch (Exception ignored) {
 			}
 		} while (i < length);
 	}
 
-	private void addMod(IdResult mod) {
-		addMod(mod.jarId, mod.mod);
+	private void addMod(IdResult mod, boolean active) {
+		addMod(mod.jarId, mod.mod, active);
 	}
 
-	public void addMod(String modId, ModVersion mod) {
-		addMod(modId, mod, false, null);
+	public void addMod(String modId, ModVersion mod, boolean active) {
+		addMod(modId, mod, false, null, active);
 	}
 
-	public void addMod(String modId, ModVersion mod, boolean bad, String issue) {
-		//if it's a bad mod we probably shouldn't cache it
+	public void addMod(String modId, ModVersion mod, boolean bad, String issue, boolean active) {
+		//if it's a BAD mod we probably shouldn't cache it
 		if (bad) {
-			AppLogger.info("adding bad mod: " + modId, getClass());
+			AppLogger.info("adding BAD mod: " + modId, getClass());
 			addBadJar(new IdResult(mod, modId), issue);
 			//if doesn't contain a / or a \ (files at that point)
 		} else if (!modId.contains("/") && !modId.contains("\\"))
 			CONFIG.getCachedMods().putItem(modId, mod);
 		else
 			AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
-		mods.put(modId, mod);
+		if(active) mods.put(modId, mod);
+		else inactiveMods.put(modId, mod);
 	}
 
 	public ModVersion getMod(String id) {
@@ -313,9 +332,11 @@ public class ModUtils {
 		badJars.clear();
 		File f = new File(DOT_MINECRAFT_LOCATION);
 		if (f.exists() && f.isDirectory()) {
-			f = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
-			if (f.exists() && f.isDirectory()) {
-				scanForMods(f);
+			File mods = FileSystems.getDefault().getPath(DOT_MINECRAFT_LOCATION).resolve("mods").toFile();
+			f = f.toPath().resolve(MINECRAFT_VERSION).toFile();
+			if (mods.exists() && mods.isDirectory()) {
+				scanForMods(mods, true);
+				if(f.exists() && f.isDirectory()) scanForMods(f, false);
 				try {
 					CONFIG.getCachedMods().writeCache();
 				} catch (IOException e) {

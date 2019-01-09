@@ -1,8 +1,7 @@
 package com.squedgy.mcmodmanager.app;
 
 import com.squedgy.mcmodmanager.AppLogger;
-import com.squedgy.mcmodmanager.app.config.Config;
-import com.squedgy.mcmodmanager.app.controllers.TableViewController;
+import com.squedgy.mcmodmanager.app.controllers.MainController;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -22,10 +21,10 @@ public class Startup extends Application {
 	public static String MINECRAFT_VERSION = "1.12.2";
 	private static Scene PARENT;
 	private static Startup instance;
-	private static TableViewController MAIN_VIEW;
+	private static MainController MAIN_VIEW;
 
 	public Startup() throws IOException {
-		if (MAIN_VIEW == null) MAIN_VIEW = TableViewController.getInstance();
+		if (MAIN_VIEW == null) MAIN_VIEW = MainController.getInstance();
 		if (PARENT == null) PARENT = new Scene(MAIN_VIEW.getRoot());
 	}
 
@@ -127,7 +126,7 @@ public class Startup extends Application {
 		return PARENT;
 	}
 
-	public TableViewController getMainView() {
+	public MainController getMainView() {
 		return MAIN_VIEW;
 	}
 

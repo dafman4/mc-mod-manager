@@ -51,7 +51,7 @@ public class NewModsController {
 				) {
 					out.transferFrom(in, 0, Long.MAX_VALUE);
 				} catch (ModIdNotFoundException | IOException ignored) { v = null; }
-				if (v != null) ModUtils.getInstance().addMod(id, v);
+				if (v != null) ModUtils.getInstance().addMod(id, v, true);
 			}
 		}
 		e.consume();

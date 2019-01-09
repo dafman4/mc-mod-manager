@@ -5,6 +5,7 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
+import com.squedgy.mcmodmanager.app.components.DisplayVersion;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
 import javafx.scene.control.TableColumn;
@@ -114,7 +115,7 @@ public class Config {
 		return one.compareTo(two);
 	}
 
-	public void writeColumnOrder(List<TableColumn<ModVersion, ?>> order) {
+	public void writeColumnOrder(List<TableColumn<DisplayVersion, ?>> order) {
 		Map<String, String> props = new HashMap<>();
 		for (int i = 0; i < order.size(); i++) props.put(order.get(i).getText(), String.valueOf(i));
 		//Rewrite the columns keys to table.{column_name} so it's within an inner object

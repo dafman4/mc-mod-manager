@@ -3,34 +3,43 @@ package com.squedgy.mcmodmanager.app.controllers;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.components.DisplayVersion;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.threads.ModLoadingThread;
+import com.squedgy.mcmodmanager.app.util.ImageUtils;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
-public class TableViewController {
+public class MainController {
 
-	private static TableViewController instance;
+	private static MainController instance;
 	private ModVersionTableController table;
 	@FXML
 	private MenuItem badJars;
@@ -45,14 +54,14 @@ public class TableViewController {
 	private ModCheckingThread checking;
 	private ModInfoThread gathering;
 
-	private TableViewController() throws IOException {
+	private MainController() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("main.fxml"));
 		loader.setController(this);
 		loader.load();
 	}
 
-	public static TableViewController getInstance() throws IOException {
-		if (instance == null) instance = new TableViewController();
+	public static MainController getInstance() throws IOException {
+		if (instance == null) instance = new MainController();
 		return instance;
 	}
 
@@ -68,7 +77,8 @@ public class TableViewController {
 		ModLoadingThread t = new ModLoadingThread((mods) -> {
 			try {
 				table = new ModVersionTableController(mods.toArray(new ModVersion[0]));
-			} catch (IOException ignored) {
+			} catch (IOException e) {
+				throw new RuntimeException(e);
 			}
 
 			table.addOnChange((obs, old, neu) -> {
@@ -84,6 +94,7 @@ public class TableViewController {
 					gathering.start();
 				}
 			});
+
 			Platform.runLater(() -> {
 				listGrid.add(table.getRoot(), 0, 0);
 				badJars.setVisible(ModUtils.viewBadJars().size() > 0);
@@ -113,7 +124,7 @@ public class TableViewController {
 	}
 
 	public void setItems(List<ModVersion> mods) {
-		table.setItems(FXCollections.observableArrayList(mods));
+		table.setItems(FXCollections.observableArrayList(mods.stream().map(DisplayVersion::new).collect(Collectors.toList())));
 	}
 
 	private synchronized void updateObjectView(String description) {

@@ -58,7 +58,7 @@ public class SetJarIdController {
 								b.setText("Ignore Failure, and Save");
 								((Version) id.mod).setModId(input.getText());
 								b.onMouseReleasedProperty().setValue(e1 -> {
-									ModUtils.getInstance().addMod(id.jarId, id.mod);
+									ModUtils.getInstance().addMod(id.jarId, id.mod, true);
 									try {
 										ModUtils.getInstance().CONFIG.getCachedMods().writeCache();
 									} catch (IOException e2) {
@@ -67,7 +67,7 @@ public class SetJarIdController {
 								});
 							} else {
 								((Version) found).setModId(input.getText());
-								ModUtils.getInstance().addMod(id.jarId, found);
+								ModUtils.getInstance().addMod(id.jarId, found, true);
 								ModUtils.getInstance().CONFIG.getCachedMods().writeCache();
 								holder.getChildren().setAll(label, new Label(input.getText()), new Label("- success"));
 							}

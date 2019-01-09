@@ -77,7 +77,7 @@ public class ModUpdaterController {
 
 							if(value.isResult()){
 								String jarId = ModUtils.getJarModId(new JarFile(newJar));
-								ModUtils.getInstance().addMod(jarId, key);
+								ModUtils.getInstance().addMod(jarId, key, true);
 							}
 						} catch (Exception e1) {
 						}
