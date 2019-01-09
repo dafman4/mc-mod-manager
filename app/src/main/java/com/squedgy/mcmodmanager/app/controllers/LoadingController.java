@@ -28,8 +28,8 @@ public class LoadingController {
 				"to{transform:rotate(360deg);} " +
 				"} " +
 				".img {" +
-				"background: url(\"" + getResource("components/img/loading.png") + "\") center center no-repeat;" +
-				"background-size:contain;" +
+				"background: url(\"" + getResource("components/img/loading.svg") + "\") center center no-repeat;" +
+				"background-size:cover;" +
 				"animation:spin 3s linear infinite;" +
 				"min-height:100px;" +
 				"min-width:100px;" +
