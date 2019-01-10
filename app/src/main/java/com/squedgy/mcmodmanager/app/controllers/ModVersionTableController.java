@@ -26,6 +26,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
@@ -35,6 +36,7 @@ public class ModVersionTableController {
 	@FXML
 	private TableView<DisplayVersion> root;
 	private ModInfoThread gathering;
+	private Function<ModVersion, ?> doubleClick = null;
 
 	public ModVersionTableController(ModVersion... mods) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modVersionTable.fxml"));
@@ -49,29 +51,29 @@ public class ModVersionTableController {
 
 			row.setOnMouseClicked(e -> {
 				if(e.getClickCount() == 2 && !row.isEmpty()){
-					ModVersion v = row.getItem();
-					if(v != null)
-					System.out.println("double click: " + v.getModId());
+					if(doubleClick != null){
+						doubleClick.apply(row.getItem());
+						root.refresh();
+					}
+
 				}
 			});
 
 			return row;
 		});
-		root.getColumns().forEach(column -> {
-			if(column.getText().equals("Active")){
-				Callback<TableColumn.CellDataFeatures<DisplayVersion, ImageView>, ObservableValue<ImageView>> meth = i ->{
-					ImageView v = i.getValue().getImage();
-					v.maxHeight(20);
-					v.maxWidth(20);
-					return new SimpleObjectProperty<>(v);
-				};
-				((TableColumn<DisplayVersion, ImageView>)column).setCellValueFactory(meth);
-			}
-		});
+
 	}
 
 	public void addOnChange(ChangeListener<ModVersion> listener) {
 		root.getSelectionModel().selectedItemProperty().addListener(listener);
+	}
+
+	public void setOnDoubleClick(Function<ModVersion, ?> func){
+		this.doubleClick = func;
+	}
+
+	public void addColumn(int index, TableColumn<DisplayVersion, ImageView> column){
+		root.getColumns().add(index, column);
 	}
 
 	public List<ModVersion> getItems() {

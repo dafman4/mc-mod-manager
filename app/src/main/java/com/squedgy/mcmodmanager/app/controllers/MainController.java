@@ -27,6 +27,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -77,6 +78,29 @@ public class MainController {
 		ModLoadingThread t = new ModLoadingThread((mods) -> {
 			try {
 				table = new ModVersionTableController(mods.toArray(new ModVersion[0]));
+
+				TableColumn<DisplayVersion, ImageView> col = new TableColumn<>();
+				Callback<TableColumn.CellDataFeatures<DisplayVersion, ImageView>, ObservableValue<ImageView>> meth = i ->{
+					ImageView v = i.getValue().getImage();
+					return new SimpleObjectProperty<>(v);
+				};
+				col.setCellValueFactory(meth);
+				table.addColumn(0, col);
+
+				table.setOnDoubleClick(mod -> {
+					ModUtils utils = ModUtils.getInstance();
+					try {
+						if (utils.modActive(mod)) {
+							utils.deactivateMod(mod);
+						} else {
+							utils.activateMod(mod);
+						}
+					}catch(Exception e){
+						throw new RuntimeException(e);
+					}
+					return null;
+				});
+
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}

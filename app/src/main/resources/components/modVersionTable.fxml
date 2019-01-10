@@ -10,7 +10,6 @@
 		<URL value="@../table-view.css"/>
 	</stylesheets>
 	<columns>
-		<TableColumn text="Active"/>
 		<TableColumn text="Mod Name">
 			<cellValueFactory>
 				<PropertyValueFactory property="modName"/>

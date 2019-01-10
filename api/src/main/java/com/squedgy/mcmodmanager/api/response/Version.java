@@ -121,7 +121,7 @@ public class Version implements ModVersion {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
+		if (o == null || getClass().equals(o.getClass())) return false;
 		Version version = (Version) o;
 		return (Objects.equals(modId, version.modId)) &&
 			Objects.equals(modName, version.modName);

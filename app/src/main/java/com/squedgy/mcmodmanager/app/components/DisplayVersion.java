@@ -20,8 +20,6 @@ public class DisplayVersion extends Version {
 	public ImageView getImage(){
 		try {
 			ImageView ret = new ImageView(ModUtils.getInstance().modActive(this) ? ImageUtils.getInstance().GOOD : ImageUtils.getInstance().BAD);
-			ret.maxWidth(20);
-			ret.maxHeight(20);
 			return ret;
 		} catch (URISyntaxException e) {
 			return null;

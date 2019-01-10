@@ -3,6 +3,12 @@
     -fx-background-color: linear-gradient(to bottom, #292929, #131313);;
 }
 
+.table-row-cell:selected, .table-row-cell:odd:selected{
+	-fx-background-color:#126;
+    -fx-background-insets: 0;
+    -fx-background-radius: 1;
+}
+
 .mod-table {
     -fx-background-color:transparent;
 }
@@ -31,12 +37,6 @@
     -fx-background-color: #424242;
     -fx-background-insets: 0, 0 0 1 0;
     -fx-padding: 0.0em; /* 0 */
-}
-
-.table-row-cell:selected {
-    -fx-background-color: #005797;
-    -fx-background-insets: 0;
-    -fx-background-radius: 1;
 }
 
 .corner{

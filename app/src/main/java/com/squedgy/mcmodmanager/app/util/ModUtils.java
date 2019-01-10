@@ -121,9 +121,34 @@ public class ModUtils {
 		if(!f.exists()) if(!f.mkdirs()) throw new IOException("couldn't make the de-active mods folder");
 		File modFile = new File(Startup.getModsDir() + File.separator + mod.getFileName());
 		if(modFile.exists()){
-			Files.move(modFile.toPath(), f.toPath().resolve(mod.getFileName()));
-			inactiveMods.put(key, mods.remove(key));
+			if(f.toPath().resolve(mod.getFileName()).toFile().exists()){
+				if(!modFile.delete()) throw new IOException("couldn't deactivate!");
+			} else {
+				Files.move(modFile.toPath(), f.toPath().resolve(mod.getFileName()));
+				inactiveMods.put(key, mods.remove(key));
+			}
+		}else{
+			throw new IOException("The given mod didn't exist in the Mods DIR OR it was already in!");
 		}
+	}
+
+	public void activateMod(ModVersion mod) throws IOException, IllegalArgumentException {
+		String key = inactiveMods.entrySet()
+			.stream()
+			.filter(m -> mod.equals(m.getValue()))
+			.findFirst()
+			.orElseThrow(() -> new IllegalArgumentException("Mod Version: id(" + mod.getModId() + ") wasn't inactive!")).getKey();
+
+		File f = new File(DOT_MINECRAFT_LOCATION + File.separator + MINECRAFT_VERSION + File.separator + mod.getFileName());
+		File newFile = new File(Startup.getModsDir() + File.separator + mod.getFileName());
+		if(f.exists()){
+			if(newFile.exists()){
+				if(!f.delete())	throw new IOException("Couldn't activate mod: id(" + mod.getModId() + ")");
+			}else{
+				Files.move(f.toPath(), newFile.toPath());
+				mods.put(key, inactiveMods.remove(key));
+			}
+		} else throw new IOException("Couldn't activate mod: id(" + mod.getModId() + ")");
 	}
 
 	public boolean modActive(ModVersion value) {
@@ -131,6 +156,7 @@ public class ModUtils {
 	}
 
 	public void scanForMods(File folder, boolean isActive) {
+		System.out.println(Arrays.toString(folder.listFiles()));
 		for (File f : Objects.requireNonNull(folder.listFiles())) {
 			if (f.isDirectory()) scanForMods(f, isActive);
 			else if (f.getName().endsWith(".jar")) {
@@ -337,6 +363,7 @@ public class ModUtils {
 			if (mods.exists() && mods.isDirectory()) {
 				scanForMods(mods, true);
 				if(f.exists() && f.isDirectory()) scanForMods(f, false);
+
 				try {
 					CONFIG.getCachedMods().writeCache();
 				} catch (IOException e) {
@@ -368,6 +395,10 @@ public class ModUtils {
 			}
 		}
 		return null;
+	}
+
+	public List<ModVersion> getInactiveMods() {
+		return new LinkedList<>(inactiveMods.values());
 	}
 
 	public static class IdResult {
