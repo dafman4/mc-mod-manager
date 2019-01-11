@@ -6,12 +6,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.squedgy.mcmodmanager.AppLogger;
+import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Cacher<ValueType> {
 
@@ -83,6 +84,15 @@ public class Cacher<ValueType> {
 				mapper.writeValue(f, cachedMods);
 			}
 		}
+	}
+
+	public void clearUnmatched(Map<String, ValueType> mods){
+		Set<String> keys = mods.keySet();
+		List<ValueType> version = new LinkedList<>(mods.values());
+		cachedMods = cachedMods.entrySet()
+			.stream()
+			.filter(e -> keys.contains(e.getKey()) && version.contains(e.getValue()))
+			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	public void putItem(String modId, ValueType version) {

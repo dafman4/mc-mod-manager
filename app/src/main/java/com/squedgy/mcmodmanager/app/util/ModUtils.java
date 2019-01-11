@@ -365,6 +365,9 @@ public class ModUtils {
 				if(f.exists() && f.isDirectory()) scanForMods(f, false);
 
 				try {
+					Map<String,ModVersion> allMods = new HashMap<>(ModUtils.mods);
+					allMods.putAll(inactiveMods);
+					CONFIG.getCachedMods().clearUnmatched(allMods);
 					CONFIG.getCachedMods().writeCache();
 				} catch (IOException e) {
 					AppLogger.error(e.getMessage(), getClass());
@@ -399,6 +402,13 @@ public class ModUtils {
 
 	public List<ModVersion> getInactiveMods() {
 		return new LinkedList<>(inactiveMods.values());
+	}
+
+	public ModVersion isVersionId(String id) {
+		List<ModVersion> version = new LinkedList<>();
+		version.addAll(mods.values());
+		version.addAll(inactiveMods.values());
+		return version.stream().filter(v -> v.getModId().equals(id)).findFirst().orElse(null);
 	}
 
 	public static class IdResult {

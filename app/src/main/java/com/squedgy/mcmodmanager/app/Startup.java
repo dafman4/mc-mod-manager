@@ -52,15 +52,11 @@ public class Startup extends Application {
 		File dotMc = new File(DOT_MINECRAFT_LOCATION);
 		if (!dotMc.exists() || !dotMc.isDirectory() || !allSubDirsMatch(dotMc, "mods", "versions","resourcepacks")) {
 			DOT_MINECRAFT_LOCATION = null;
-			while (!chooseMinecraftDirectory()) chooseMinecraftDirectory();
-			dotMc = new File(DOT_MINECRAFT_LOCATION);
 		}
 
 
 
-		if (DOT_MINECRAFT_LOCATION != null && allSubDirsMatch(dotMc, "mods", "versions","resourcepacks")) launch(args);
-
-		else AppLogger.info("Minecraft Directory not set, shutting down.", Startup.class);
+		launch(args);
 	}
 
 	public static boolean allSubDirsMatch(File dir, String... subDirs){
@@ -73,33 +69,6 @@ public class Startup extends Application {
 
 		return true;
 	}
-
-	public static boolean chooseMinecraftDirectory() throws ClassNotFoundException, UnsupportedLookAndFeelException, InstantiationException, IllegalAccessException {
-		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		JFileChooser chooser = new JFileChooser();
-		chooser.setAcceptAllFileFilterUsed(false);
-		chooser.setFileFilter(new FileFilter() {
-			@Override
-			public boolean accept(File f) { return f.isDirectory(); }
-
-			@Override
-			public String getDescription() { return "Directories"; }
-		});
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-
-		int result = chooser.showSaveDialog(null);
-		if (result == JFileChooser.APPROVE_OPTION) {
-			File f = new File(chooser.getSelectedFile().getAbsolutePath());
-
-			if (f.exists() && allSubDirsMatch(f, "mods", "versions","resourcepacks")) {
-				DOT_MINECRAFT_LOCATION = f.getAbsolutePath();
-				ModUtils.getInstance().CONFIG.setProperty(CUSTOM_DIR, DOT_MINECRAFT_LOCATION);
-				ModUtils.getInstance().CONFIG.writeProps();
-			} else return false;
-		}
-		return true;
-	}
-
 	public static URL getResource(String resource) {
 		return Thread.currentThread().getContextClassLoader().getResource(resource);
 	}
@@ -133,13 +102,12 @@ public class Startup extends Application {
 	@Override
 	public void start(Stage stage) throws IOException {
 
-		getInstance();
-
 		stage.setTitle("Minecraft Mod Manager");
-		stage.setScene(PARENT);
 		stage.show();
 		stage.setMinHeight(500);
 		stage.setMinWidth(700);
+		getInstance();
+		stage.setScene(PARENT);
 	}
 
 }

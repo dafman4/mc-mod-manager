@@ -27,8 +27,11 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -36,6 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.squedgy.mcmodmanager.app.Startup.DOT_MINECRAFT_LOCATION;
 import static com.squedgy.mcmodmanager.app.Startup.getResource;
 
 public class MainController {
@@ -73,7 +77,15 @@ public class MainController {
 
 	public void loadMods() throws IOException {
 		WebView w = new LoadingController().getRoot();
-
+		while(DOT_MINECRAFT_LOCATION == null){
+			DirectoryChooser fc = new DirectoryChooser();
+			File location = fc.showDialog(null);
+			if(location.exists() && Startup.allSubDirsMatch(location, "mods", "versions", "saves")){
+				DOT_MINECRAFT_LOCATION = location.getAbsolutePath();
+				ModUtils.getInstance().CONFIG.setProperty(Startup.CUSTOM_DIR, DOT_MINECRAFT_LOCATION);
+				ModUtils.getInstance().CONFIG.writeProps();
+			}
+		}
 		root.setContent(w);
 		ModLoadingThread t = new ModLoadingThread((mods) -> {
 			try {
