@@ -171,11 +171,11 @@ public abstract class ModChecker {
 					}
 				}).setDefaultRequestConfig(
 					RequestConfig.custom()
-					.setCookieSpec(CookieSpecs.STANDARD)
-					.build()
+						.setCookieSpec(CookieSpecs.STANDARD)
+						.build()
 				);
 			//If proxy then add it
-			if (System.getProperty("https.proxyPort") != null && System.getProperty("https.proxyHost") != null){
+			if (System.getProperty("https.proxyPort") != null && System.getProperty("https.proxyHost") != null) {
 				clientBuilder.setProxy(new HttpHost(System.getProperty("https.proxyHost"), Integer.valueOf(System.getProperty("https.proxyPort"))));
 			}
 

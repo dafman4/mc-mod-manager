@@ -1,9 +1,9 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.app.util.JavafxUtils;
-import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.mcmodmanager.app.components.PublicNode;
+import com.squedgy.mcmodmanager.app.util.JavafxUtils;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
+import com.squedgy.mcmodmanager.app.util.PathUtils;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -31,7 +31,7 @@ public class BadJarsController {
 	@FXML
 	public void initialize() {
 		root.setItems(FXCollections.observableArrayList(ModUtils.viewBadJars().entrySet().stream().map(PublicNode::new).collect(Collectors.toList())));
-		TableColumn<PublicNode, String> one = JavafxUtils.makeColumn("File", v ->{
+		TableColumn<PublicNode, String> one = JavafxUtils.makeColumn("File", v -> {
 			String fileName = v.getValue().getKey().getFileName();
 			return new SimpleStringProperty(fileName.contains(File.separator) ? fileName.substring((PathUtils.getModsDir() + File.separator).length()) : fileName);
 		});
@@ -44,6 +44,8 @@ public class BadJarsController {
 		root.refresh();
 	}
 
-	public TableView getRoot() { return root; }
+	public TableView getRoot() {
+		return root;
+	}
 
 }

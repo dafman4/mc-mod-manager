@@ -20,7 +20,7 @@ public class ModCheckingThread extends Thread {
 	private final Callback<List<ModVersion>, ?> callback;
 	private final Map<ModVersion, Thread> updateCheckers;
 
-	public ModCheckingThread(Callback<List<ModVersion>, ?> callback){
+	public ModCheckingThread(Callback<List<ModVersion>, ?> callback) {
 		this(Arrays.asList(ModUtils.getInstance().getMods()), Config.minecraftVersion, callback);
 	}
 
@@ -31,7 +31,7 @@ public class ModCheckingThread extends Thread {
 		this.callback = callback;
 	}
 
-	private void removeThread(ModVersion v){
+	private void removeThread(ModVersion v) {
 		updateCheckers.remove(v);
 	}
 
@@ -55,16 +55,19 @@ public class ModCheckingThread extends Thread {
 				} catch (ModIdNotFoundException | NullPointerException e) {
 				} catch (Exception e) {
 					AppLogger.error(e, getClass());
-				}finally{
+				} finally {
 					removeThread(id);
 				}
 			});
 			updateCheckers.put(id, toRun);
 			toRun.start();
 		});
-		while(updateCheckers.size() > 0) {
-			try { TimeUnit.SECONDS.sleep(3); }
-			catch (InterruptedException e) { AppLogger.error(e, getClass()); }
+		while (updateCheckers.size() > 0) {
+			try {
+				TimeUnit.SECONDS.sleep(3);
+			} catch (InterruptedException e) {
+				AppLogger.error(e, getClass());
+			}
 		}
 		callback.call(updateables);
 	}

@@ -18,12 +18,10 @@ import java.util.stream.Collectors;
 
 public class Config {
 
-	private static final String CONFIG_DIRECTORY = "config" + File.separator;
-	private static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY + "manager.json";
-
 	public static final String CACHE_DIRECTORY = "cache" + File.separator;
 	public static final String CUSTOM_DIR = "mc-dir";
-
+	private static final String CONFIG_DIRECTORY = "config" + File.separator;
+	private static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY + "manager.json";
 	private static final JsonFileFormat format = new JsonFileFormat();
 	private static final FileReader<Map<String, String>> READER = new FileReader<>(CONFIG_FILE_PATH, format);
 	private static final FileWriter<Map<String, String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH, format, false);
@@ -40,26 +38,38 @@ public class Config {
 	}
 
 	public static Config getInstance() {
-		if (instance == null)  instance = new Config();
+		if (instance == null) instance = new Config();
 		return instance;
 	}
 
-	public Cacher<ModVersion> getCachedMods() { return cachedMods; }
+	public Cacher<ModVersion> getCachedMods() {
+		return cachedMods;
+	}
 
-	public String getProperty(String key) { return CONFIG.get(key); }
+	public String getProperty(String key) {
+		return CONFIG.get(key);
+	}
 
-	public String setProperty(String key, String prop) { return CONFIG.put(key, prop); }
+	public String setProperty(String key, String prop) {
+		return CONFIG.put(key, prop);
+	}
 
-	public void deleteProperty(String key) { CONFIG.remove(key); }
+	public void deleteProperty(String key) {
+		CONFIG.remove(key);
+	}
 
-	public Map<String, String> readProps() { return readProps(CONFIG_FILE_PATH); }
+	public Map<String, String> readProps() {
+		return readProps(CONFIG_FILE_PATH);
+	}
 
 	public Map<String, String> readProps(String file) {
 		READER.setFileLocation(file);
 		return READER.read();
 	}
 
-	public void writeProps() { writeProps(CONFIG_FILE_PATH, CONFIG); }
+	public void writeProps() {
+		writeProps(CONFIG_FILE_PATH, CONFIG);
+	}
 
 	public <T> void writeProps(Map<String, T> config) {
 		//Props = CONFIG
@@ -86,10 +96,14 @@ public class Config {
 
 	public int compareColumns(String tableName, String a, String b) {
 		Integer one = null, two = null;
-		try { one = Integer.valueOf(getProperty(tableName + "." + a));
-		}catch( NumberFormatException ignore) {}
-		try { two = Integer.valueOf(getProperty(tableName + "." + b));
-		}catch( NumberFormatException ignore) {}
+		try {
+			one = Integer.valueOf(getProperty(tableName + "." + a));
+		} catch (NumberFormatException ignore) {
+		}
+		try {
+			two = Integer.valueOf(getProperty(tableName + "." + b));
+		} catch (NumberFormatException ignore) {
+		}
 		if (one == null && two == null) return 0;
 		else if (one == null) return -1;
 		else if (two == null) return 1;
@@ -104,12 +118,14 @@ public class Config {
 		props.entrySet()
 			.stream()
 			.map(e -> new AbstractMap.SimpleEntry<>(tableName + "." + e.getKey(), e.getValue()))
-			.forEach( e -> CONFIG.put(e.getKey(), e.getValue()));
+			.forEach(e -> CONFIG.put(e.getKey(), e.getValue()));
 		//Add CONFIG so it's all nice and dandy
 		CONFIG.putAll(props);
 		writeProps();
 	}
 
-	public void setCacher(String mcVersion) { cachedMods = Cacher.reading(CACHE_DIRECTORY + minecraftVersion + ".json", new JsonModVersionDeserializer()); }
+	public void setCacher(String mcVersion) {
+		cachedMods = Cacher.reading(CACHE_DIRECTORY + minecraftVersion + ".json", new JsonModVersionDeserializer());
+	}
 
 }

@@ -12,27 +12,27 @@ public class JavafxUtils {
 
 	private static Map<WebView, Thread> viewSetters = null;
 
-	public static void putSetterAndStart(WebView view, Runnable run){
+	public static void putSetterAndStart(WebView view, Runnable run) {
 		putSetterAndStart(view, new Thread(run));
 	}
 
-	public static void putSetterAndStart(WebView view, Thread t){
+	public static void putSetterAndStart(WebView view, Thread t) {
 		putSetter(view, t);
 		t.start();
 	}
 
-	private static void putSetter(WebView view, Thread t){
-		if(viewSetters == null) viewSetters = new HashMap<>();
+	private static void putSetter(WebView view, Thread t) {
+		if (viewSetters == null) viewSetters = new HashMap<>();
 		else {
 			Thread current = viewSetters.get(view);
-			if(current != null && current.isAlive())
+			if (current != null && current.isAlive())
 				current.interrupt();
 		}
 		viewSetters.put(view, t);
 	}
 
-	public static <Obj,Value> TableColumn<Obj,Value> makeColumn(String header, Callback<TableColumn.CellDataFeatures<Obj, Value>, ObservableValue<Value>> factory){
-		TableColumn<Obj,Value> ret = new TableColumn<>();
+	public static <Obj, Value> TableColumn<Obj, Value> makeColumn(String header, Callback<TableColumn.CellDataFeatures<Obj, Value>, ObservableValue<Value>> factory) {
+		TableColumn<Obj, Value> ret = new TableColumn<>();
 		ret.setText(header);
 		ret.setCellValueFactory(factory);
 		return ret;

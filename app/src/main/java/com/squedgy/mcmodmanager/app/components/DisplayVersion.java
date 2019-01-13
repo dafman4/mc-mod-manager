@@ -8,7 +8,7 @@ import javafx.scene.image.ImageView;
 
 public class DisplayVersion extends Version {
 
-	public DisplayVersion(ModVersion v){
+	public DisplayVersion(ModVersion v) {
 		setModId(v.getModId());
 		setFileName(v.getFileName());
 		setDescription(v.getDescription());
@@ -19,7 +19,7 @@ public class DisplayVersion extends Version {
 		setUploadedAt(v.getUploadedAt());
 	}
 
-	public ImageView getImage(){
+	public ImageView getImage() {
 		ImageUtils u = ImageUtils.getInstance();
 		return new ImageView(ModUtils.getInstance().modActive(this) ? u.GOOD : ImageUtils.getInstance().BAD);
 	}

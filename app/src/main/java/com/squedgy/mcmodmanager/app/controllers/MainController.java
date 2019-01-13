@@ -3,14 +3,14 @@ package com.squedgy.mcmodmanager.app.controllers;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
-import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.threads.ModLoadingThread;
-import com.squedgy.mcmodmanager.app.util.ModUtils;
 import com.squedgy.mcmodmanager.app.util.JavafxUtils;
+import com.squedgy.mcmodmanager.app.util.ModUtils;
+import com.squedgy.mcmodmanager.app.util.PathUtils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
@@ -92,7 +92,7 @@ public class MainController {
 		t.start();
 	}
 
-	private void initializeTable(List<ModVersion> mods) throws IOException{
+	private void initializeTable(List<ModVersion> mods) throws IOException {
 		table = new ModVersionTableController(TABLE_NAME, mods.toArray(new ModVersion[0]));
 
 		//Add the active/deactive image column here
@@ -113,7 +113,7 @@ public class MainController {
 				} else {
 					utils.activateMod(mod);
 				}
-			}catch(Exception e){
+			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 			return null;
@@ -133,11 +133,17 @@ public class MainController {
 		});
 	}
 
-	public ScrollPane getRoot() { return root; }
+	public ScrollPane getRoot() {
+		return root;
+	}
 
-	public List<ModVersion> getItems() { return table.getItems(); }
+	public List<ModVersion> getItems() {
+		return table.getItems();
+	}
 
-	public void setItems(List<ModVersion> mods) { table.setItems(FXCollections.observableArrayList(mods.stream().map(DisplayVersion::new).collect(Collectors.toList()))); }
+	public void setItems(List<ModVersion> mods) {
+		table.setItems(FXCollections.observableArrayList(mods.stream().map(DisplayVersion::new).collect(Collectors.toList())));
+	}
 
 	private synchronized void updateObjectView(String description) {
 		objectView.getEngine().loadContent(
@@ -150,9 +156,13 @@ public class MainController {
 	}
 
 	@FXML
-	public void setColumns(Event e) { ModUtils.getInstance().CONFIG.writeColumnOrder(TABLE_NAME, table.getColumns()); }
+	public void setColumns(Event e) {
+		ModUtils.getInstance().CONFIG.writeColumnOrder(TABLE_NAME, table.getColumns());
+	}
 
-	public void updateModList() { setItems(Arrays.asList(ModUtils.getInstance().getMods())); }
+	public void updateModList() {
+		setItems(Arrays.asList(ModUtils.getInstance().getMods()));
+	}
 
 	@FXML
 	public void searchForUpdates(Event e) {
@@ -166,7 +176,7 @@ public class MainController {
 
 		if (checking == null || !checking.isAlive()) {
 
-			checking = new ModCheckingThread( l -> {
+			checking = new ModCheckingThread(l -> {
 				//do something with the returned list
 				Platform.runLater(() -> {
 
@@ -202,7 +212,7 @@ public class MainController {
 		m.setContent(new SetJarIdController().getRoot());
 		m.setAfterClose(e2 -> {
 			try {
-								m.close();
+				m.close();
 				loadMods();
 			} catch (IOException e1) {
 				AppLogger.error(e1, getClass());

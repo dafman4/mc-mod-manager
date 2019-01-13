@@ -61,7 +61,7 @@ public class SetJarIdController {
 		});
 	}
 
-	private void onMouseReleased(Event e, ModUtils.IdResult id, TextInputControl input, Button b, HBox holder, Label label){
+	private void onMouseReleased(Event e, ModUtils.IdResult id, TextInputControl input, Button b, HBox holder, Label label) {
 		ModVersion version = id.mod;
 		try {
 			ModVersion found = getLatestVersion(input.getText(), Config.minecraftVersion, id.mod.getFileName());
@@ -69,14 +69,14 @@ public class SetJarIdController {
 				b.setText(" Ignore Failure, and Save?");
 				((Version) id.mod).setModId(input.getText());
 				b.onMouseReleasedProperty().setValue(e1 -> {
-					if(id.mod.getModId().equals(input.getText())) {
+					if (id.mod.getModId().equals(input.getText())) {
 						ModUtils.getInstance().addMod(id.jarId, id.mod, true);
 						try {
 							ModUtils.getInstance().CONFIG.getCachedMods().writeCache();
 						} catch (IOException e2) {
 							AppLogger.error(e2.getMessage(), getClass());
 						}
-					}else{
+					} else {
 						onMouseReleased(e, id, input, b, holder, label);
 					}
 				});

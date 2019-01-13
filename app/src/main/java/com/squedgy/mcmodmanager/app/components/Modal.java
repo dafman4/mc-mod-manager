@@ -7,7 +7,6 @@ import javafx.beans.value.ObservableNumberValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
@@ -46,6 +45,13 @@ public class Modal {
 		return instance;
 	}
 
+	public static Modal loading() throws IOException {
+		Modal ret = getInstance();
+		ret.setContent(new LoadingController().getRoot());
+		ret.open(Startup.getParent().getWindow());
+		return ret;
+	}
+
 	public void setContent(Control node) {
 		holder.getChildren().setAll(node);
 		node.prefWidthProperty().bind(holder.widthProperty());
@@ -64,35 +70,36 @@ public class Modal {
 		node.prefHeightProperty().bind(holder.prefHeightProperty());
 	}
 
-	public void bindMinHeight(ObservableNumberValue v) { root.minHeightProperty().bind(v); }
+	public void bindMinHeight(ObservableNumberValue v) {
+		root.minHeightProperty().bind(v);
+	}
 
-	public void bindMinWidth(ObservableNumberValue v) { root.minWidthProperty().bind(v); }
+	public void bindMinWidth(ObservableNumberValue v) {
+		root.minWidthProperty().bind(v);
+	}
 
-	public ScrollPane getRoot() { return root; }
+	public ScrollPane getRoot() {
+		return root;
+	}
 
 	public void open(Window owner) {
 		setUp(owner);
-		if(stage.isShowing())stage.close();
+		if (stage.isShowing()) stage.close();
 		stage.show();
 	}
 
-	public void setAfterClose(EventHandler<WindowEvent> e) { if (stage != null) stage.onCloseRequestProperty().setValue(e); }
+	public void setAfterClose(EventHandler<WindowEvent> e) {
+		if (stage != null) stage.onCloseRequestProperty().setValue(e);
+	}
 
 	public void openAndWait(Window window) {
 		setUp(window);
-		if(stage.isShowing())stage.close();
+		if (stage.isShowing()) stage.close();
 		stage.showAndWait();
 	}
 
-	public static Modal loading() throws IOException {
-		Modal ret = getInstance();
-		ret.setContent(new LoadingController().getRoot());
-		ret.open(Startup.getParent().getWindow());
-		return ret;
-	}
-
 	private void setUp(Window window) {
-		if(stage == null){
+		if (stage == null) {
 			stage = new Stage();
 			stage.onCloseRequestProperty().set(e -> stage.close());
 			Scene scene = new Scene(root);
@@ -101,12 +108,14 @@ public class Modal {
 			stage.initOwner(window);
 			stage.initModality(Modality.APPLICATION_MODAL);
 		}
-		if(!stage.isShowing()) {
+		if (!stage.isShowing()) {
 			stage.setMinHeight(root.getMinHeight());
 			stage.setMinWidth(root.getMinWidth());
 		}
 	}
 
-	public void close() { stage.close(); }
+	public void close() {
+		stage.close();
+	}
 
 }

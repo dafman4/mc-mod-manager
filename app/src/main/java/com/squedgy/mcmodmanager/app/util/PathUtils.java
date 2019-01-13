@@ -15,45 +15,55 @@ public class PathUtils {
 
 	private static String minecraftDirectory;
 
-	public static void setMinecraftDirectory(String dir){
-		File f = new File(dir);
-		if(f.exists() && f.isDirectory() && allSubDirsMatch(f, "mods", "versions", "resourcepacks")){
-			minecraftDirectory = dir;
-		}
-	}
-
-	public static boolean allSubDirsMatch(File dir, String... subDirs){
-		if(dir.exists() && dir.isDirectory()){
-			for(String s : subDirs){
+	public static boolean allSubDirsMatch(File dir, String... subDirs) {
+		if (dir.exists() && dir.isDirectory()) {
+			for (String s : subDirs) {
 				File f = dir.toPath().resolve(s).toFile();
-				if(!f.exists() || !f.isDirectory()) return false;
+				if (!f.exists() || !f.isDirectory()) return false;
 			}
 		}
 
 		return true;
 	}
 
-	public static String getMinecraftDirectory() { return minecraftDirectory; }
+	public static String getMinecraftDirectory() {
+		return minecraftDirectory;
+	}
 
-	public static String getModsDir(){ return minecraftDirectory + File.separator + "mods"; }
+	public static void setMinecraftDirectory(String dir) {
+		File f = new File(dir);
+		if (f.exists() && f.isDirectory() && allSubDirsMatch(f, "mods", "versions", "resourcepacks")) {
+			minecraftDirectory = dir;
+		}
+	}
 
-	public static String getStorageDir() { return minecraftDirectory + File.separator + minecraftVersion; }
+	public static String getModsDir() {
+		return minecraftDirectory + File.separator + "mods";
+	}
 
-	public static String getModLocation(ModVersion v){ return getModsDir() + File.separator + v.getFileName(); }
+	public static String getStorageDir() {
+		return minecraftDirectory + File.separator + minecraftVersion;
+	}
 
-	public static String getModStorage(ModVersion v) { return getStorageDir() + File.separator + v.getFileName(); }
+	public static String getModLocation(ModVersion v) {
+		return getModsDir() + File.separator + v.getFileName();
+	}
+
+	public static String getModStorage(ModVersion v) {
+		return getStorageDir() + File.separator + v.getFileName();
+	}
 
 	public static String findModLocation(ModVersion v) {
 		File f = new File(getModLocation(v));
 		return f.exists() ? f.getAbsolutePath() : new File(getModStorage(v)).getAbsolutePath();
 	}
 
-	public static void ensureMinecraftDirectory(){
+	public static void ensureMinecraftDirectory() {
 		Config utils = ModUtils.getInstance().CONFIG;
-		while(minecraftDirectory == null){
+		while (minecraftDirectory == null) {
 			DirectoryChooser fc = new DirectoryChooser();
 			File location = fc.showDialog(null);
-			if(location.exists() && PathUtils.allSubDirsMatch(location, "mods", "versions", "saves")){
+			if (location.exists() && PathUtils.allSubDirsMatch(location, "mods", "versions", "saves")) {
 				minecraftDirectory = location.getAbsolutePath();
 				utils.setProperty(Config.CUSTOM_DIR, minecraftDirectory);
 				utils.writeProps();

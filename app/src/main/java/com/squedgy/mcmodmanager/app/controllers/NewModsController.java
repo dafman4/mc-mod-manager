@@ -1,14 +1,12 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
-import com.squedgy.mcmodmanager.app.Startup;
-import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
+import com.squedgy.mcmodmanager.app.util.PathUtils;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -18,7 +16,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -44,26 +44,21 @@ public class NewModsController {
 	}
 
 	@FXML
-	public void initialize(){ }
+	public void initialize() {
+	}
 
-	private boolean downloadMod(ModVersion v, String output, ModUtils utils){
+	private boolean downloadMod(ModVersion v, String output, ModUtils utils) {
 		try (
 			FileOutputStream outFile = new FileOutputStream(output);
 			ReadableByteChannel in = Channels.newChannel(ModChecker.download(v));
 			FileChannel out = outFile.getChannel()
 		) {
 			out.transferFrom(in, 0, Long.MAX_VALUE);
-			utils.addMod(ModUtils.getJarModId(new JarFile(PathUtils.getModsDir() + File.separator + v.getFileName())), v,false,  "", true);
+			utils.addMod(ModUtils.getJarModId(new JarFile(PathUtils.getModsDir() + File.separator + v.getFileName())), v, false, "", true);
 			return true;
 		} catch (ModIdNotFoundException | IOException ignored) {
 			return false;
 		}
-	}
-
-	private static class Result{
-		private ModVersion version;
-		private boolean succeded;
-		private String reason;
 	}
 
 	@FXML
@@ -76,16 +71,19 @@ public class NewModsController {
 			ModUtils utils = ModUtils.getInstance();
 			Map<String, Result> results = new HashMap<>();
 
-			for(String id : mods.getText().split("([^-a-zA-Z0-9]|[\r\n])+")){
+			for (String id : mods.getText().split("([^-a-zA-Z0-9]|[\r\n])+")) {
 				//Check normal and deactivated mods
 				ModVersion mod = utils.getAnyModFromId(id);
 				Result result = new Result();
 				result.succeded = false;
 
-				if(mod == null) {
-					try { checkCurseForge(id, result); }
-					catch (ModIdNotFoundException ignored) { result.reason = "Failed to locate a mod with id: " + id; }
-				}else{
+				if (mod == null) {
+					try {
+						checkCurseForge(id, result);
+					} catch (ModIdNotFoundException ignored) {
+						result.reason = "Failed to locate a mod with id: " + id;
+					}
+				} else {
 					updates.add(mod);
 					result.reason = "Mod already exists, currently attempting to update";
 				}
@@ -94,8 +92,8 @@ public class NewModsController {
 			try {
 				new ModUpdaterController(updates).updateAll(null);
 				afterAdd(results);
+			} catch (IOException ignored) {
 			}
-			catch (IOException ignored) { }
 			e.consume();
 		});
 		t.start();
@@ -107,8 +105,8 @@ public class NewModsController {
 		results.forEach((key, value) -> resultBox.getChildren().add(new Label(key + ": " + (value.succeded ? "Succeeded!!" : value.reason))));
 		Button b = new Button("Back");
 		resultBox.getChildren().addAll(new Label(), b);
-		b.setOnMouseReleased(event ->{
-			Platform.runLater(() ->{
+		b.setOnMouseReleased(event -> {
+			Platform.runLater(() -> {
 				mods.clear();
 				m.setContent(root);
 			});
@@ -116,18 +114,26 @@ public class NewModsController {
 		Platform.runLater(() -> m.setContent(resultBox));
 	}
 
-	private Result checkCurseForge(String id, Result result) throws ModIdNotFoundException{
+	private Result checkCurseForge(String id, Result result) throws ModIdNotFoundException {
 		ModUtils utils = ModUtils.getInstance();
 		ModVersion mod = ModChecker.getNewest(id, Config.minecraftVersion);
-		if(downloadMod(mod, PathUtils.getModLocation(mod), utils)){
+		if (downloadMod(mod, PathUtils.getModLocation(mod), utils)) {
 			result.succeded = true;
 			result.version = mod;
-		}else{
+		} else {
 			result.reason = "Failed to download: " + mod.getModId();
 		}
 		return result;
 	}
 
-	public VBox getRoot() { return root; }
+	public VBox getRoot() {
+		return root;
+	}
+
+	private static class Result {
+		private ModVersion version;
+		private boolean succeded;
+		private String reason;
+	}
 
 }

@@ -43,7 +43,7 @@ public class Startup extends Application {
 		else mcDir = System.getProperty("user.home") + File.separator + ".minecraft";
 
 		File dotMc = new File(mcDir);
-		if (!dotMc.exists() || !dotMc.isDirectory() || !allSubDirsMatch(dotMc, "mods", "versions","resourcepacks")) {
+		if (!dotMc.exists() || !dotMc.isDirectory() || !allSubDirsMatch(dotMc, "mods", "versions", "resourcepacks")) {
 			mcDir = null;
 		}
 		PathUtils.setMinecraftDirectory(mcDir);
@@ -51,9 +51,13 @@ public class Startup extends Application {
 		launch(args);
 	}
 
-	public static Scene getParent() { return PARENT; }
+	public static Scene getParent() {
+		return PARENT;
+	}
 
-	public MainController getMainView() { return MAIN_VIEW; }
+	public MainController getMainView() {
+		return MAIN_VIEW;
+	}
 
 	@Override
 	public void start(Stage stage) throws IOException {

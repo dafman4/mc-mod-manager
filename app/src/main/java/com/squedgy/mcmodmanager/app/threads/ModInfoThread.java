@@ -5,7 +5,6 @@ import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
-import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.util.Callback;
 
@@ -25,12 +24,12 @@ public class ModInfoThread extends Thread {
 		this.callback = callback;
 	}
 
-	public void callback(ModVersion v){
-		if(!Thread.currentThread().isInterrupted()) callback.call(v);
+	public void callback(ModVersion v) {
+		if (!Thread.currentThread().isInterrupted()) callback.call(v);
 	}
 
-	public void failed(){
-		if(!Thread.currentThread().isInterrupted()) couldntFind.call(null);
+	public void failed() {
+		if (!Thread.currentThread().isInterrupted()) couldntFind.call(null);
 	}
 
 	@Override

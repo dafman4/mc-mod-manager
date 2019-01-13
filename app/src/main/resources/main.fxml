@@ -12,7 +12,7 @@
 	</stylesheets>
 	<VBox fx:id="content" prefWidth="${root.width}" prefHeight="${root.height}">
 		<MenuBar fx:id="menu">
-			<Menu text="Add" >
+			<Menu text="Add">
 				<MenuItem text="Mods" onAction="#newMods"/>
 			</Menu>
 			<Menu text="View">
@@ -24,7 +24,8 @@
 				<MenuItem text="Link Ids" onAction="#setJarIds"/>
 			</Menu>
 		</MenuBar>
-		<GridPane fx:id="listGrid" prefHeight="${content.height - menu.height}" prefWidth="${content.width - menu.width}">
+		<GridPane fx:id="listGrid" prefHeight="${content.height - menu.height}"
+		          prefWidth="${content.width - menu.width}">
 			<WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
 			<columnConstraints>
 				<ColumnConstraints hgrow="ALWAYS"/>

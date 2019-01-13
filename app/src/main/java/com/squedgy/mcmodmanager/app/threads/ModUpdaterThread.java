@@ -8,7 +8,10 @@ import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.mcmodmanager.app.util.Result;
 import javafx.util.Callback;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -22,7 +25,7 @@ public class ModUpdaterThread extends Thread {
 
 	private final List<ModVersion> updates;
 	private final Callback<Map<ModVersion, Result>, Void> callback;
-	private final Map<ModVersion,Thread> updateThreads = new HashMap<>();
+	private final Map<ModVersion, Thread> updateThreads = new HashMap<>();
 
 	public ModUpdaterThread(List<ModVersion> updates, Callback<Map<ModVersion, Result>, Void> callback) {
 		this.updates = updates;
@@ -37,15 +40,18 @@ public class ModUpdaterThread extends Thread {
 			updateThreads.get(update).start();
 		});
 
-		while(updateThreads.size() > 0) {
-			try { TimeUnit.SECONDS.sleep(2); }
-			catch (InterruptedException e) { AppLogger.error(e, getClass()); }
+		while (updateThreads.size() > 0) {
+			try {
+				TimeUnit.SECONDS.sleep(2);
+			} catch (InterruptedException e) {
+				AppLogger.error(e, getClass());
+			}
 		}
 
 		callback.call(results);
 	}
 
-	private Thread buildThread(ModVersion update, Map<ModVersion, Result> results){
+	private Thread buildThread(ModVersion update, Map<ModVersion, Result> results) {
 		return new Thread(() -> {
 			boolean downloaded = false;
 			try {
@@ -64,7 +70,7 @@ public class ModUpdaterThread extends Thread {
 						AppLogger.error(e.getMessage(), getClass());
 					}
 				}
-			}finally{
+			} finally {
 				if (downloaded) results.put(update, new Result(true, "succeeded"));
 				else results.put(update, new Result(false, "failed: Couldn't download"));
 				AppLogger.info("removed: " + updateThreads.remove(update), getClass());
