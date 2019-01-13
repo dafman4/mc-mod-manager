@@ -10,8 +10,8 @@
 		<URL value="@main.css"/>
 		<URL value="@table-view.css"/>
 	</stylesheets>
-	<VBox fx:id="content">
-		<MenuBar>
+	<VBox fx:id="content" prefWidth="${root.width}" prefHeight="${root.height}">
+		<MenuBar fx:id="menu">
 			<Menu text="Add" >
 				<MenuItem text="Mods" onAction="#newMods"/>
 			</Menu>
@@ -24,12 +24,12 @@
 				<MenuItem text="Link Ids" onAction="#setJarIds"/>
 			</Menu>
 		</MenuBar>
-		<GridPane fx:id="listGrid" prefWidth="${root.width}">
+		<GridPane fx:id="listGrid" prefHeight="${content.height - menu.height}" prefWidth="${content.width - menu.width}">
 			<WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
 			<columnConstraints>
 				<ColumnConstraints hgrow="ALWAYS"/>
 				<ColumnConstraints hgrow="NEVER" minWidth="4.0"/>
-				<ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0"/>
+				<ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0" maxWidth="500"/>
 			</columnConstraints>
 			<rowConstraints>
 				<RowConstraints vgrow="ALWAYS"/>

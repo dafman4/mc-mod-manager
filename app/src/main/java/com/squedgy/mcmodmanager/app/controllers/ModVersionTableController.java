@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.squedgy.mcmodmanager.app.Startup.getResource;
+import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
 
 public class ModVersionTableController {
 
@@ -37,14 +37,20 @@ public class ModVersionTableController {
 	private TableView<DisplayVersion> root;
 	private ModInfoThread gathering;
 	private Function<ModVersion, ?> doubleClick = null;
+	private final String TABLE_NAME;
 
-	public ModVersionTableController(ModVersion... mods) throws IOException {
+	public ModVersionTableController(String name, ModVersion... mods) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modVersionTable.fxml"));
 		loader.setController(this);
 		loader.load();
 		//Set mod list
 		setItems(FXCollections.observableArrayList(Arrays.stream(mods).map(DisplayVersion::new).collect(Collectors.toList())));
-		root.getColumns().setAll(root.getColumns().sorted((a, b) -> ModUtils.getInstance().CONFIG.compareColumns(a.getText(), b.getText())));
+		TABLE_NAME = name;
+	}
+
+	@FXML
+	public void initialize(){
+		root.getColumns().setAll(root.getColumns().sorted((a, b) -> ModUtils.getInstance().CONFIG.compareColumns(TABLE_NAME, a.getText(), b.getText())));
 		root.refresh();
 		root.setRowFactory(tv -> {
 			TableRow<DisplayVersion> row = new TableRow<>();
@@ -61,24 +67,19 @@ public class ModVersionTableController {
 
 			return row;
 		});
-
 	}
 
 	public void addOnChange(ChangeListener<ModVersion> listener) {
 		root.getSelectionModel().selectedItemProperty().addListener(listener);
 	}
 
-	public void setOnDoubleClick(Function<ModVersion, ?> func){
-		this.doubleClick = func;
-	}
+	public void setOnDoubleClick(Function<ModVersion, ?> func){ this.doubleClick = func; }
 
 	public void addColumn(int index, TableColumn<DisplayVersion, ImageView> column){
 		root.getColumns().add(index, column);
 	}
 
-	public List<ModVersion> getItems() {
-		return new ArrayList<>(root.getItems());
-	}
+	public List<ModVersion> getItems() { return new ArrayList<>(root.getItems()); }
 
 	public void setItems(ObservableList<DisplayVersion> items) {
 		root.setItems(items);
@@ -90,11 +91,7 @@ public class ModVersionTableController {
 		root.refresh();
 	}
 
-	public List<TableColumn<DisplayVersion, ?>> getColumns() {
-		return root.getColumns();
-	}
+	public List<TableColumn<DisplayVersion, ?>> getColumns() { return root.getColumns(); }
 
-	public TableView<DisplayVersion> getRoot() {
-		return root;
-	}
+	public TableView<DisplayVersion> getRoot() { return root; }
 }

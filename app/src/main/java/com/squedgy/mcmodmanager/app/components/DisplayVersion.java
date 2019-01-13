@@ -6,8 +6,6 @@ import com.squedgy.mcmodmanager.app.util.ImageUtils;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.scene.image.ImageView;
 
-import java.net.URISyntaxException;
-
 public class DisplayVersion extends Version {
 
 	public DisplayVersion(ModVersion v){
@@ -15,14 +13,14 @@ public class DisplayVersion extends Version {
 		setFileName(v.getFileName());
 		setDescription(v.getDescription());
 		setModName(v.getModName());
+		setDownloadUrl(v.getDownloadUrl());
+		setId(v.getId());
+		setTypeOfRelease(v.getTypeOfRelease());
+		setUploadedAt(v.getUploadedAt());
 	}
 
 	public ImageView getImage(){
-		try {
-			ImageView ret = new ImageView(ModUtils.getInstance().modActive(this) ? ImageUtils.getInstance().GOOD : ImageUtils.getInstance().BAD);
-			return ret;
-		} catch (URISyntaxException e) {
-			return null;
-		}
+		ImageUtils u = ImageUtils.getInstance();
+		return new ImageView(ModUtils.getInstance().modActive(this) ? u.GOOD : ImageUtils.getInstance().BAD);
 	}
 }

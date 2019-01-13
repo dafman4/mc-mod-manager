@@ -25,11 +25,19 @@ public class ModInfoThread extends Thread {
 		this.callback = callback;
 	}
 
+	public void callback(ModVersion v){
+		if(!Thread.currentThread().isInterrupted()) callback.call(v);
+	}
+
+	public void failed(){
+		if(!Thread.currentThread().isInterrupted()) couldntFind.call(null);
+	}
+
 	@Override
 	public void run() {
 		ModVersion ret = ModUtils.getInstance().CONFIG.getCachedMods().getItem(toFind.getModId());
 		if (ret != null) {
-			callback.call(ret);
+			callback(ret);
 			return;
 		}
 		CurseForgeResponse resp = null;
@@ -56,11 +64,11 @@ public class ModInfoThread extends Thread {
 				.findFirst()
 				.orElse(null);
 			if (ret != null) {
-				callback.call(ret);
+				callback(ret);
 				return;
 			}
 
 		}
-		this.couldntFind.call(null);
+		failed();
 	}
 }

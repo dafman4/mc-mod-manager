@@ -15,13 +15,9 @@ public class PublicNode {
 		value = entry.getValue();
 	}
 
-	public ModVersion getKey() {
-		return key;
-	}
+	public ModVersion getKey() { return key; }
 
-	public String getValue() {
-		return value;
-	}
+	public String getValue() { return value; }
 
 	@Override
 	public String toString() {

@@ -1,6 +1,8 @@
 package com.squedgy.mcmodmanager.app.components;
 
 
+import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.controllers.LoadingController;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,7 +21,7 @@ import javafx.stage.WindowEvent;
 
 import java.io.IOException;
 
-import static com.squedgy.mcmodmanager.app.Startup.getResource;
+import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
 
 public class Modal {
 
@@ -34,17 +36,13 @@ public class Modal {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modal.fxml"));
 		loader.setController(this);
 		loader.load();
-		holder.prefWidthProperty().bind(root.widthProperty().subtract(2));
-		holder.prefHeightProperty().bind(root.heightProperty().subtract(2));
 		root.minWidthProperty().setValue(500);
-		root.minHeightProperty().setValue(300);
-		holder.setPadding(new Insets(5, 5, 5, 5));
+		root.minHeightProperty().setValue(500);
+//		root.setPadding(new Insets(5, 5, 5, 5));
 	}
 
 	public static Modal getInstance() throws IOException {
 		if (instance == null) instance = new Modal();
-		instance.setAfterClose(e -> {
-		});
 		return instance;
 	}
 
@@ -62,52 +60,53 @@ public class Modal {
 
 	public void setContent(WebView node) {
 		holder.getChildren().setAll(node);
-		node.prefWidthProperty().bind(holder.widthProperty());
-		node.prefHeightProperty().bind(holder.heightProperty());
+		node.prefWidthProperty().bind(holder.prefWidthProperty());
+		node.prefHeightProperty().bind(holder.prefHeightProperty());
 	}
 
-	public void bindMinHeight(ObservableNumberValue v) {
-		root.minHeightProperty().bind(v);
-	}
+	public void bindMinHeight(ObservableNumberValue v) { root.minHeightProperty().bind(v); }
 
-	public void bindMinWidth(ObservableNumberValue v) {
-		root.minWidthProperty().bind(v);
-	}
+	public void bindMinWidth(ObservableNumberValue v) { root.minWidthProperty().bind(v); }
 
-	public ScrollPane getRoot() {
-		return root;
-	}
+	public ScrollPane getRoot() { return root; }
 
 	public void open(Window owner) {
 		setUp(owner);
+		if(stage.isShowing())stage.close();
 		stage.show();
 	}
 
-	public void setAfterClose(EventHandler<WindowEvent> e) {
-		if (stage != null) stage.onCloseRequestProperty().setValue(e);
-	}
+	public void setAfterClose(EventHandler<WindowEvent> e) { if (stage != null) stage.onCloseRequestProperty().setValue(e); }
 
 	public void openAndWait(Window window) {
 		setUp(window);
+		if(stage.isShowing())stage.close();
 		stage.showAndWait();
 	}
 
+	public static Modal loading() throws IOException {
+		Modal ret = getInstance();
+		ret.setContent(new LoadingController().getRoot());
+		ret.open(Startup.getParent().getWindow());
+		return ret;
+	}
+
 	private void setUp(Window window) {
-		if (stage == null) {
+		if(stage == null){
 			stage = new Stage();
+			stage.onCloseRequestProperty().set(e -> stage.close());
 			Scene scene = new Scene(root);
 			scene.setRoot(root);
 			stage.setScene(scene);
-			stage.setMinHeight(root.getMinHeight());
-			stage.setMinWidth(root.getMinWidth());
 			stage.initOwner(window);
 			stage.initModality(Modality.APPLICATION_MODAL);
 		}
-
+		if(!stage.isShowing()) {
+			stage.setMinHeight(root.getMinHeight());
+			stage.setMinWidth(root.getMinWidth());
+		}
 	}
 
-	public void close() {
-		stage.close();
-	}
+	public void close() { stage.close(); }
 
 }

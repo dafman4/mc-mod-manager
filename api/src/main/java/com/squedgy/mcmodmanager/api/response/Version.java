@@ -30,7 +30,7 @@ public class Version implements ModVersion {
 		return this.uploadedAt;
 	}
 
-	void setUploadedAt(LocalDateTime uploadedAt) {
+	public void setUploadedAt(LocalDateTime uploadedAt) {
 		this.uploadedAt = uploadedAt;
 	}
 
@@ -46,7 +46,7 @@ public class Version implements ModVersion {
 		return typeOfRelease;
 	}
 
-	void setTypeOfRelease(String typeOfRelease) {
+	public void setTypeOfRelease(String typeOfRelease) {
 		this.typeOfRelease = typeOfRelease;
 	}
 
@@ -54,7 +54,7 @@ public class Version implements ModVersion {
 		return id;
 	}
 
-	void setId(long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -62,7 +62,7 @@ public class Version implements ModVersion {
 		return downloadUrl;
 	}
 
-	void setDownloadUrl(String downloadUrl) {
+	public void setDownloadUrl(String downloadUrl) {
 		this.downloadUrl = downloadUrl;
 	}
 
