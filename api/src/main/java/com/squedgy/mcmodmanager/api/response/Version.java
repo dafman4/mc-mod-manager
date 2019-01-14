@@ -21,7 +21,7 @@ public class Version implements ModVersion {
 		return minecraftVersion;
 	}
 
-	void setMinecraftVersion(String minecraftVersion) {
+	public void setMinecraftVersion(String minecraftVersion) {
 		this.minecraftVersion = minecraftVersion;
 	}
 

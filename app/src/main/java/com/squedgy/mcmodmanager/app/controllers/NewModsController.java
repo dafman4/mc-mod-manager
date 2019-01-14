@@ -1,5 +1,6 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
@@ -19,6 +20,7 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -38,7 +40,9 @@ public class NewModsController {
 	public TextArea mods;
 
 	public NewModsController() throws IOException {
-		FXMLLoader loader = new FXMLLoader(getResource("components" + File.separator + "new-mods.fxml"));
+		URL url = getResource("components/new-mods.fxml");
+		AppLogger.info("Loading: " + url, getClass());
+		FXMLLoader loader = new FXMLLoader(url);
 		loader.setController(this);
 		loader.load();
 	}
@@ -62,9 +66,10 @@ public class NewModsController {
 	}
 
 	@FXML
-	public void addMods(Event e) throws IOException {
+	public void addMods(Event e)  {
 		//A mod id consists of "-" and alpha-numerical, things that aren't those are the delimiters
-		Modal.loading();
+		try { Modal.loading(); }
+		catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
 		Thread t = new Thread(() -> {
 
 			List<ModVersion> updates = new LinkedList<>();

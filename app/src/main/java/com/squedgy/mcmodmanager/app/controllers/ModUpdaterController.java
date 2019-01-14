@@ -46,32 +46,36 @@ public class ModUpdaterController {
 	}
 
 	@FXML
-	public void updateAll(Event e) throws IOException {
-		Modal modal = Modal.loading();
-		if (updates == null) {
-			updates = new ModUpdaterThread(
-				table.getItems(),
-				results -> {
-					TableView<Map.Entry<ModVersion, Result>> resultTable = getResultTable();
-					System.gc();
+	public void updateAll(Event e)  {
+		try {
+			Modal modal = Modal.loading();
+			if (updates == null) {
+				updates = new ModUpdaterThread(
+					table.getItems(),
+					results -> {
+						TableView<Map.Entry<ModVersion, Result>> resultTable = getResultTable();
+						System.gc();
 
-					results.forEach((key, value) -> {
-						if (value.isResult()) handleSuccessfulDownload(key, value);
-						resultTable.getItems().add(new AbstractMap.SimpleEntry<>(key, value));
+						results.forEach((key, value) -> {
+							if (value.isResult()) handleSuccessfulDownload(key, value);
+							resultTable.getItems().add(new AbstractMap.SimpleEntry<>(key, value));
+						});
+						Platform.runLater(() -> {
+							modal.setContent(resultTable);
+							try {
+								ModUtils.getInstance().setMods();
+								Startup.getInstance().getMainView().updateModList();
+							} catch (IOException ignored) {
+							}
+						});
+						return null;
 					});
-					ModUtils.getInstance().setMods();
-					Platform.runLater(() -> {
-						modal.setContent(resultTable);
-						try {
-							Startup.getInstance().getMainView().updateModList();
-						} catch (IOException ignored) {
-						}
-					});
-					return null;
-				});
 
+			}
+			if (!updates.isAlive()) updates.start();
+		} catch (IOException e1) {
+			AppLogger.error(e1.getMessage(), getClass());
 		}
-		if (!updates.isAlive()) updates.start();
 	}
 
 	private void handleSuccessfulDownload(ModVersion key, Result value) {

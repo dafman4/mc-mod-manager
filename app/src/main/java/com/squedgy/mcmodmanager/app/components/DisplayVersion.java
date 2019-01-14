@@ -17,6 +17,7 @@ public class DisplayVersion extends Version {
 		setId(v.getId());
 		setTypeOfRelease(v.getTypeOfRelease());
 		setUploadedAt(v.getUploadedAt());
+		setMinecraftVersion(v.getMinecraftVersion());
 	}
 
 	public ImageView getImage() {

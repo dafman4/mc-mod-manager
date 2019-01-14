@@ -1,12 +1,18 @@
 package com.squedgy.mcmodmanager.app.util;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.config.Config;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 
 import static com.squedgy.mcmodmanager.app.config.Config.minecraftVersion;
 
@@ -65,10 +71,27 @@ public class PathUtils {
 			File location = fc.showDialog(null);
 			if (location.exists() && PathUtils.allSubDirsMatch(location, "mods", "versions", "saves")) {
 				minecraftDirectory = location.getAbsolutePath();
-				utils.setProperty(Config.CUSTOM_DIR, minecraftDirectory);
+				utils.setProperty(Config.CUSTOM_MC_DIR, minecraftDirectory);
 				utils.writeProps();
 			}
 		}
+	}
+
+	public static File getProjectDir(){
+		try {
+			return new File(URLDecoder.decode(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(".")).getPath(), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			AppLogger.error(e.getMessage(), PathUtils.class);
+			return null;
+		}
+	}
+
+	public static Path getPathFromProjectDir(String path){
+		File base = getProjectDir();
+		if(base != null){
+			return base.toPath().resolve(path);
+		}
+		return Paths.get(path);
 	}
 
 

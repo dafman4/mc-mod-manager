@@ -5,10 +5,6 @@ public class Result {
 	private boolean result;
 	private String reason;
 
-	public Result(boolean result) {
-		this(result, "");
-	}
-
 	public Result(boolean result, String reason) {
 		this.reason = reason;
 		this.result = result;

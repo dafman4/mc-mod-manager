@@ -121,6 +121,7 @@ public class MainController {
 
 		//Selection updating
 		table.addOnChange((obs, old, neu) -> {
+			System.out.println(obs.getValue().getMinecraftVersion());
 			updateObjectView("<h1>Loading...</h1>");
 			ModInfoThread gathering = new ModInfoThread(neu, version -> {
 				Platform.runLater(() -> updateObjectView(version.getDescription()));
@@ -198,35 +199,45 @@ public class MainController {
 	}
 
 	@FXML
-	public void showBadJars(Event e) throws IOException {
-		Modal m = Modal.getInstance();
-		BadJarsController c = new BadJarsController();
-		m.setContent(c.getRoot());
-		m.open(Startup.getParent().getWindow());
+	public void showBadJars(Event e)  {
+		try {
+			Modal m = Modal.getInstance();
+			BadJarsController c = new BadJarsController();
+			m.setContent(c.getRoot());
+			m.open(Startup.getParent().getWindow());
+		}
+		catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
 	}
 
 	@FXML
-	public void setJarIds(Event e) throws IOException {
-		Modal m = Modal.getInstance();
+	public void setJarIds(Event e){
+		try {
+			Modal m = Modal.getInstance();
+			m.setContent(new SetJarIdController().getRoot());
+			m.setAfterClose(e2 -> {
+				try {
+					m.close();
+					loadMods();
+				} catch (IOException e1) {
+					AppLogger.error(e1, getClass());
+				}
+			});
+			m.openAndWait(Startup.getParent().getWindow());
+		}
+		catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
 
-		m.setContent(new SetJarIdController().getRoot());
-		m.setAfterClose(e2 -> {
-			try {
-				m.close();
-				loadMods();
-			} catch (IOException e1) {
-				AppLogger.error(e1, getClass());
-			}
-		});
 
-		m.openAndWait(Startup.getParent().getWindow());
 	}
 
 	@FXML
-	public void newMods(Event e) throws IOException {
-		Modal m = Modal.getInstance();
-		m.setContent(new NewModsController().getRoot());
-		m.openAndWait(Startup.getParent().getWindow());
+	public void newMods(Event e) {
+		try {
+			Modal m = Modal.getInstance();
+			m.setContent(new NewModsController().getRoot());
+			m.openAndWait(Startup.getParent().getWindow());
+		} catch (IOException e1) {
+			AppLogger.error(e1.getMessage(), getClass());
+		}
 	}
 
 }

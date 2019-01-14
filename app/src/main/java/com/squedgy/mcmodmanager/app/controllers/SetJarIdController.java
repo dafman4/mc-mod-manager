@@ -6,8 +6,11 @@ import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.Version;
+import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +36,17 @@ public class SetJarIdController {
 		FXMLLoader loader = new FXMLLoader(getResource("components/jar-ids.fxml"));
 		loader.setController(this);
 		loader.load();
+		Modal.getInstance().setAfterClose(e -> {
+			try {
+				MainController c = Startup.getInstance().getMainView();
+				c.getRoot().setContent(new LoadingController().getRoot());
+				new Thread(() -> {
+					ModUtils.getInstance().setMods();
+					try { c.loadMods(); }
+					catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
+				}).start();
+			} catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
+		});
 	}
 
 	@FXML
@@ -62,7 +76,7 @@ public class SetJarIdController {
 	}
 
 	private void onMouseReleased(Event e, ModUtils.IdResult id, TextInputControl input, Button b, HBox holder, Label label) {
-		ModVersion version = id.mod;
+		ModUtils utils = ModUtils.getInstance();
 		try {
 			ModVersion found = getLatestVersion(input.getText(), Config.minecraftVersion, id.mod.getFileName());
 			if (found == null) {
@@ -70,9 +84,9 @@ public class SetJarIdController {
 				((Version) id.mod).setModId(input.getText());
 				b.onMouseReleasedProperty().setValue(e1 -> {
 					if (id.mod.getModId().equals(input.getText())) {
-						ModUtils.getInstance().addMod(id.jarId, id.mod, true);
 						try {
-							ModUtils.getInstance().CONFIG.getCachedMods().writeCache();
+							utils.addMod(id.jarId, id.mod, true);
+							utils.CONFIG.getCachedMods().writeCache();
 						} catch (IOException e2) {
 							AppLogger.error(e2.getMessage(), getClass());
 						}
@@ -82,8 +96,8 @@ public class SetJarIdController {
 				});
 			} else {
 				((Version) found).setModId(input.getText());
-				ModUtils.getInstance().addMod(id.jarId, found, true);
-				ModUtils.getInstance().CONFIG.getCachedMods().writeCache();
+				utils.addMod(id.jarId, found, true);
+				utils.CONFIG.getCachedMods().writeCache();
 				holder.getChildren().setAll(label, new Label(input.getText()), new Label(" - success"));
 			}
 		} catch (ModIdFoundConnectionFailed | IOException modIdFoundConnectionFailed) {

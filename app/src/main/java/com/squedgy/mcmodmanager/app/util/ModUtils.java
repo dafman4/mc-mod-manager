@@ -140,6 +140,10 @@ public class ModUtils {
 
 	public static String getJarModId(JarFile file) {
 		ZipEntry e = getMcmodInfo(file);
+		return getJarModId(file, e);
+	}
+
+	public static String getJarModId(JarFile file, ZipEntry e){
 		if (e != null && !e.isDirectory()) {
 			ObjectMapper mapper = new ObjectMapper();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
@@ -207,8 +211,8 @@ public class ModUtils {
 				JarFile file = getJarFile(f, fileName);
 				if (file != null) {
 					try {
-						String jarId = getJarModId(file);
 						ZipEntry e = getMcmodInfo(file);
+						String jarId = getJarModId(file, e);
 						if (e != null) {
 							try {
 								ModVersion v = matchesExistingId(jarId, fileName);
@@ -390,6 +394,7 @@ public class ModUtils {
 
 	public void setMods() {
 		mods.clear();
+		inactiveMods.clear();
 		badJars.clear();
 		File f = new File(PathUtils.getMinecraftDirectory());
 		if (f.exists() && f.isDirectory()) {
@@ -398,7 +403,9 @@ public class ModUtils {
 			if (mods.exists() && mods.isDirectory()) {
 				scanForMods(mods, true);
 				if (f.exists() && f.isDirectory()) scanForMods(f, false);
-
+				ModUtils.badJars.entrySet().stream().filter(e -> !e.getValue().equals(NO_MOD_INFO)).forEach(key -> {
+					AppLogger.info("Inactive: " + key.getKey().jarId + " - " + key.getKey().mod.getModId(), getClass());
+				});
 				try {
 					Map<String, ModVersion> allMods = new HashMap<>(ModUtils.mods);
 					allMods.putAll(inactiveMods);

@@ -29,7 +29,7 @@ public class ModVersionTableController {
 	@FXML
 	private TableView<DisplayVersion> root;
 	private ModInfoThread gathering;
-	private Function<ModVersion, ?> doubleClick = null;
+	private Function<DisplayVersion, ?> doubleClick = null;
 
 	public ModVersionTableController(String name, ModVersion... mods) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modVersionTable.fxml"));
@@ -61,11 +61,11 @@ public class ModVersionTableController {
 		});
 	}
 
-	public void addOnChange(ChangeListener<ModVersion> listener) {
+	public void addOnChange(ChangeListener<DisplayVersion> listener) {
 		root.getSelectionModel().selectedItemProperty().addListener(listener);
 	}
 
-	public void setOnDoubleClick(Function<ModVersion, ?> func) {
+	public void setOnDoubleClick(Function<DisplayVersion, ?> func) {
 		this.doubleClick = func;
 	}
 

@@ -32,10 +32,11 @@ public class Startup extends Application {
 	public static void main(String[] args) {
 		String os = System.getProperty("os.name");
 		ModUtils c = ModUtils.getInstance();
+		System.out.println(PathUtils.getPathFromProjectDir("."));
 
 		String mcDir;
 		//If custom set, otherwise looking for defaults
-		if (c.CONFIG.getProperty(Config.CUSTOM_DIR) != null) mcDir = c.CONFIG.getProperty(Config.CUSTOM_DIR);
+		if (c.CONFIG.getProperty(Config.CUSTOM_MC_DIR) != null) mcDir = c.CONFIG.getProperty(Config.CUSTOM_MC_DIR);
 		else if (os.matches(".*[Ww]indows.*"))
 			mcDir = System.getenv("APPDATA") + File.separator + ".minecraft";
 		else if (os.matches(".*[Mm]ac [Oo][Ss].*"))

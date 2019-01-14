@@ -1,0 +1,20 @@
+<style>
+	body{
+		background-color:#222;
+		color:#ccc;
+	}
+	@keyframes spin{
+		from{transform:rotate(0deg);}
+		to{transform:rotate(360deg);}
+	}
+	.img {
+		background: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8"?><svg width="75mm" height="75mm" version="1.1" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><metadata><rdf:RDF><cc:Work rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/><dc:title/></cc:Work></rdf:RDF></metadata><g transform="matrix(3.96 0 0 3.9586 128.76 -878.72)"><path transform="matrix(1 0 0 1.0003 0 -.10155)" d="m11.139 235.9c5.5708 4.0462 7.9587-5.5935 12.292-0.24337 4.3338 5.3501-5.5916 5.6846-2.7902 11.974 2.8014 6.2895 9.6892-0.86474 10.767 5.9355 1.0781 6.8002-7.6848 2.1272-8.4035 8.9747s8.8235 4.0957 6.357 10.524c-2.4665 6.4282-7.7188-2.0002-11.765 3.5706-4.0462 5.5708 5.5935 7.9587 0.24337 12.292-5.3501 4.3338-5.6846-5.5916-11.974-2.7902-6.2895 2.8014 0.86473 9.6892-5.9355 10.767-6.8002 1.0781-2.1272-7.6848-8.9747-8.4035-6.8475-0.71868-4.0957 8.8235-10.524 6.357-6.4282-2.4665 2.0002-7.7188-3.5706-11.765s-7.9587 5.5935-12.292 0.24337c-4.3338-5.3501 5.5916-5.6846 2.7902-11.974-2.8014-6.2895-9.6892 0.86474-10.767-5.9355-1.0781-6.8002 7.6848-2.1272 8.4035-8.9747s-8.8235-4.0957-6.357-10.524c2.4665-6.4282 7.7188 2.0002 11.765-3.5706 4.0462-5.5708-5.5935-7.9587-0.24337-12.292 5.3501-4.3338 5.6846 5.5916 11.974 2.7902s-0.86473-9.6892 5.9355-10.767c6.8002-1.0781 2.1272 7.6848 8.9747 8.4035 6.8475 0.71868 4.0957-8.8235 10.524-6.357 6.4282 2.4665-2.0002 7.7188 3.5706 11.765z" stroke-width=".22581"/><circle cx="-6" cy="259.5" r="25" fill="#008000" stroke-width=".26458"/><path d="m-4.5004 260.65 8.8478-1.7751-8.8295 1.8643 5.9612 6.7749-6.0293-6.7144-2.8866 8.55 2.8002-8.5787-8.8478 1.7751 8.8295-1.8643-5.9612-6.7749 6.0293 6.7144 2.8866-8.55z" fill="#917c6f" stroke-width=".26458"/><path transform="matrix(.67559 0 0 .64497 -32.289 91.405)" d="m20.411 253.91 15.341-1.7378-0.27482-10.929 9.1754 12.417 9.3271-5.7023-6.1655 14.155 9.6019 5.2263-15.341 1.7378 0.27482 10.929-9.1754-12.417-9.3271 5.7023 6.1655-14.155z" fill="#917c6f" stroke-width=".26458"/></g></svg>') center center no-repeat;
+		background-size:cover;
+		animation:spin 3s linear infinite;
+		height:100px;
+		width:100px;
+	}
+</style>
+<div style='display:flex;justify-content:center;align-items:center;height:100%;'>
+	<div class='img' id='img'></div>
+</div>

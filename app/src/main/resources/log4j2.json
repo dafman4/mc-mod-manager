@@ -4,8 +4,8 @@
 		"appenders": {
 			"RollingFile": {
 				"name": "File",
-				"fileName": "logs/min-mod-man.log",
-				"filePattern": "logs/min-mod-man-%d{MM-dd-yy-HH-mm}-%i.log.gz",
+				"fileName": "./logs/min-mod-man.log",
+				"filePattern": "./logs/min-mod-man-%d{MM-dd-yy-HH-mm}-%i.log.gz",
 				"PatternLayout": {
 					"pattern": "[%d{HH:mm:ss}][%-30.-30t][LEVEL/%-5p]%m%n%throwable"
 				},

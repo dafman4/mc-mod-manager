@@ -5,26 +5,25 @@ import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
+import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
 import javafx.scene.control.TableColumn;
 
 import java.io.File;
-import java.util.AbstractMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Config {
 
-	public static final String CACHE_DIRECTORY = "cache" + File.separator;
-	public static final String CUSTOM_DIR = "mc-dir";
-	private static final String CONFIG_DIRECTORY = "config" + File.separator;
-	private static final String CONFIG_FILE_PATH = CONFIG_DIRECTORY + "manager.json";
+	public static final Path CACHE_DIRECTORY = PathUtils.getPathFromProjectDir("cache" + File.separator);
+	public static final String CUSTOM_MC_DIR = "mc-dir";
+	private static final Path CONFIG_DIRECTORY = PathUtils.getPathFromProjectDir("config" + File.separator);
+	private static final Path CONFIG_FILE_PATH = CONFIG_DIRECTORY.resolve("manager.json");
 	private static final JsonFileFormat format = new JsonFileFormat();
-	private static final FileReader<Map<String, String>> READER = new FileReader<>(CONFIG_FILE_PATH, format);
-	private static final FileWriter<Map<String, String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH, format, false);
+	private static final FileReader<Map<String, String>> READER = new FileReader<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format);
+	private static final FileWriter<Map<String, String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format, false);
 
 	public static String minecraftVersion = "1.12.2";
 
@@ -59,7 +58,7 @@ public class Config {
 	}
 
 	public Map<String, String> readProps() {
-		return readProps(CONFIG_FILE_PATH);
+		return readProps(CONFIG_FILE_PATH.toFile().getAbsolutePath());
 	}
 
 	public Map<String, String> readProps(String file) {
@@ -68,7 +67,7 @@ public class Config {
 	}
 
 	public void writeProps() {
-		writeProps(CONFIG_FILE_PATH, CONFIG);
+		writeProps(CONFIG_FILE_PATH.toFile().getAbsolutePath(), CONFIG);
 	}
 
 	public <T> void writeProps(Map<String, T> config) {
@@ -81,7 +80,7 @@ public class Config {
 				.map(e -> new AbstractMap.SimpleEntry<>(e.getKey(), e.getValue().toString()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
 		);
-		writeProps(CONFIG_FILE_PATH, props);
+		writeProps(CONFIG_FILE_PATH.toFile().getAbsolutePath(), props);
 	}
 
 	public void writeProps(String file, Map<String, String> props) {
@@ -125,7 +124,7 @@ public class Config {
 	}
 
 	public void setCacher(String mcVersion) {
-		cachedMods = Cacher.reading(CACHE_DIRECTORY + minecraftVersion + ".json", new JsonModVersionDeserializer());
+		cachedMods = Cacher.reading(CACHE_DIRECTORY.resolve(minecraftVersion + ".json").toFile().getAbsolutePath(), new JsonModVersionDeserializer());
 	}
 
 }
