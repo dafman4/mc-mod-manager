@@ -36,21 +36,10 @@ public class SetJarIdController {
 		FXMLLoader loader = new FXMLLoader(getResource("components/jar-ids.fxml"));
 		loader.setController(this);
 		loader.load();
-		Modal.getInstance().setAfterClose(e -> {
-			try {
-				MainController c = Startup.getInstance().getMainView();
-				c.getRoot().setContent(new LoadingController().getRoot());
-				new Thread(() -> {
-					ModUtils.getInstance().setMods();
-					try { c.loadMods(); }
-					catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
-				}).start();
-			} catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
-		});
 	}
 
 	@FXML
-	public void initialize() {
+	public void initialize() throws IOException {
 		ModUtils.viewBadJars().forEach((id, reason) -> {
 			if (!reason.equals(ModUtils.NO_MOD_INFO)) {
 				ModVersion version = id.mod;

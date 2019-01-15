@@ -28,8 +28,8 @@ public class ModVersionTableController {
 	private final String TABLE_NAME;
 	@FXML
 	private TableView<DisplayVersion> root;
-	private ModInfoThread gathering;
 	private Function<DisplayVersion, ?> doubleClick = null;
+	private ChangeListener<DisplayVersion> currentListener = null;
 
 	public ModVersionTableController(String name, ModVersion... mods) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modVersionTable.fxml"));
@@ -43,7 +43,7 @@ public class ModVersionTableController {
 	@FXML
 	public void initialize() {
 		root.getColumns().setAll(root.getColumns().sorted((a, b) -> ModUtils.getInstance().CONFIG.compareColumns(TABLE_NAME, a.getText(), b.getText())));
-		root.refresh();
+		refresh();
 		root.setRowFactory(tv -> {
 			TableRow<DisplayVersion> row = new TableRow<>();
 
@@ -51,7 +51,7 @@ public class ModVersionTableController {
 				if (e.getClickCount() == 2 && !row.isEmpty()) {
 					if (doubleClick != null) {
 						doubleClick.apply(row.getItem());
-						root.refresh();
+						refresh();
 					}
 
 				}
@@ -61,8 +61,14 @@ public class ModVersionTableController {
 		});
 	}
 
-	public void addOnChange(ChangeListener<DisplayVersion> listener) {
-		root.getSelectionModel().selectedItemProperty().addListener(listener);
+	public void refresh(){
+		root.refresh();
+	}
+
+	public void setOnChange(ChangeListener<DisplayVersion> listener) {
+		if(currentListener != null) root.getSelectionModel().selectedItemProperty().removeListener(currentListener);
+		currentListener = listener;
+		root.getSelectionModel().selectedItemProperty().addListener(currentListener);
 	}
 
 	public void setOnDoubleClick(Function<DisplayVersion, ?> func) {
@@ -79,7 +85,7 @@ public class ModVersionTableController {
 
 	public void setItems(ObservableList<DisplayVersion> items) {
 		root.setItems(items);
-		root.refresh();
+		refresh();
 	}
 
 	public List<TableColumn<DisplayVersion, ?>> getColumns() {
@@ -88,7 +94,7 @@ public class ModVersionTableController {
 
 	public void setColumns(List<TableColumn<DisplayVersion, ?>> cols) {
 		root.getColumns().setAll(cols);
-		root.refresh();
+		refresh();
 	}
 
 	public TableView<DisplayVersion> getRoot() {

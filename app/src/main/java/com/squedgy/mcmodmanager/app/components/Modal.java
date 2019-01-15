@@ -1,6 +1,7 @@
 package com.squedgy.mcmodmanager.app.components;
 
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.controllers.LoadingController;
 import javafx.beans.value.ObservableNumberValue;
@@ -43,6 +44,20 @@ public class Modal {
 	public static Modal getInstance() throws IOException {
 		if (instance == null) instance = new Modal();
 		return instance;
+	}
+
+	private static void reset() {
+		try {
+			Modal m = getInstance();
+			m.getWindow().onCloseRequestProperty().setValue(null);
+		} catch (IOException e) {
+			AppLogger.error(e.getMessage(), Modal.class);
+		}
+	}
+
+	public Window getWindow(){
+		if(stage == null) return null;
+		return stage.getOwner();
 	}
 
 	public static Modal loading() throws IOException {
@@ -89,7 +104,14 @@ public class Modal {
 	}
 
 	public void setAfterClose(EventHandler<WindowEvent> e) {
-		if (stage != null) stage.onCloseRequestProperty().setValue(e);
+		if (stage != null){
+			stage.onCloseRequestProperty().setValue(ev -> {
+				e.handle(ev);
+				reset();
+			});
+		}else {
+			AppLogger.debug("STAGE NULL", getClass());
+		}
 	}
 
 	public void openAndWait(Window window) {

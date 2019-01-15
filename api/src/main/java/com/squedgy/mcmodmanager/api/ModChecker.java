@@ -184,7 +184,6 @@ public abstract class ModChecker {
 			int responseCode = response.getStatusLine().getStatusCode();
 			if (responseCode > 299 || responseCode < 200) {
 				AppLogger.info("Couldn't access the url code(" + responseCode + ") :" + get.getURI().toURL().toString(), ModChecker.class);
-				response.getEntity().writeTo(System.out);
 				return null;
 			}
 

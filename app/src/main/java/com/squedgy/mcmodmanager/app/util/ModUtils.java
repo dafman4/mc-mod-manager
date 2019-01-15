@@ -393,6 +393,9 @@ public class ModUtils {
 	}
 
 	public void setMods() {
+		StackTraceElement element = Thread.currentThread().getStackTrace()[2];
+		AppLogger.debug(element.getFileName() + ": " + element.getLineNumber(), getClass());
+		AppLogger.debug(Thread.currentThread().getName() + ": set mods called", getClass() );
 		mods.clear();
 		inactiveMods.clear();
 		badJars.clear();

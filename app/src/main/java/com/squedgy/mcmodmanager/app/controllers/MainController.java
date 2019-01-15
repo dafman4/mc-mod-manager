@@ -15,6 +15,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -49,6 +50,7 @@ public class MainController {
 	private ScrollPane root;
 	@FXML
 	private VBox content;
+	private boolean filled = false;
 	private ModCheckingThread checking;
 
 	private MainController() throws IOException {
@@ -70,19 +72,27 @@ public class MainController {
 		loadMods();
 	}
 
-	public void loadMods() throws IOException {
-		root.setContent(new LoadingController().getRoot());
+	public void loadMods() {
+		Platform.runLater(() ->{
+			try {
+				root.setContent(new LoadingController().getRoot());
+			} catch (IOException e) {
+				AppLogger.error(e.getMessage(), getClass());
+			}
+		});
 		PathUtils.ensureMinecraftDirectory();
 
 		ModLoadingThread t = new ModLoadingThread((mods) -> {
-			try {
-				initializeTable(mods);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-
 			Platform.runLater(() -> {
-				listGrid.add(table.getRoot(), 0, 0);
+				try {
+					initializeTable(mods);
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+				if(!filled){
+					listGrid.add(table.getRoot(), 0, 0);
+					filled = true;
+				}
 				badJars.setVisible(ModUtils.viewBadJars().size() > 0);
 				root.setContent(content);
 				Platform.runLater(() -> Startup.getParent().getWindow().centerOnScreen());
@@ -93,13 +103,19 @@ public class MainController {
 	}
 
 	private void initializeTable(List<ModVersion> mods) throws IOException {
-		table = new ModVersionTableController(TABLE_NAME, mods.toArray(new ModVersion[0]));
-
-		//Add the active/deactive image column here
-		TableColumn<DisplayVersion, ImageView> col = new TableColumn<>();
-		Callback<TableColumn.CellDataFeatures<DisplayVersion, ImageView>, ObservableValue<ImageView>> imageCellFactory = i -> new SimpleObjectProperty<>(i.getValue().getImage());
-		col.setCellValueFactory(imageCellFactory);
-		table.addColumn(0, col);
+		if(table == null) table = new ModVersionTableController(TABLE_NAME, mods.toArray(new ModVersion[0]));
+		else{
+			ObservableList<DisplayVersion> observableList = FXCollections.observableArrayList(mods.stream().map(DisplayVersion::new).collect(Collectors.toList()));
+			table.setItems(observableList);
+		}
+		if(!table.getColumns().get(0).getText().equals(" ")) {
+			//Add the active/deactive image column here
+			TableColumn<DisplayVersion, ImageView> col = new TableColumn<>();
+			col.setText(" ");
+			Callback<TableColumn.CellDataFeatures<DisplayVersion, ImageView>, ObservableValue<ImageView>> imageCellFactory = i -> new SimpleObjectProperty<>(i.getValue().getImage());
+			col.setCellValueFactory(imageCellFactory);
+			table.addColumn(0, col);
+		}
 
 		//The following two are made in code as
 		//it could potentially not be necessary
@@ -120,8 +136,8 @@ public class MainController {
 		});
 
 		//Selection updating
-		table.addOnChange((obs, old, neu) -> {
-			System.out.println(obs.getValue().getMinecraftVersion());
+		table.setOnChange((obs, old, neu) -> {
+			System.out.println(Thread.currentThread().getName() + ": " + obs.getValue().getMinecraftVersion());
 			updateObjectView("<h1>Loading...</h1>");
 			ModInfoThread gathering = new ModInfoThread(neu, version -> {
 				Platform.runLater(() -> updateObjectView(version.getDescription()));
@@ -214,15 +230,26 @@ public class MainController {
 		try {
 			Modal m = Modal.getInstance();
 			m.setContent(new SetJarIdController().getRoot());
+			m.open(Startup.getParent().getWindow());
 			m.setAfterClose(e2 -> {
 				try {
-					m.close();
-					loadMods();
+					Startup.getInstance().getMainView().getRoot().setContent(new LoadingController().getRoot());
+					new Thread(() -> {
+						ModUtils utils = ModUtils.getInstance();
+						ModUtils.viewBadJars().forEach((key, value) -> {
+							AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
+						});
+						utils.setMods();
+						AppLogger.debug("setting mods", getClass());
+						ModUtils.viewBadJars().forEach((key, value) -> {
+							AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
+						});
+						loadMods();
+					}).start();
 				} catch (IOException e1) {
 					AppLogger.error(e1, getClass());
 				}
 			});
-			m.openAndWait(Startup.getParent().getWindow());
 		}
 		catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
 
