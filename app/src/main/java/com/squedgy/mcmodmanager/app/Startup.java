@@ -62,13 +62,13 @@ public class Startup extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException {
-		stage.setTitle("Minecraft Mod Manager");
-		stage.show();
-		stage.setMinHeight(500);
-		stage.setMinWidth(700);
-		stage.centerOnScreen();
 		getInstance();
+		stage.setTitle("Minecraft Mod Manager");
+		stage.setMinHeight(MAIN_VIEW.getRoot().getMinHeight());
+		stage.setMinWidth(MAIN_VIEW.getRoot().getMinWidth());
 		stage.setScene(PARENT);
+		stage.centerOnScreen();
+		stage.show();
 	}
 
 }

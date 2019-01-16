@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import java.net.URL?>
 <TableView xmlns:fx="http://javafx.com/fxml/1" styleClass="mod-table" fx:id="root"
-           xmlns="http://javafx.com/javafx/8.0.172-ea">
+           xmlns="http://javafx.com/javafx/8.0.172-ea" minHeight="0" minWidth="0">
 	<stylesheets>
 		<URL value="@../main.css"/>
 		<URL value="@../table-view.css"/>

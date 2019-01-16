@@ -61,7 +61,10 @@ public class PathUtils {
 
 	public static String findModLocation(ModVersion v) {
 		File f = new File(getModLocation(v));
-		return f.exists() ? f.getAbsolutePath() : new File(getModStorage(v)).getAbsolutePath();
+		if(!f.exists()) f = new File(getModStorage(v));
+		if(!f.exists()) f = new File(getModsDir() + File.separator + v.getFileName().replace(' ', '+'));
+		if(!f.exists()) f = new File(getStorageDir() + File.separator + v.getFileName().replace(' ', '+'));
+		return f.getAbsolutePath();
 	}
 
 	public static void ensureMinecraftDirectory() {

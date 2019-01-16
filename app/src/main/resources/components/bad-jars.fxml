@@ -2,5 +2,5 @@
 
 <?import javafx.scene.control.TableView?>
 <TableView xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea"
-           styleClass="mod-table">
+           styleClass="mod-table,all-padding" minWidth="550" minHeight="400">
 </TableView>

@@ -7,6 +7,13 @@
     -border-cell:#aaa;
     -border:#7a7a7a;
 }
+
+.l-r-padding{
+	-fx-padding: 0 10px 0 10px;
+}
+.all-padding{
+	-fx-padding:10px 15px 10px 15px;
+}
 .root, .stack-pane, .viewport{
     -fx-background-color: -back;
 }
@@ -22,7 +29,12 @@
 .base{
     -fx-padding:5,10,5,10;
 }
-.root{ }
+.root{
+	-fx-padding:0;
+	-fx-background-insets:0;
+	-fx-border-insets:0;
+	-fx-border-width:0;
+}
 
 .scroll-bar {
     -fx-background-color:#666;
@@ -53,4 +65,16 @@
 .text-field, .text-box{
 	-fx-background-color:-back;
 	-fx-border-color: -border;
+}
+
+.menu-bar{
+	-fx-background-insets:0px;
+	-fx-padding:0px;
+}
+
+.menu{
+	-fx-height:12px;
+	-fx-border-color:#666;
+	-fx-border-width: 0px 1px 1px 0px;
+	-fx-border-style:solid outside;
 }

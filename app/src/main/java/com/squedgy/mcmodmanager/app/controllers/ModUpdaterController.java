@@ -12,10 +12,13 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -33,7 +36,9 @@ public class ModUpdaterController {
 	@FXML
 	public VBox root;
 	@FXML
-	public HBox buttons;
+	public TilePane buttons;
+	@FXML
+	public Button updateAll;
 	public ModVersionTableController table;
 	public ModUpdaterThread updates;
 
@@ -42,7 +47,18 @@ public class ModUpdaterController {
 		loader.setController(this);
 		loader.load();
 		table = new ModVersionTableController(TABLE_NAME, updates.toArray(new ModVersion[0]));
-		root.getChildren().add(table.getRoot());
+		root.getChildren().add(0, table.getRoot());
+		VBox.setVgrow(table.getRoot(), Priority.ALWAYS);
+		updateAll.setVisible(table.getItems().size() > 0);
+	}
+
+	@FXML
+	public void close(Event e){
+		try {
+			Modal.getInstance().close();
+		} catch (IOException e1) {
+			AppLogger.error(e1.getMessage(), getClass());
+		}
 	}
 
 	@FXML
@@ -81,14 +97,11 @@ public class ModUpdaterController {
 	private void handleSuccessfulDownload(ModVersion key, Result value) {
 		ModVersion old = ModUtils.getInstance().getMod(key.getModId());
 
-		File newMod = new File(PathUtils.getModLocation(key));
-		File oldMod = new File(PathUtils.getModLocation(old));
+		File newMod = new File(PathUtils.findModLocation(key));
+		File oldMod = new File(PathUtils.findModLocation(old));
 
 		AppLogger.info("Old File ||| New File\n" + oldMod.getAbsolutePath() + "|||" + newMod.getAbsolutePath(), getClass());
 
-		if (!oldMod.exists()) {
-			oldMod = new File(PathUtils.getModStorage(old));
-		}
 		value.setResult(oldMod.delete());
 		value.setReason(value.isResult() ? "Succeeded!" : "couldn't delete the old file");
 		if (!value.isResult()) {
@@ -114,6 +127,7 @@ public class ModUpdaterController {
 
 	private TableView<Map.Entry<ModVersion, Result>> getResultTable() {
 		TableView<Map.Entry<ModVersion, Result>> ret = new TableView<>();
+		ret.getStyleClass().addAll("all-padding", "mod-table");
 		TableColumn<Map.Entry<ModVersion, Result>, ImageView> image = JavafxUtils.makeColumn("Succeeded", e -> {
 			ImageUtils u = ImageUtils.getInstance();
 			boolean succeed = e.getValue().getValue().isResult();

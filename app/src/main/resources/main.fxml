@@ -4,37 +4,34 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.web.WebView?>
 <?import java.net.URL?>
-<ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea"
-            fitToHeight="true" fitToWidth="true">
+<VBox  styleClass="menu-bar" minHeight="400" minWidth="600" xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea">
 	<stylesheets>
 		<URL value="@main.css"/>
 		<URL value="@table-view.css"/>
 	</stylesheets>
-	<VBox fx:id="content" prefWidth="${root.width}" prefHeight="${root.height}">
-		<MenuBar fx:id="menu">
-			<Menu text="Add">
-				<MenuItem text="Mods" onAction="#newMods"/>
-			</Menu>
-			<Menu text="View">
-				<MenuItem text="Bad Jars" fx:id="badJars" onAction="#showBadJars"/>
-				<MenuItem text="Updates" onAction="#searchForUpdates"/>
-			</Menu>
-			<Menu text="Save">
-				<MenuItem text="Columns" onAction="#setColumns"/>
-				<MenuItem text="Link Ids" onAction="#setJarIds"/>
-			</Menu>
-		</MenuBar>
-		<GridPane fx:id="listGrid" prefHeight="${content.height - menu.height}"
-		          prefWidth="${content.width - menu.width}">
-			<WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-			<columnConstraints>
-				<ColumnConstraints hgrow="ALWAYS"/>
-				<ColumnConstraints hgrow="NEVER" minWidth="4.0"/>
-				<ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0" maxWidth="500"/>
-			</columnConstraints>
-			<rowConstraints>
-				<RowConstraints vgrow="ALWAYS"/>
-			</rowConstraints>
-		</GridPane>
-	</VBox>
-</ScrollPane>
+	<MenuBar fx:id="menu">
+		<Menu text="Mods">
+			<MenuItem text="Add" onAction="#newMods"/>
+			<MenuItem text="Find Updates" onAction="#searchForUpdates"/>
+			<MenuItem text="Fix Ids" onAction="#setJarIds"/>
+		</Menu>
+		<Menu text="View">
+			<MenuItem text="Bad Jars" fx:id="badJars" onAction="#showBadJars"/>
+		</Menu>
+		<Menu text="Save">
+			<MenuItem text="Columns" onAction="#setColumns"/>
+		</Menu>
+	</MenuBar>
+	<GridPane styleClass="l-r-padding" fx:id="listGrid" prefHeight="${root.height - menu.height}" prefWidth="${root.width - menu.width}">
+		<WebView fx:id="objectView" GridPane.columnIndex="2" GridPane.rowIndex="0"/>
+		<columnConstraints>
+			<ColumnConstraints hgrow="ALWAYS"/>
+			<ColumnConstraints hgrow="NEVER" minWidth="4.0"/>
+			<ColumnConstraints halignment="RIGHT" hgrow="ALWAYS" percentWidth="40.0" maxWidth="500"/>
+		</columnConstraints>
+		<rowConstraints>
+			<RowConstraints vgrow="ALWAYS" maxHeight="Infinity" />
+			<RowConstraints vgrow="NEVER" prefHeight="20" minHeight="20" maxHeight="20"/>
+		</rowConstraints>
+	</GridPane>
+</VBox>

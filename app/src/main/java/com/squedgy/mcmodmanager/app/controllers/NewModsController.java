@@ -66,6 +66,15 @@ public class NewModsController {
 	}
 
 	@FXML
+	public void close(Event e){
+		try {
+			Modal.getInstance().close();
+		} catch (IOException e1) {
+			AppLogger.error(e1, getClass());
+		}
+	}
+
+	@FXML
 	public void addMods(Event e)  {
 		//A mod id consists of "-" and alpha-numerical, things that aren't those are the delimiters
 		try { Modal.loading(); }

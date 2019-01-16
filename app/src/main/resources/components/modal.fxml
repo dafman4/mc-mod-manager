@@ -10,7 +10,7 @@
 		<URL value="@../main.css"/>
 		<URL value="@../table-view.css"/>
 	</stylesheets>
-	<VBox fx:id="holder" prefWidth="${root.width}" prefHeight="${root.height}">
+	<VBox fx:id="holder">
 
 	</VBox>
 </ScrollPane>

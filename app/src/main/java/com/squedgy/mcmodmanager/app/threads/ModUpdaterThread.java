@@ -8,10 +8,7 @@ import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.mcmodmanager.app.util.Result;
 import javafx.util.Callback;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
@@ -58,7 +55,7 @@ public class ModUpdaterThread extends Thread {
 				ModVersion oldMod = ModUtils.getInstance().getMod(update.getModId());
 				String fileLocation = PathUtils.findModLocation(oldMod);
 				InputStream file = ModChecker.download(update);
-				if (file != null) {
+				if (file != null && new File(fileLocation).exists()) {
 					try (
 						FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
 						ReadableByteChannel in = Channels.newChannel(file);
@@ -66,7 +63,7 @@ public class ModUpdaterThread extends Thread {
 					) {
 						out.transferFrom(in, 0, Long.MAX_VALUE);
 						downloaded = true;
-					} catch (IOException e) {
+					}catch (IOException e) {
 						AppLogger.error(e.getMessage(), getClass());
 					}
 				}

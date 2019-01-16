@@ -19,9 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -47,9 +45,9 @@ public class MainController {
 	@FXML
 	private GridPane listGrid;
 	@FXML
-	private ScrollPane root;
+	private VBox root;
 	@FXML
-	private VBox content;
+	private MenuBar menu;
 	private boolean filled = false;
 	private ModCheckingThread checking;
 
@@ -65,7 +63,7 @@ public class MainController {
 	}
 
 	@FXML
-	public void initialize() throws IOException {
+	public void initialize() {
 		//Set the default view to a decent looking background
 		updateObjectView("<h1>&nbsp;</h1>");
 		objectView.getEngine().setJavaScriptEnabled(true);
@@ -75,7 +73,7 @@ public class MainController {
 	public void loadMods() {
 		Platform.runLater(() ->{
 			try {
-				root.setContent(new LoadingController().getRoot());
+				root.getChildren().setAll(new LoadingController().getRoot());
 			} catch (IOException e) {
 				AppLogger.error(e.getMessage(), getClass());
 			}
@@ -94,7 +92,7 @@ public class MainController {
 					filled = true;
 				}
 				badJars.setVisible(ModUtils.viewBadJars().size() > 0);
-				root.setContent(content);
+				root.getChildren().setAll(menu, listGrid);
 				Platform.runLater(() -> Startup.getParent().getWindow().centerOnScreen());
 			});
 			return null;
@@ -150,7 +148,7 @@ public class MainController {
 		});
 	}
 
-	public ScrollPane getRoot() {
+	public VBox getRoot() {
 		return root;
 	}
 
@@ -200,12 +198,12 @@ public class MainController {
 					ModUpdaterController table;
 					try {
 						table = new ModUpdaterController(l);
+						modal.setContent(table.getRoot());
+						modal.openAndWait(Startup.getParent().getWindow());
 					} catch (IOException e1) {
-						throw new RuntimeException();
+						AppLogger.error(e1, getClass());
+						modal.close();
 					}
-					modal.setContent(table.getRoot());
-					modal.openAndWait(Startup.getParent().getWindow());
-
 				});
 				return null;
 			});
@@ -217,7 +215,7 @@ public class MainController {
 	@FXML
 	public void showBadJars(Event e)  {
 		try {
-			Modal m = Modal.getInstance();
+			Modal m = Modal.getInstance(Startup.getParent().getWindow());
 			BadJarsController c = new BadJarsController();
 			m.setContent(c.getRoot());
 			m.open(Startup.getParent().getWindow());
@@ -228,23 +226,27 @@ public class MainController {
 	@FXML
 	public void setJarIds(Event e){
 		try {
-			Modal m = Modal.getInstance();
-			m.setContent(new SetJarIdController().getRoot());
+			Modal m = Modal.getInstance(Startup.getParent().getWindow());
+			SetJarIdController controller = new SetJarIdController();
+			m.setContent(controller.getRoot());
 			m.open(Startup.getParent().getWindow());
 			m.setAfterClose(e2 -> {
 				try {
-					Startup.getInstance().getMainView().getRoot().setContent(new LoadingController().getRoot());
+					if(controller.isUpdated()) Startup.getInstance().getMainView().getRoot().getChildren().setAll(new LoadingController().getRoot());
 					new Thread(() -> {
-						ModUtils utils = ModUtils.getInstance();
-						ModUtils.viewBadJars().forEach((key, value) -> {
-							AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
-						});
-						utils.setMods();
-						AppLogger.debug("setting mods", getClass());
-						ModUtils.viewBadJars().forEach((key, value) -> {
-							AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
-						});
-						loadMods();
+						if(controller.isUpdated()) {
+							ModUtils utils = ModUtils.getInstance();
+							ModUtils.viewBadJars().forEach((key, value) -> {
+								AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
+							});
+							utils.setMods();
+							AppLogger.debug("setting mods", getClass());
+							ModUtils.viewBadJars().forEach((key, value) -> {
+								AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
+							});
+							loadMods();
+						}
+						m.setAfterClose(null);
 					}).start();
 				} catch (IOException e1) {
 					AppLogger.error(e1, getClass());
@@ -259,7 +261,7 @@ public class MainController {
 	@FXML
 	public void newMods(Event e) {
 		try {
-			Modal m = Modal.getInstance();
+			Modal m = Modal.getInstance(Startup.getParent().getWindow());
 			m.setContent(new NewModsController().getRoot());
 			m.openAndWait(Startup.getParent().getWindow());
 		} catch (IOException e1) {

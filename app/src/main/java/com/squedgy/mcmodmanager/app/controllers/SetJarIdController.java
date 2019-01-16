@@ -31,15 +31,22 @@ public class SetJarIdController {
 
 	@FXML
 	private VBox root;
+	private boolean updated;
 
 	public SetJarIdController() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/jar-ids.fxml"));
 		loader.setController(this);
 		loader.load();
+		updated = false;
+	}
+
+	public boolean isUpdated() {
+		return updated;
 	}
 
 	@FXML
 	public void initialize() throws IOException {
+
 		ModUtils.viewBadJars().forEach((id, reason) -> {
 			if (!reason.equals(ModUtils.NO_MOD_INFO)) {
 				ModVersion version = id.mod;
@@ -76,6 +83,8 @@ public class SetJarIdController {
 						try {
 							utils.addMod(id.jarId, id.mod, true);
 							utils.CONFIG.getCachedMods().writeCache();
+							holder.getChildren().setAll(label, new Label(input.getText()), new Label(" - saved"));
+							updated = true;
 						} catch (IOException e2) {
 							AppLogger.error(e2.getMessage(), getClass());
 						}
@@ -88,6 +97,7 @@ public class SetJarIdController {
 				utils.addMod(id.jarId, found, true);
 				utils.CONFIG.getCachedMods().writeCache();
 				holder.getChildren().setAll(label, new Label(input.getText()), new Label(" - success"));
+				updated = true;
 			}
 		} catch (ModIdFoundConnectionFailed | IOException modIdFoundConnectionFailed) {
 			AppLogger.error(modIdFoundConnectionFailed.getMessage(), getClass());

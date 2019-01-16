@@ -129,7 +129,7 @@ public class ModUtils {
 		if (e == null) {
 			Version v = new Version();
 			v.setFileName(file.getName());
-			addBadJar(new IdResult(v, file.getName()), NO_MOD_INFO);
+//			addBadJar(new IdResult(v, file.getName()), NO_MOD_INFO);
 		}
 		return e;
 	}

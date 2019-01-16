@@ -32,17 +32,19 @@ public class Modal {
 	public VBox holder;
 	private Stage stage;
 
-	private Modal() throws IOException {
+	private Modal(Window window) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/modal.fxml"));
 		loader.setController(this);
 		loader.load();
-		root.minWidthProperty().setValue(500);
-		root.minHeightProperty().setValue(500);
-//		root.setPadding(new Insets(5, 5, 5, 5));
+		setUp(window);
 	}
 
-	public static Modal getInstance() throws IOException {
-		if (instance == null) instance = new Modal();
+	public static Modal getInstance() throws IOException{
+		return getInstance(null);
+	}
+
+	public static Modal getInstance(Window window) throws IOException {
+		if (instance == null) instance = new Modal(window);
 		return instance;
 	}
 
@@ -68,29 +70,35 @@ public class Modal {
 	}
 
 	public void setContent(Control node) {
+		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
+		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40));
 		holder.getChildren().setAll(node);
 		node.prefWidthProperty().bind(holder.widthProperty());
 		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(Region node) {
+		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
+		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40));
 		holder.getChildren().setAll(node);
 		node.prefWidthProperty().bind(holder.widthProperty());
 		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(WebView node) {
+		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
+		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40));
 		holder.getChildren().setAll(node);
-		node.prefWidthProperty().bind(holder.prefWidthProperty());
-		node.prefHeightProperty().bind(holder.prefHeightProperty());
+		node.prefWidthProperty().bind(holder.widthProperty());
+		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void bindMinHeight(ObservableNumberValue v) {
-		root.minHeightProperty().bind(v);
+		if(stage != null) stage.minHeightProperty().bind(v);
 	}
 
 	public void bindMinWidth(ObservableNumberValue v) {
-		root.minWidthProperty().bind(v);
+		if(stage != null) stage.minWidthProperty().bind(v);
 	}
 
 	public ScrollPane getRoot() {
@@ -104,7 +112,8 @@ public class Modal {
 	}
 
 	public void setAfterClose(EventHandler<WindowEvent> e) {
-		if (stage != null){
+		if(e == null) stage.onCloseRequestProperty().setValue(null);
+		else if (stage != null){
 			stage.onCloseRequestProperty().setValue(ev -> {
 				e.handle(ev);
 				reset();
@@ -126,13 +135,11 @@ public class Modal {
 			stage.onCloseRequestProperty().set(e -> stage.close());
 			Scene scene = new Scene(root);
 			scene.setRoot(root);
+			stage.setMinWidth(200);
+			stage.setMinHeight(150);
 			stage.setScene(scene);
 			stage.initOwner(window);
 			stage.initModality(Modality.APPLICATION_MODAL);
-		}
-		if (!stage.isShowing()) {
-			stage.setMinHeight(root.getMinHeight());
-			stage.setMinWidth(root.getMinWidth());
 		}
 	}
 
