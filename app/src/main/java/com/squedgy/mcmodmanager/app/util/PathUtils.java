@@ -37,9 +37,11 @@ public class PathUtils {
 	}
 
 	public static void setMinecraftDirectory(String dir) {
-		File f = new File(dir);
-		if (f.exists() && f.isDirectory() && allSubDirsMatch(f, "mods", "versions", "resourcepacks")) {
-			minecraftDirectory = dir;
+		if(dir != null) {
+			File f = new File(dir);
+			if (f.exists() && f.isDirectory() && allSubDirsMatch(f, "mods", "versions", "resourcepacks")) {
+				minecraftDirectory = dir;
+			}
 		}
 	}
 
@@ -72,6 +74,9 @@ public class PathUtils {
 		while (minecraftDirectory == null) {
 			DirectoryChooser fc = new DirectoryChooser();
 			File location = fc.showDialog(null);
+			if(location == null){
+				System.exit(0);
+			}
 			if (location.exists() && PathUtils.allSubDirsMatch(location, "mods", "versions", "saves")) {
 				minecraftDirectory = location.getAbsolutePath();
 				utils.setProperty(Config.CUSTOM_MC_DIR, minecraftDirectory);
@@ -82,7 +87,7 @@ public class PathUtils {
 
 	public static File getProjectDir(){
 		try {
-			return new File(URLDecoder.decode(Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(".")).getPath(), "UTF-8"));
+			return new File(URLDecoder.decode(PathUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8")).toPath().getParent().toFile();
 		} catch (UnsupportedEncodingException e) {
 			AppLogger.error(e.getMessage(), PathUtils.class);
 			return null;
