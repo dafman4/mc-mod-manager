@@ -18,9 +18,11 @@
 
 		<TilePane fx:id="footer" prefHeight="30" alignment="CENTER" prefWidth="${holder.width - 20}">
 			<padding>
-				<Insets><top>10</top></Insets>
+				<Insets>
+					<bottom>10</bottom>
+				</Insets>
 			</padding>
-			<HBox alignment="CENTER_LEFT">
+			<HBox alignment="TOP_LEFT">
 				<Button text="Close" onMouseReleased="#close"/>
 			</HBox>
 		</TilePane>

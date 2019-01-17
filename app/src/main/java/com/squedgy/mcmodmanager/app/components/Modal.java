@@ -58,7 +58,7 @@ public class Modal {
 		footer.getChildren().addAll(nodes);
 		footer.setPrefColumns(footer.getChildren().size());
 		footer.prefTileWidthProperty().bind(footer.prefWidthProperty().divide(footer.getChildren().size()).subtract(5));
-		if(nodes.length > 0) nodes[nodes.length-1].alignmentProperty().setValue(Pos.CENTER_RIGHT);
+		if(nodes.length > 0) nodes[nodes.length-1].alignmentProperty().setValue(Pos.TOP_RIGHT);
 	}
 
 	public static Modal getInstance() throws IOException{
