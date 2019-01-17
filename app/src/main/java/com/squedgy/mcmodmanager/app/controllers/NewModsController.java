@@ -15,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
@@ -45,6 +46,11 @@ public class NewModsController {
 		FXMLLoader loader = new FXMLLoader(url);
 		loader.setController(this);
 		loader.load();
+		HBox box = new HBox();
+		Button b = new Button("Add Mods");
+		b.onMouseReleasedProperty().setValue(this::addMods);
+		box.getChildren().setAll(b);
+		Modal.getInstance().setFooter(box);
 	}
 
 	@FXML

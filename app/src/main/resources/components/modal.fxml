@@ -4,6 +4,10 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.VBox?>
 <?import java.net.URL?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
 <ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea"
             fitToWidth="true" fitToHeight="true">
 	<stylesheets>
@@ -12,5 +16,13 @@
 	</stylesheets>
 	<VBox fx:id="holder">
 
+		<TilePane fx:id="footer" prefHeight="30" alignment="CENTER" prefWidth="${holder.width - 20}">
+			<padding>
+				<Insets><top>10</top></Insets>
+			</padding>
+			<HBox alignment="CENTER_LEFT">
+				<Button text="Close" onMouseReleased="#close"/>
+			</HBox>
+		</TilePane>
 	</VBox>
 </ScrollPane>

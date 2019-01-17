@@ -135,7 +135,6 @@ public class MainController {
 
 		//Selection updating
 		table.setOnChange((obs, old, neu) -> {
-			System.out.println(Thread.currentThread().getName() + ": " + obs.getValue().getMinecraftVersion());
 			updateObjectView("<h1>Loading...</h1>");
 			ModInfoThread gathering = new ModInfoThread(neu, version -> {
 				Platform.runLater(() -> updateObjectView(version.getDescription()));

@@ -1,22 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:id="root" styleClass="all-padding" minWidth="600" minHeight="500">
-	<TilePane fx:id="buttons" VBox.vgrow="NEVER" prefColumns="2" prefTileWidth="${(root.width - 32) / 2}">
-		<VBox.margin>
-			<Insets>
-				<top>10</top>
-			</Insets>
-		</VBox.margin>
-		<HBox alignment="CENTER_LEFT">
-			<Button fx:id="close" text="Close" onMouseReleased="#close"/>
-		</HBox>
 		<HBox alignment="CENTER_RIGHT">
 			<Button fx:id="updateAll" text="Update All" onMouseReleased="#updateAll" />
 		</HBox>
-	</TilePane>
 </VBox>

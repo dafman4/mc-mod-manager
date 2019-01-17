@@ -50,6 +50,11 @@ public class ModUpdaterController {
 		root.getChildren().add(0, table.getRoot());
 		VBox.setVgrow(table.getRoot(), Priority.ALWAYS);
 		updateAll.setVisible(table.getItems().size() > 0);
+		HBox box = new HBox();
+		Button button = new Button("Update All");
+		button.onMouseReleasedProperty().setValue(this::updateAll);
+		box.getChildren().setAll(button);
+		Modal.getInstance().setFooter(box);
 	}
 
 	@FXML

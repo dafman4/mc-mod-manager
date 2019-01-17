@@ -4,24 +4,9 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.HBox?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea" styleClass="all-padding" minWidth="400" minHeight="300">
 	<Label text="Mod Ids separated by:"/>
 	<Label text="NOT (a-z, 0-9, OR -)s" />
 	<TextArea fx:id="mods" VBox.vgrow="ALWAYS"/>
-	<TilePane prefColumns="2" prefTileWidth="${(root.width - 32) / 2}">
-		<VBox.margin>
-			<Insets>
-				<top>10</top>
-			</Insets>
-		</VBox.margin>
-		<HBox alignment="CENTER_LEFT">
-			<Button text="Close" onMouseReleased="#close"/>
-		</HBox>
-		<HBox alignment="CENTER_RIGHT">
-			<Button text="Add Mods" onMouseReleased="#addMods"/>
-		</HBox>
-	</TilePane>
 </VBox>

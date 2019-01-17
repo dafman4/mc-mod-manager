@@ -5,13 +5,18 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.controllers.LoadingController;
 import javafx.beans.value.ObservableNumberValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.stage.Modality;
@@ -27,9 +32,12 @@ public class Modal {
 
 	private static Modal instance;
 	@FXML
-	public ScrollPane root;
+	private ScrollPane root;
 	@FXML
-	public VBox holder;
+	private VBox holder;
+	@FXML
+	private TilePane footer;
+	private static final EventHandler<WindowEvent> DEFAULT_ACTION = e -> reset();
 	private Stage stage;
 
 	private Modal(Window window) throws IOException {
@@ -37,6 +45,20 @@ public class Modal {
 		loader.setController(this);
 		loader.load();
 		setUp(window);
+		setAfterClose(DEFAULT_ACTION);
+	}
+
+	@FXML
+	public void close(Event e){
+		close();
+	}
+
+	public void setFooter(HBox... nodes){
+		footer.getChildren().setAll(footer.getChildren().get(0));
+		footer.getChildren().addAll(nodes);
+		footer.setPrefColumns(footer.getChildren().size());
+		footer.prefTileWidthProperty().bind(footer.prefWidthProperty().divide(footer.getChildren().size()).subtract(5));
+		if(nodes.length > 0) nodes[nodes.length-1].alignmentProperty().setValue(Pos.CENTER_RIGHT);
 	}
 
 	public static Modal getInstance() throws IOException{
@@ -50,8 +72,10 @@ public class Modal {
 
 	private static void reset() {
 		try {
+			AppLogger.debug("RESET", Modal.class);
 			Modal m = getInstance();
-			m.getWindow().onCloseRequestProperty().setValue(null);
+			m.setFooter();
+			m.getWindow().onCloseRequestProperty().setValue(DEFAULT_ACTION);
 		} catch (IOException e) {
 			AppLogger.error(e.getMessage(), Modal.class);
 		}
@@ -71,24 +95,27 @@ public class Modal {
 
 	public void setContent(Control node) {
 		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
-		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40));
-		holder.getChildren().setAll(node);
+		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
+		if(holder.getChildren().size() > 1) holder.getChildren().set(0, node);
+		else holder.getChildren().add(0, node);
 		node.prefWidthProperty().bind(holder.widthProperty());
 		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(Region node) {
 		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
-		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40));
-		holder.getChildren().setAll(node);
+		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
+		if(holder.getChildren().size() > 1) holder.getChildren().set(0, node);
+		else holder.getChildren().add(0, node);
 		node.prefWidthProperty().bind(holder.widthProperty());
 		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(WebView node) {
 		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
-		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40));
-		holder.getChildren().setAll(node);
+		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
+		if(holder.getChildren().size() > 1) holder.getChildren().set(0, node);
+		else holder.getChildren().add(0, node);
 		node.prefWidthProperty().bind(holder.widthProperty());
 		node.prefHeightProperty().bind(holder.heightProperty());
 	}
@@ -112,7 +139,7 @@ public class Modal {
 	}
 
 	public void setAfterClose(EventHandler<WindowEvent> e) {
-		if(e == null) stage.onCloseRequestProperty().setValue(null);
+		if(e == null) stage.onCloseRequestProperty().setValue(DEFAULT_ACTION);
 		else if (stage != null){
 			stage.onCloseRequestProperty().setValue(ev -> {
 				e.handle(ev);
@@ -145,6 +172,7 @@ public class Modal {
 
 	public void close() {
 		stage.close();
+		reset();
 	}
 
 }
