@@ -42,7 +42,6 @@ public class NewModsController {
 
 	public NewModsController() throws IOException {
 		URL url = getResource("components/new-mods.fxml");
-		AppLogger.info("Loading: " + url, getClass());
 		FXMLLoader loader = new FXMLLoader(url);
 		loader.setController(this);
 		loader.load();

@@ -32,7 +32,6 @@ public class Startup extends Application {
 	public static void main(String[] args) {
 		String os = System.getProperty("os.name");
 		ModUtils c = ModUtils.getInstance();
-		System.out.println(PathUtils.getPathFromProjectDir("."));
 
 		String mcDir;
 		//If custom set, otherwise looking for defaults

@@ -72,7 +72,6 @@ public class Modal {
 
 	private static void reset() {
 		try {
-			AppLogger.debug("RESET", Modal.class);
 			Modal m = getInstance();
 			m.setFooter();
 			m.getWindow().onCloseRequestProperty().setValue(DEFAULT_ACTION);
