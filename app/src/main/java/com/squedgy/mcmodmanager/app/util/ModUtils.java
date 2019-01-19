@@ -9,6 +9,7 @@ import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.*;
 import com.squedgy.mcmodmanager.app.config.Config;
+import com.squedgy.mcmodmanager.app.threads.ModLocatorThread;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,6 +19,7 @@ import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -31,6 +33,7 @@ public class ModUtils {
 	private static final Map<String, ModVersion> inactiveMods = new HashMap<>();
 	private static ModUtils instance;
 	public final Config CONFIG;
+	private Map<JarFile, Thread> runningThreads = new HashMap<>();
 
 	private ModUtils() {
 		CONFIG = Config.getInstance();
@@ -148,16 +151,16 @@ public class ModUtils {
 			ObjectMapper mapper = new ObjectMapper();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
 				JsonNode root = mapper.readValue(
-					reader.lines().map(
-						l -> l.replaceAll("\n", "\\n")).collect(Collectors.joining()
+						reader.lines().map(
+							l -> l.replaceAll("\n", "\\n")
+						).collect(Collectors.joining()
 					),
 					JsonNode.class
 				);
 				if (root.has("modList")) root = root.get("modList");
 				if (root.isArray()) root = root.get(0);
 				if (root.has("modid")) return root.get("modid").textValue();
-			} catch (IOException ignored) {
-			}
+			} catch (IOException ignored) { }
 		}
 		return null;
 	}
@@ -212,27 +215,19 @@ public class ModUtils {
 				if (file != null) {
 					try {
 						ZipEntry e = getMcmodInfo(file);
-						String jarId = getJarModId(file, e);
 						if (e != null) {
-							try {
-								ModVersion v = matchesExistingId(jarId, fileName);
-								if (v != null) {
-									addMod(jarId, v, isActive);
-									continue;
-								}
-							} catch (IOException | ModIdFoundConnectionFailed ignored) {
-							}
-
-							//Attempt to find an online ModVersion matching the installed one
-							try {
-								IdResult id = getRealModId(file);
-								addMod(id, isActive);
-								continue;
-							} catch (ModIdNotFoundException e1) {
-								AppLogger.info(e1.getMessage(), getClass());
-							}
-							//Otherwise read the mcmod.info as a json node and find the first working one as a stand-in
-							readJson(file, (e), jarId, isActive);
+							String jarId = getJarModId(file, e);
+							ModLocatorThread thread = new ModLocatorThread(jarId, fileName, file, (id, v) ->{
+								addMod(id, v, isActive);
+								runningThreads.remove(file);
+							}, () -> {
+								//Otherwise read the mcmod.info as a json node and find the first working one as a stand-in
+								try { readJson(file, (e), jarId, isActive); }
+								catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
+								finally{ runningThreads.remove(file); }
+							});
+							runningThreads.put(file, thread);
+							thread.run();
 						}
 					} catch (Exception e2) {
 						AppLogger.error(e2, getClass());
@@ -257,17 +252,17 @@ public class ModUtils {
 		if (root.has("modList")) root = root.get("modList");//this will be an array
 
 		if (root.isArray()) checkNode(root, file, root.size(), isActive);
-		else addMod(getJarModId(file), readNode(root, file), true, "Couldn't find a curse forge match.", isActive);
+		else addMod(getJarModId(file), readNode(root, file),"Couldn't find a curse forge match.", isActive);
 	}
 
 	public ModVersion readNode(JsonNode modInfo, JarFile modJar) throws ModIdFailedException {
 
 		ModVersionFactory factory = new ModVersionFactory();
+		factory.badJar(true);
 		if (modInfo.has("name")) factory.withName(modInfo.get("name").textValue());
 		else throw new ModIdFailedException("Node doesn't have a name within the mcmod.info");
 
-		String[] names = modJar.getName().split("[\\\\/]");
-		factory.withFileName(names[names.length - 1]);
+		factory.withFileName(new File(modJar.getName()).getName());
 
 		if (modInfo.has("modid")) factory.withModId(modInfo.get("modid").textValue());
 		else factory.withModId(formatModName(modInfo.get("name").textValue()));
@@ -290,11 +285,17 @@ public class ModUtils {
 
 	public IdResult getRealModId(JarFile file) throws ModIdNotFoundException {
 		List<Exception> issues = new LinkedList<>();
+		Version v = new Version();
+		v.setFileName(new File(file.getName()).getName());
 		String jarId = getJarModId(file),
-			fileName = new File(file.getName()).getName().replace('+', ' ');
+			fileName = v.getFileName();
 		List<String> testStrings = Arrays.stream(getJarModIds(file)).filter(Objects::nonNull).collect(Collectors.toList());
 		testStrings.addAll(Arrays.stream(getJarModNames(file)).filter(Objects::nonNull).map(ModUtils::formatModName).collect(Collectors.toList()));
-		testStrings = new LinkedList<>(new HashSet<>(testStrings));
+
+		System.out.println(fileName);
+		System.out.println(String.join(", ", testStrings));
+		testStrings = testStrings.stream().distinct().collect(Collectors.toList());
+		System.out.println(String.join(", ", testStrings));
 		IdResult ret = new IdResult();
 		ModVersion test = null;
 		try {
@@ -323,14 +324,20 @@ public class ModUtils {
 
 	public ModVersion matchesExistingId(String id, String fileName) throws IOException, ModIdFoundConnectionFailed {
 		ModVersion ret = CONFIG.getCachedMods().getItem(id);
+		System.out.println("cache found within matchesExistingId: " + ret);
 		List<ModVersion> versions;
 		if (ret == null) {
 			versions = ModChecker.getForVersion(id, Config.minecraftVersion)
 				.getVersions();
+			System.out.println("From given id: " + id + "\n" + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining(", ")));
 		} else if (!ret.getFileName().equals(fileName)) {
 			versions = ModChecker.getForVersion(ret.getModId(), Config.minecraftVersion)
 				.getVersions();
-		} else return ret;
+			System.out.println("From cached id (no matching file): " + id + "\n" + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining(", ")));
+		} else{
+			System.out.println("found cached version");
+			return ret;
+		}
 
 		AppLogger.info("potential file matches: " + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining("|||")), getClass());
 		ret = versions
@@ -349,31 +356,28 @@ public class ModUtils {
 				i++;
 				if (root == null) continue;
 				ModVersion v = readNode(root, jarFile);
-				addMod(getJarModId(jarFile), v, true, "Couldn't find a curse forge match for any guessed ids", active);
+				addMod(getJarModId(jarFile), v,"Couldn't find a curse forge match for any guessed ids", active);
 				return;
 			} catch (Exception ignored) {
 			}
 		} while (i < length);
 	}
 
-	private void addMod(IdResult mod, boolean active) {
+	public void addMod(IdResult mod, boolean active) {
 		addMod(mod.jarId, mod.mod, active);
 	}
 
 	public void addMod(String modId, ModVersion mod, boolean active) {
-		addMod(modId, mod, false, null, active);
+		addMod(modId, mod, null, active);
 	}
 
-	public void addMod(String modId, ModVersion mod, boolean bad, String issue, boolean active) {
-		//if it's a BAD mod we probably shouldn't cache it
-		if (bad) {
+	public void addMod(String modId, ModVersion mod, String issue, boolean active) {
+		if (mod.isBadJar()) {
 			AppLogger.info("adding BAD mod: " + modId, getClass());
 			addBadJar(new IdResult(mod, modId), issue);
-			//if doesn't contain a / or a \ (files at that point)
-		} else if (!modId.contains("/") && !modId.contains("\\"))
-			CONFIG.getCachedMods().putItem(modId, mod);
-		else
-			AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
+		}
+		if (!modId.contains("/") && !modId.contains("\\")) CONFIG.getCachedMods().putItem(modId, mod);
+		else AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
 		if (active) mods.put(modId, mod);
 		else inactiveMods.put(modId, mod);
 	}
@@ -393,9 +397,6 @@ public class ModUtils {
 	}
 
 	public void setMods() {
-		StackTraceElement element = Thread.currentThread().getStackTrace()[2];
-		AppLogger.debug(element.getFileName() + ": " + element.getLineNumber(), getClass());
-		AppLogger.debug(Thread.currentThread().getName() + ": set mods called", getClass() );
 		mods.clear();
 		inactiveMods.clear();
 		badJars.clear();
@@ -406,9 +407,10 @@ public class ModUtils {
 			if (mods.exists() && mods.isDirectory()) {
 				scanForMods(mods, true);
 				if (f.exists() && f.isDirectory()) scanForMods(f, false);
-				ModUtils.badJars.entrySet().stream().filter(e -> !e.getValue().equals(NO_MOD_INFO)).forEach(key -> {
-					AppLogger.info("Inactive: " + key.getKey().jarId + " - " + key.getKey().mod.getModId(), getClass());
-				});
+				while(runningThreads.size() > 0) {
+					try { TimeUnit.MILLISECONDS.sleep(250); }
+					catch (InterruptedException ignored) { }
+				}
 				try {
 					Map<String, ModVersion> allMods = new HashMap<>(ModUtils.mods);
 					allMods.putAll(inactiveMods);

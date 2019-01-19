@@ -20,9 +20,7 @@ public class ModLoadingThread extends Thread {
 	public void run() {
 		ModUtils utils = ModUtils.getInstance();
 		ModVersion[] mods = utils.getMods();
-		List<ModVersion> modList = new LinkedList<>();
-		modList.addAll(Arrays.asList(mods));
-		modList.addAll(ModUtils.getInstance().getInactiveMods());
+		List<ModVersion> modList = new LinkedList<>(Arrays.asList(mods));
 		callback.call(modList);
 	}
 }

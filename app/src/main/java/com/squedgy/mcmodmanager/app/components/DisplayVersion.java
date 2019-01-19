@@ -18,6 +18,7 @@ public class DisplayVersion extends Version {
 		setTypeOfRelease(v.getTypeOfRelease());
 		setUploadedAt(v.getUploadedAt());
 		setMinecraftVersion(v.getMinecraftVersion());
+		setBadJar(v.isBadJar());
 	}
 
 	public ImageView getImage() {

@@ -38,6 +38,7 @@ public class JsonModVersionSerializer extends StdSerializer<Map<String, ModVersi
 					n.put(JSON_KEY_MOD_ID, value.getModId());
 					n.put(JSON_KEY_RELEASE_TYPE, value.getTypeOfRelease());
 					n.put(JSON_KEY_UPLOADED_AT, value.getUploadedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+					n.put(JSON_KEY_BAD_JAR, value.isBadJar());
 					root.set(key, n);
 				} catch (Exception ignored) {
 				}

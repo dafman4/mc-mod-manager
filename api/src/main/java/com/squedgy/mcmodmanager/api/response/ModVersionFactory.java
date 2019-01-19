@@ -15,6 +15,7 @@ public class ModVersionFactory {
 	private LocalDateTime uploadedAt;
 	private String modId;
 	private String description;
+	private boolean badJar;
 
 	public ModVersionFactory() {
 	}
@@ -74,6 +75,7 @@ public class ModVersionFactory {
 		this.name = null;
 		this.type = null;
 		this.version = null;
+		badJar = false;
 	}
 
 
@@ -88,7 +90,12 @@ public class ModVersionFactory {
 		ret.setUploadedAt(uploadedAt);
 		ret.setModId(modId);
 		ret.setDescription(description);
+		ret.setBadJar(badJar);
 		return ret;
 	}
 
+	public ModVersionFactory badJar(Boolean badJar) {
+		this.badJar = badJar;
+		return this;
+	}
 }

@@ -8,23 +8,23 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
-<ScrollPane xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea"
-            fitToWidth="true" fitToHeight="true">
+<?import javafx.scene.control.Label?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:id="root" xmlns="http://javafx.com/javafx/8.0.172-ea">
 	<stylesheets>
 		<URL value="@../main.css"/>
 		<URL value="@../table-view.css"/>
 	</stylesheets>
-	<VBox fx:id="holder">
-
-		<TilePane fx:id="footer" prefHeight="30" alignment="CENTER" prefWidth="${holder.width - 20}">
-			<padding>
-				<Insets>
-					<bottom>10</bottom>
-				</Insets>
-			</padding>
-			<HBox alignment="TOP_LEFT">
-				<Button text="Close" onMouseReleased="#close"/>
-			</HBox>
-		</TilePane>
-	</VBox>
-</ScrollPane>
+	<ScrollPane prefHeight="${root.height - 40}" fx:id="holder" fitToWidth="true">
+	</ScrollPane>
+	<TilePane fx:id="footer" prefHeight="30" maxHeight="30" alignment="CENTER" prefWidth="${root.width - 20}">
+		<padding>
+			<Insets>
+				<top>5</top>
+				<bottom>5</bottom>
+			</Insets>
+		</padding>
+		<HBox alignment="CENTER_LEFT">
+			<Button text="Close" onMouseReleased="#close"/>
+		</HBox>
+	</TilePane>
+</VBox>

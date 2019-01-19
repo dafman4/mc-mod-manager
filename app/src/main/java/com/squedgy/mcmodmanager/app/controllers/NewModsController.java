@@ -63,7 +63,7 @@ public class NewModsController {
 			FileChannel out = outFile.getChannel()
 		) {
 			out.transferFrom(in, 0, Long.MAX_VALUE);
-			utils.addMod(ModUtils.getJarModId(new JarFile(PathUtils.getModsDir() + File.separator + v.getFileName())), v, false, "", true);
+			utils.addMod(ModUtils.getJarModId(new JarFile(PathUtils.getModsDir() + File.separator + v.getFileName())), v, "", true);
 			return true;
 		} catch (ModIdNotFoundException | IOException ignored) {
 			return false;

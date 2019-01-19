@@ -20,9 +20,6 @@ subprojects {
 		mavenCentral()
 	}
 
-
-	apply plugin: 'io.spring.dependency-management'
-
 	dependencyManagement {
 		imports {
 			mavenBom 'org.apache.logging.log4j:log4j-bom:2.11.1'
@@ -41,29 +38,18 @@ subprojects {
 	}
 
 	group 'com.squedgy.mc-mod-manager'
-	version = "1.0"
+	version = "0.0.1"
 	sourceCompatibility = 1.8
 	targetCompatibility = 1.8
 
-	jar {
-		manifest.attributes provider: 'gradle'
-		baseName = 'mc-mod-manager-' + project.name
-		version = version
+	assemble{
+		dependsOn 'clean'
 	}
 
-	task fatJar(type: Jar) {
-		manifest {
-			attributes(
-				'Implementation-Title': 'All Projects Jar',
-				'Implementation-Version': version,
-			)
-			if (!mainClass.isEmpty()) {
-				attributes 'Main-Class': mainClass
-			}
-		}
-		baseName = project.name + "-all"
-		from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-		with jar
+	jar {
+		manifest.attributes provider: 'gradle'
+		baseName = project.name + '-mmm'
+		version = version
 	}
 
 	uploadArchives {
@@ -72,4 +58,3 @@ subprojects {
 		}
 	}
 }
-

@@ -135,15 +135,17 @@ public class MainController {
 
 		//Selection updating
 		table.setOnChange((obs, old, neu) -> {
-			updateObjectView("<h1>Loading...</h1>");
-			ModInfoThread gathering = new ModInfoThread(neu, version -> {
-				Platform.runLater(() -> updateObjectView(version.getDescription()));
-				return null;
-			}, n -> {
-				Platform.runLater(() -> updateObjectView(("<h2>Error Loading, couldn't find a description!</h2>")));
-				return null;
-			});
-			JavafxUtils.putSetterAndStart(objectView, gathering);
+			if(neu.getDescription() == null) {
+				updateObjectView("<h1>Loading...</h1>");
+				ModInfoThread gathering = new ModInfoThread(
+					neu,
+					version -> Platform.runLater(() -> updateObjectView(version.getDescription())),
+					() -> Platform.runLater(() -> updateObjectView(("<h2>Error Loading, couldn't find a description!</h2>")))
+				);
+				JavafxUtils.putSetterAndStart(objectView, gathering);
+			}else{
+				updateObjectView(neu.getDescription());
+			}
 		});
 	}
 
@@ -166,7 +168,10 @@ public class MainController {
 				"img{max-width:100%;height:auto;}" +
 				"a{color:#ff9000;text-decoration:none;} " +
 				"a:visited{color:#544316;}" +
-				"</style>" + description);
+			"</style>" +
+			"<script>" +
+				"window.onload = function() { var tags = document.getElementsByTagName('iframe'); for(var i = tags.length-1; i >= 0; i++){ tags[i].parentNode.removeChild(tags[i]); }}" +
+			"</script>" + description);
 	}
 
 	@FXML

@@ -8,28 +8,30 @@ import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.util.Callback;
 
+import java.util.function.Consumer;
+
 public class ModInfoThread extends Thread {
 
 	private final ModVersion toFind;
-	private final Callback<ModVersion, ?> callback;
-	private final Callback<Void, ?> couldntFind;
+	private final Consumer<ModVersion> callback;
+	private final Runnable couldntFind;
 
-	public ModInfoThread(ModVersion toFind, Callback<ModVersion, ?> callback) {
+	public ModInfoThread(ModVersion toFind, Consumer<ModVersion> callback) {
 		this(toFind, callback, null);
 	}
 
-	public ModInfoThread(ModVersion toFind, Callback<ModVersion, ?> callback, Callback<Void, ?> couldntFind) {
+	public ModInfoThread(ModVersion toFind, Consumer<ModVersion> callback, Runnable couldntFind) {
 		this.couldntFind = couldntFind;
 		this.toFind = toFind;
 		this.callback = callback;
 	}
 
 	public void callback(ModVersion v) {
-		if (!Thread.currentThread().isInterrupted()) callback.call(v);
+		if (!Thread.currentThread().isInterrupted()) callback.accept(v);
 	}
 
 	public void failed() {
-		if (!Thread.currentThread().isInterrupted()) couldntFind.call(null);
+		if (!Thread.currentThread().isInterrupted()) couldntFind.run();
 	}
 
 	@Override

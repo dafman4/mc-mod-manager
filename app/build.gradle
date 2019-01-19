@@ -8,14 +8,17 @@ dependencies {
 }
 
 jar {
+	dependsOn ':api:jar'
+	println this.properties.get("mainClass")
 	manifest {
 		attributes(
-			'Main-Class': 'com.squedgy.mcmodmanager.app.MainController'
+			'Main-Class': this.properties.get("mainClass")
 		)
 	}
-}
 
-fatJar {
-	dependsOn(":api:fatJar")
-	fatJar
+	from{
+		configurations.compile.collect {
+			it.isDirectory() ? it : zipTree(it)
+		}
+	}
 }

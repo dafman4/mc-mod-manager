@@ -32,9 +32,9 @@ public class Modal {
 
 	private static Modal instance;
 	@FXML
-	private ScrollPane root;
+	private VBox root;
 	@FXML
-	private VBox holder;
+	private ScrollPane holder;
 	@FXML
 	private TilePane footer;
 	private static final EventHandler<WindowEvent> DEFAULT_ACTION = e -> reset();
@@ -56,9 +56,10 @@ public class Modal {
 	public void setFooter(HBox... nodes){
 		footer.getChildren().setAll(footer.getChildren().get(0));
 		footer.getChildren().addAll(nodes);
+		for(HBox box : nodes) box.setAlignment(Pos.CENTER);
 		footer.setPrefColumns(footer.getChildren().size());
 		footer.prefTileWidthProperty().bind(footer.prefWidthProperty().divide(footer.getChildren().size()).subtract(5));
-		if(nodes.length > 0) nodes[nodes.length-1].alignmentProperty().setValue(Pos.TOP_RIGHT);
+		if(nodes.length > 0) nodes[nodes.length-1].alignmentProperty().setValue(Pos.CENTER_RIGHT);
 	}
 
 	public static Modal getInstance() throws IOException{
@@ -95,28 +96,25 @@ public class Modal {
 	public void setContent(Control node) {
 		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
 		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
-		if(holder.getChildren().size() > 1) holder.getChildren().set(0, node);
-		else holder.getChildren().add(0, node);
-		node.prefWidthProperty().bind(holder.widthProperty());
-		node.prefHeightProperty().bind(holder.heightProperty());
+		holder.setContent(node);
+//		node.prefWidthProperty().bind(holder.widthProperty());
+//		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(Region node) {
 		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
 		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
-		if(holder.getChildren().size() > 1) holder.getChildren().set(0, node);
-		else holder.getChildren().add(0, node);
-		node.prefWidthProperty().bind(holder.widthProperty());
-		node.prefHeightProperty().bind(holder.heightProperty());
+		holder.setContent(node);
+//		node.prefWidthProperty().bind(holder.widthProperty());
+//		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void setContent(WebView node) {
 		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
 		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
-		if(holder.getChildren().size() > 1) holder.getChildren().set(0, node);
-		else holder.getChildren().add(0, node);
-		node.prefWidthProperty().bind(holder.widthProperty());
-		node.prefHeightProperty().bind(holder.heightProperty());
+		holder.setContent(node);
+//		node.prefWidthProperty().bind(holder.widthProperty());
+//		node.prefHeightProperty().bind(holder.heightProperty());
 	}
 
 	public void bindMinHeight(ObservableNumberValue v) {
@@ -127,7 +125,7 @@ public class Modal {
 		if(stage != null) stage.minWidthProperty().bind(v);
 	}
 
-	public ScrollPane getRoot() {
+	public VBox getRoot() {
 		return root;
 	}
 

@@ -16,6 +16,14 @@ public class Version implements ModVersion {
 	private String modId;
 	private String modName;
 	private String description;
+	private boolean badJar;
+
+	public Version(){ badJar = false; }
+
+	@Override
+	public boolean isBadJar() { return badJar; }
+
+	public void setBadJar(boolean badJar) { this.badJar = badJar; }
 
 	public String getMinecraftVersion() {
 		return minecraftVersion;
@@ -114,7 +122,8 @@ public class Version implements ModVersion {
 			",uploadedAt=" + uploadedAt +
 			",modName='" + modName + '\'' +
 			",modId='" + modId + '\'' +
-			",description='" + (description != null ? description.replace('\n', ' ') : "null") + '\''
+			",description='" + (description != null ? description.replace('\n', ' ') : "null") + '\'' +
+			",badJar='" + badJar + '\''
 			+ '}';
 	}
 

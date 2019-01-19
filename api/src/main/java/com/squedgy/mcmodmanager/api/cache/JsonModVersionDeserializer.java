@@ -41,7 +41,8 @@ public class JsonModVersionDeserializer extends StdDeserializer<Map<String, ModV
 					JSON_KEY_MOD_ID,
 					JSON_KEY_MOD_NAME,
 					JSON_KEY_RELEASE_TYPE,
-					JSON_KEY_UPLOADED_AT)
+					JSON_KEY_UPLOADED_AT,
+					JSON_KEY_BAD_JAR)
 				) {
 					ret.put(
 						field.getKey(),
@@ -54,6 +55,7 @@ public class JsonModVersionDeserializer extends StdDeserializer<Map<String, ModV
 							.withDescription(getText(version, JSON_KEY_DESCRIPTION).replaceAll("\\r\\n|\\n|\\r", ""))
 							.withId(getLong(version, JSON_KEY_ID))
 							.uploadedAt(LocalDateTime.parse(getText(version, JSON_KEY_UPLOADED_AT)))
+							.badJar(Boolean.valueOf(getText(version, JSON_KEY_BAD_JAR)))
 							.build()
 					);
 				}

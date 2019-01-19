@@ -12,7 +12,8 @@ public interface ModVersion extends Comparable<ModVersion> {
 		JSON_KEY_MINECRAFT_VERSION = "mc-version",
 		JSON_KEY_UPLOADED_AT = "uploaded",
 		JSON_KEY_MOD_ID = "mod-id",
-		JSON_KEY_DESCRIPTION = "desc";
+		JSON_KEY_DESCRIPTION = "desc",
+		JSON_KEY_BAD_JAR = "bad-link";
 
 	public abstract String getFileName();
 
@@ -33,5 +34,7 @@ public interface ModVersion extends Comparable<ModVersion> {
 	public abstract String getDescription();
 
 	public abstract boolean isHtmlDescription();
+
+	public abstract boolean isBadJar();
 
 }
