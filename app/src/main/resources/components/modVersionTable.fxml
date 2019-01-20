@@ -22,7 +22,7 @@
 		</TableColumn>
 		<TableColumn text="Mod Id">
 			<cellValueFactory>
-				<PropertyValueFactory property="jarId"/>
+				<PropertyValueFactory property="modId"/>
 			</cellValueFactory>
 		</TableColumn>
 		<TableColumn text="File Name">

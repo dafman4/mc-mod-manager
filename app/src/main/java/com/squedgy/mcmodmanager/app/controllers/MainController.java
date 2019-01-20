@@ -187,35 +187,36 @@ public class MainController {
 
 	@FXML
 	public void searchForUpdates(Event e) {
-		Modal modal;
+		Platform.runLater(() -> {
+			Modal modal;
+			try {
 
-		try {
-			modal = Modal.loading();
-		} catch (IOException e1) {
-			throw new RuntimeException();
-		}
+				modal = Modal.loading();
+			} catch (IOException e1) {
+				throw new RuntimeException();
+			}
 
-		if (checking == null || !checking.isAlive()) {
+			if (checking == null || !checking.isAlive()) {
 
-			checking = new ModCheckingThread(l -> {
-				//do something with the returned list
-				Platform.runLater(() -> {
+				checking = new ModCheckingThread(l -> {
+					//do something with the returned list
+					Platform.runLater(() -> {
 
-					ModUpdaterController table;
-					try {
-						table = new ModUpdaterController(l);
-						modal.setContent(table.getRoot());
-						modal.openAndWait(Startup.getParent().getWindow());
-					} catch (IOException e1) {
-						AppLogger.error(e1, getClass());
-						modal.close();
-					}
+						ModUpdaterController table;
+						try {
+							table = new ModUpdaterController(l);
+							modal.setContent(table.getRoot());
+							modal.openAndWait(Startup.getParent().getWindow());
+						} catch (IOException e1) {
+							AppLogger.error(e1, getClass());
+							modal.close();
+						}
+					});
+					return null;
 				});
-				return null;
-			});
-			checking.start();
-		}
-
+				checking.start();
+			}
+		});
 	}
 
 	@FXML

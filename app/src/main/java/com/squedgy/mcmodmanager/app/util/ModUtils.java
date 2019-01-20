@@ -166,6 +166,7 @@ public class ModUtils {
 	}
 
 	public void deactivateMod(ModVersion mod) throws IOException {
+		//This should clean up any file references hanging about
 		System.gc();
 		String key = this.getKey(mod);
 		File f = new File(PathUtils.getStorageDir());
@@ -184,6 +185,7 @@ public class ModUtils {
 	}
 
 	public void activateMod(ModVersion mod) throws IOException, IllegalArgumentException {
+		//This should clean up any file references hanging about
 		System.gc();
 		String key = inactiveMods.entrySet()
 			.stream()
@@ -383,7 +385,11 @@ public class ModUtils {
 	}
 
 	public ModVersion getMod(String id) {
-		return mods.get(id);
+		ModVersion v = mods.get(id);
+		if(v == null){
+			v = mods.values().stream().filter(e -> e.getModId().equals(id)).findFirst().orElse(null);
+		}
+		return v;
 	}
 
 	public ModVersion[] getMods() {

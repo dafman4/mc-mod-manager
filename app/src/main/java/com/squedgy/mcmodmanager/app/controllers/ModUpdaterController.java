@@ -54,6 +54,7 @@ public class ModUpdaterController {
 		Button button = new Button("Update All");
 		button.onMouseReleasedProperty().setValue(this::updateAll);
 		box.getChildren().setAll(button);
+		box.setVisible(updates.size() > 0);
 		Modal.getInstance().setFooter(box);
 	}
 
@@ -140,17 +141,20 @@ public class ModUpdaterController {
 	private static TableView<Map.Entry<ModVersion, Result>> getResultTable() {
 		TableView<Map.Entry<ModVersion, Result>> ret = new TableView<>();
 		ret.getStyleClass().addAll("all-padding", "mod-table");
-		TableColumn<Map.Entry<ModVersion, Result>, ImageView> image = JavafxUtils.makeColumn("Succeeded", e -> {
-			ImageUtils u = ImageUtils.getInstance();
-			boolean succeed = e.getValue().getValue().isResult();
-			return new SimpleObjectProperty<>(new ImageView(succeed ? u.GOOD : u.BAD));
-		});
-		TableColumn<Map.Entry<ModVersion, Result>, String> mod = JavafxUtils.makeColumn("Mod", e -> new SimpleStringProperty(e.getValue().getKey().getModName()));
-		TableColumn<Map.Entry<ModVersion, Result>, String> reason = JavafxUtils.makeColumn("Reason", e -> {
-			boolean succeed = e.getValue().getValue().isResult();
-
-			return new SimpleStringProperty(succeed ? "Succeeded" : e.getValue().getValue().getReason());
-		});
+		TableColumn<Map.Entry<ModVersion, Result>, ImageView>
+			image = JavafxUtils.makeColumn("Succeeded", e -> {
+				ImageUtils u = ImageUtils.getInstance();
+				boolean succeed = e.getValue().getValue().isResult();
+				return new SimpleObjectProperty<>(new ImageView(succeed ? u.GOOD : u.BAD));
+			}
+		);
+		TableColumn<Map.Entry<ModVersion, Result>, String>
+			mod = JavafxUtils.makeColumn("Mod", e -> new SimpleStringProperty(e.getValue().getKey().getModName())),
+			reason = JavafxUtils.makeColumn("Reason", e -> {
+				boolean succeed = e.getValue().getValue().isResult();
+				return new SimpleStringProperty(succeed ? "Succeeded" : e.getValue().getValue().getReason());
+			}
+		);
 
 		ret.getColumns().addAll(
 			image,
