@@ -1,5 +1,6 @@
 package com.squedgy.mcmodmanager.app.config;
 
+import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
@@ -10,6 +11,7 @@ import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
 import javafx.scene.control.TableColumn;
 
+import java.applet.Applet;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
@@ -21,6 +23,7 @@ public class Config {
 	public static final String CUSTOM_MC_DIR = "mc-dir";
 	private static final Path CONFIG_DIRECTORY = PathUtils.getPathFromProjectDir("config" + File.separator);
 	private static final Path CONFIG_FILE_PATH = CONFIG_DIRECTORY.resolve("manager.json");
+	private static final String MINECRAFT_VERSION_KEY = "minecraft-version";
 	private static final JsonFileFormat format = new JsonFileFormat();
 	private static final FileReader<Map<String, String>> READER = new FileReader<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format);
 	private static final FileWriter<Map<String, String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format, false);
@@ -33,6 +36,10 @@ public class Config {
 
 	private Config() {
 		CONFIG = readProps();
+		AppLogger.debug(String.format("CONFIG %s %s", (CONFIG.containsKey(MINECRAFT_VERSION_KEY) ? "contains": "doesn't contain"), MINECRAFT_VERSION_KEY), getClass());
+		if(CONFIG.containsKey(MINECRAFT_VERSION_KEY)) minecraftVersion = CONFIG.get(MINECRAFT_VERSION_KEY);
+		else CONFIG.put(MINECRAFT_VERSION_KEY, minecraftVersion);
+		AppLogger.debug(CONFIG.get(MINECRAFT_VERSION_KEY), getClass());
 		setCacher(minecraftVersion);
 	}
 
@@ -58,6 +65,7 @@ public class Config {
 	}
 
 	public Map<String, String> readProps() {
+		AppLogger.info(String.format("Config file location %s", CONFIG_FILE_PATH.toFile().getAbsolutePath()), getClass());
 		return readProps(CONFIG_FILE_PATH.toFile().getAbsolutePath());
 	}
 
