@@ -6,6 +6,7 @@ import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.Version;
+import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.event.Event;
@@ -43,7 +44,6 @@ public class SetJarIdController {
 
 	@FXML
 	public void initialize() throws IOException {
-
 		ModUtils.viewBadJars().forEach((id, reason) -> {
 			if (!reason.equals(ModUtils.NO_MOD_INFO)) {
 				ModVersion version = id.mod;
@@ -58,7 +58,7 @@ public class SetJarIdController {
 					Button b = new Button("Save");
 					HBox.setMargin(b, new Insets(5, 5, 5, 5));
 
-					b.onMouseReleasedProperty().setValue(e -> onMouseReleased(e, id, input, b, holder, label));
+					b.onMouseReleasedProperty().setValue(e -> onMouseReleased(id, input, b, holder, label));
 
 					holder.getChildren().addAll(label, input, b);
 
@@ -68,7 +68,7 @@ public class SetJarIdController {
 		});
 	}
 
-	private void onMouseReleased(Event e, ModUtils.IdResult id, TextInputControl input, Button b, HBox holder, Label label) {
+	private void onMouseReleased(ModUtils.IdResult id, TextInputControl input, Button b, HBox holder, Label label) {
 		ModUtils utils = ModUtils.getInstance();
 		try {
 			ModVersion found = getLatestVersion(input.getText(), Config.minecraftVersion, id.mod.getFileName());
@@ -86,7 +86,7 @@ public class SetJarIdController {
 							AppLogger.error(e2.getMessage(), getClass());
 						}
 					} else {
-						onMouseReleased(e, id, input, b, holder, label);
+						onMouseReleased(id, input, b, holder, label);
 					}
 				});
 			} else {

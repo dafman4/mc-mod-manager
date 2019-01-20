@@ -53,38 +53,40 @@ public abstract class ModChecker {
 	}
 
 	private static CloseableHttpResponse connectInOrder(String... urls){
-		System.out.println(urls.length);
+
 		for(String url: urls){
+			AppLogger.debug("Trying to access url: " + url, ModChecker.class);
 			CloseableHttpClient client = getClient();
-			System.out.println(url);
+
 			HttpGet get = new HttpGet(url);
 			try{
 				CloseableHttpResponse resp = client.execute(get);
 				int responseCode = resp.getStatusLine().getStatusCode();
 				if(responseCode >= 200 && responseCode < 300){
-					System.out.println("found at:" + url);
+
 					return resp;
 				}else {
 					resp.close();
 				}
-			}catch(IOException e){ System.out.println(e.getMessage()); }
+			}catch(IOException e){
+				AppLogger.error(e.getMessage(), ModChecker.class);
+			}
 		}
-		System.out.println("returning null");
+
 		return null;
 	}
 
 	private static CurseForgeResponse get(String mod, CurseForgeResponseDeserializer deserializer) throws IOException, ModIdFoundConnectionFailed {
-		System.out.println("Get called for mod: " + mod);
+
 		try(CloseableHttpResponse response = connectInOrder(
 			"https://api.cfwidget.com/minecraft/mc-mods/" + mod,
 			"https://api.cfwidget.com/mc-mods/minecraft/" + mod,
 			"https://api.cfwidget.com/projects/" + mod)
 		){
 			if(response == null){
-				System.out.println("null response");
 				throw new IOException(String.format("%s couldn't be found/accessed", mod));
 			}
-			System.out.println("response not null");
+
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()))) {
 				ObjectMapper mapper = new ObjectMapper()
 					.registerModule(
@@ -95,7 +97,7 @@ public abstract class ModChecker {
 					.collect(Collectors.joining(""))
 					.replaceAll("\\n", "\\\\n")
 					.replaceAll("\\r", "\\\\r");
-				System.out.println("response:\n" + response);
+
 				return mapper
 					.readValue(
 						text,
@@ -106,10 +108,7 @@ public abstract class ModChecker {
 			} catch (Exception e) {
 				throw new ModIdFoundConnectionFailed(String.format("Unknown Error with mod %s: %s", mod, e.getMessage()), e);
 			}
-		}catch (Exception e){
-			AppLogger.error(e, ModChecker.class);
-			throw e;
-		}
+		}catch(Exception e){ AppLogger.error(e, ModChecker.class); throw e; }
 	}
 
 	public static ModVersion getNewest(String mId, String mcV) throws ModIdNotFoundException {
@@ -162,7 +161,8 @@ public abstract class ModChecker {
 	}
 
 	public static InputStream download(ModVersion v) {
-		try(CloseableHttpResponse response = connectInOrder(buildURI(v.getDownloadUrl() + "/file").toURL().toString())){
+		try{
+			CloseableHttpResponse response = connectInOrder(buildURI(v.getDownloadUrl() + "/file").toURL().toString());
 			if(response == null){
 				throw new IOException(
 					String.format(

@@ -28,23 +28,26 @@ public class ModLocatorThread extends Thread {
 
 	@Override
 	public void run() {
-		ModUtils utils = ModUtils.getInstance();
-		try {
-			ModVersion v = utils.matchesExistingId(jarId, fileName);
-			if (v != null) {
-				found.accept(jarId, v);
-				return;
+		try{
+			ModUtils utils = ModUtils.getInstance();
+			try {
+				ModVersion v = utils.matchesExistingId(jarId, fileName);
+				if (v != null) {
+					found.accept(jarId, v);
+					return;
+				}
+			} catch (IOException | ModIdFoundConnectionFailed e) {
+				AppLogger.error(e.getMessage(), getClass());
 			}
-		} catch (IOException | ModIdFoundConnectionFailed ignored) { }
 
-		//Attempt to find an online ModVersion matching the installed one
-		try {
+			//Attempt to find an online ModVersion matching the installed one
 			ModUtils.IdResult id = utils.getRealModId(file);
 			found.accept(id.jarId, id.mod);
-			return;
-		} catch (ModIdNotFoundException e1) {
-			AppLogger.info(e1.getMessage(), getClass());
+		}catch(Exception e){
+			AppLogger.error(e, getClass());
+			failedToLocate.run();
+		}finally {
+			this.interrupt();
 		}
-		failedToLocate.run();
 	}
 }

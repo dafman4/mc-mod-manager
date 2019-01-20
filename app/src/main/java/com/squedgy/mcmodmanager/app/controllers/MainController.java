@@ -20,6 +20,7 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -64,6 +65,7 @@ public class MainController {
 
 	@FXML
 	public void initialize() {
+		objectView.cacheProperty().setValue(true);
 		//Set the default view to a decent looking background
 		updateObjectView("<h1>&nbsp;</h1>");
 		objectView.getEngine().setJavaScriptEnabled(true);
@@ -128,7 +130,7 @@ public class MainController {
 					utils.activateMod(mod);
 				}
 			} catch (Exception e) {
-				throw new RuntimeException(e);
+				AppLogger.error(e, getClass());
 			}
 			return null;
 		});
@@ -235,7 +237,7 @@ public class MainController {
 			m.setContent(controller.getRoot());
 			m.open(Startup.getParent().getWindow());
 			m.setAfterClose(e2 -> {
-				try {
+								try {
 					if(controller.isUpdated()) Startup.getInstance().getMainView().getRoot().getChildren().setAll(new LoadingController().getRoot());
 					new Thread(() -> {
 						if(controller.isUpdated()) {

@@ -38,9 +38,9 @@ public class ModUpdaterController {
 	@FXML
 	public TilePane buttons;
 	@FXML
-	public Button updateAll;
-	public ModVersionTableController table;
-	public ModUpdaterThread updates;
+	private Button updateAll;
+	private static ModVersionTableController table;
+	private static ModUpdaterThread updates;
 
 	public ModUpdaterController(List<ModVersion> updates) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/updates.fxml"));
@@ -66,46 +66,53 @@ public class ModUpdaterController {
 		}
 	}
 
-	@FXML
-	public void updateAll(Event e)  {
-		try {
-			Modal modal = Modal.loading();
-			if (updates == null) {
-				updates = new ModUpdaterThread(
-					table.getItems(),
-					results -> {
-						TableView<Map.Entry<ModVersion, Result>> resultTable = getResultTable();
-						System.gc();
+	public static void updateAll(List<ModVersion> items){
+		Platform.runLater(() ->{
+			try {
+				Modal modal = Modal.loading();
+				if (updates == null || !updates.isAlive()) {
+					updates = new ModUpdaterThread(
+						items,
+						results -> {
+							TableView<Map.Entry<ModVersion, Result>> resultTable = getResultTable();
+							System.gc();
+							Platform.runLater(() -> {
+								results.forEach((key, value) -> {
+									if (value.isResult()) handleSuccessfulDownload(key, value);
+									resultTable.getItems().add(new AbstractMap.SimpleEntry<>(key, value));
+								});
+								modal.setContent(resultTable);
+								try {
+									ModUtils.getInstance().setMods();
+									Startup.getInstance().getMainView().updateModList();
+								} catch (IOException e2) {
+									AppLogger.error(e2, ModUpdaterController.class);
+								}
+							});
+							return null;
+						}
+					);
 
-						results.forEach((key, value) -> {
-							if (value.isResult()) handleSuccessfulDownload(key, value);
-							resultTable.getItems().add(new AbstractMap.SimpleEntry<>(key, value));
-						});
-						Platform.runLater(() -> {
-							modal.setContent(resultTable);
-							try {
-								ModUtils.getInstance().setMods();
-								Startup.getInstance().getMainView().updateModList();
-							} catch (IOException ignored) {
-							}
-						});
-						return null;
-					});
-
+				}
+				if (!updates.isAlive()) updates.start();
+			} catch (IOException e1) {
+				AppLogger.error(e1, ModUpdaterController.class);
 			}
-			if (!updates.isAlive()) updates.start();
-		} catch (IOException e1) {
-			AppLogger.error(e1.getMessage(), getClass());
-		}
+		} );
 	}
 
-	private void handleSuccessfulDownload(ModVersion key, Result value) {
+	@FXML
+	public void updateAll(Event e)  {
+		updateAll(table.getItems());
+	}
+
+	private static void handleSuccessfulDownload(ModVersion key, Result value) {
 		ModVersion old = ModUtils.getInstance().getMod(key.getModId());
 
 		File newMod = new File(PathUtils.findModLocation(key));
 		File oldMod = new File(PathUtils.findModLocation(old));
 
-		AppLogger.info("Old File ||| New File\n" + oldMod.getAbsolutePath() + "|||" + newMod.getAbsolutePath(), getClass());
+		AppLogger.info("Old File ||| New File\n" + oldMod.getAbsolutePath() + "|||" + newMod.getAbsolutePath(), ModUpdaterController.class);
 
 		value.setResult(oldMod.delete());
 		value.setReason(value.isResult() ? "Succeeded!" : "couldn't delete the old file");
@@ -130,7 +137,7 @@ public class ModUpdaterController {
 		}
 	}
 
-	private TableView<Map.Entry<ModVersion, Result>> getResultTable() {
+	private static TableView<Map.Entry<ModVersion, Result>> getResultTable() {
 		TableView<Map.Entry<ModVersion, Result>> ret = new TableView<>();
 		ret.getStyleClass().addAll("all-padding", "mod-table");
 		TableColumn<Map.Entry<ModVersion, Result>, ImageView> image = JavafxUtils.makeColumn("Succeeded", e -> {

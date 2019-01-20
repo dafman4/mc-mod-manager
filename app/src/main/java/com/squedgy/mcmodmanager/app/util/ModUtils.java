@@ -166,15 +166,16 @@ public class ModUtils {
 	}
 
 	public void deactivateMod(ModVersion mod) throws IOException {
+		System.gc();
 		String key = this.getKey(mod);
 		File f = new File(PathUtils.getStorageDir());
 		if (!f.exists()) if (!f.mkdirs()) throw new IOException("couldn't make the de-active mods folder");
-		File modFile = new File(PathUtils.getModsDir() + File.separator + mod.getFileName());
-		if (modFile.exists()) {
+		File startDir = new File(PathUtils.getModsDir());
+		if (startDir.toPath().resolve(mod.getFileName()).toFile().exists()) {
 			if (f.toPath().resolve(mod.getFileName()).toFile().exists()) {
-				if (!modFile.delete()) throw new IOException("couldn't deactivate!");
+				if (!startDir.delete()) throw new IOException("couldn't deactivate!");
 			} else {
-				Files.move(modFile.toPath(), f.toPath().resolve(mod.getFileName()));
+				Files.move(startDir.toPath().resolve(mod.getFileName()), f.toPath().resolve(mod.getFileName()));
 				inactiveMods.put(key, mods.remove(key));
 			}
 		} else {
@@ -183,6 +184,7 @@ public class ModUtils {
 	}
 
 	public void activateMod(ModVersion mod) throws IOException, IllegalArgumentException {
+		System.gc();
 		String key = inactiveMods.entrySet()
 			.stream()
 			.filter(m -> mod.equals(m.getValue()))
@@ -190,12 +192,12 @@ public class ModUtils {
 			.orElseThrow(() -> new IllegalArgumentException("Mod Version: id(" + mod.getModId() + ") wasn't inactive!")).getKey();
 
 		File f = new File(PathUtils.getStorageDir());
-		File newFile = new File(PathUtils.getModsDir() + File.separator + mod.getFileName());
-		if (f.exists()) {
-			if (newFile.exists()) {
+		File newFile = new File(PathUtils.getModsDir());
+		if (f.toPath().resolve(mod.getFileName()).toFile().exists()) {
+			if (newFile.toPath().resolve(mod.getFileName()).toFile().exists()) {
 				if (!f.delete()) throw new IOException("Couldn't activate mod: id(" + mod.getModId() + ")");
 			} else {
-				Files.move(f.toPath(), newFile.toPath());
+				Files.move(f.toPath().resolve(mod.getFileName()), newFile.toPath().resolve(mod.getFileName()));
 				mods.put(key, inactiveMods.remove(key));
 			}
 		} else throw new IOException("Couldn't activate mod: id(" + mod.getModId() + ")");
@@ -227,7 +229,7 @@ public class ModUtils {
 								finally{ runningThreads.remove(file); }
 							});
 							runningThreads.put(file, thread);
-							thread.run();
+							thread.start();
 						}
 					} catch (Exception e2) {
 						AppLogger.error(e2, getClass());
@@ -291,15 +293,13 @@ public class ModUtils {
 			fileName = v.getFileName();
 		List<String> testStrings = Arrays.stream(getJarModIds(file)).filter(Objects::nonNull).collect(Collectors.toList());
 		testStrings.addAll(Arrays.stream(getJarModNames(file)).filter(Objects::nonNull).map(ModUtils::formatModName).collect(Collectors.toList()));
-
-		System.out.println(fileName);
-		System.out.println(String.join(", ", testStrings));
 		testStrings = testStrings.stream().distinct().collect(Collectors.toList());
-		System.out.println(String.join(", ", testStrings));
+
 		IdResult ret = new IdResult();
 		ModVersion test = null;
 		try {
 			for (String id : testStrings) {
+				AppLogger.debug("testing id: " + id, getClass());
 				try {
 					test = matchesExistingId(id, fileName);
 				} catch (IOException | ModIdNotFoundException e) {
@@ -324,18 +324,17 @@ public class ModUtils {
 
 	public ModVersion matchesExistingId(String id, String fileName) throws IOException, ModIdFoundConnectionFailed {
 		ModVersion ret = CONFIG.getCachedMods().getItem(id);
-		System.out.println("cache found within matchesExistingId: " + ret);
+
 		List<ModVersion> versions;
 		if (ret == null) {
 			versions = ModChecker.getForVersion(id, Config.minecraftVersion)
 				.getVersions();
-			System.out.println("From given id: " + id + "\n" + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining(", ")));
+
 		} else if (!ret.getFileName().equals(fileName)) {
 			versions = ModChecker.getForVersion(ret.getModId(), Config.minecraftVersion)
 				.getVersions();
-			System.out.println("From cached id (no matching file): " + id + "\n" + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining(", ")));
+
 		} else{
-			System.out.println("found cached version");
 			return ret;
 		}
 
@@ -368,10 +367,11 @@ public class ModUtils {
 	}
 
 	public void addMod(String modId, ModVersion mod, boolean active) {
-		addMod(modId, mod, null, active);
+		addMod(modId, mod, "", active);
 	}
 
 	public void addMod(String modId, ModVersion mod, String issue, boolean active) {
+		if(issue == null || issue.isEmpty()) issue = modId + " did not have a proper link to curse forge!";
 		if (mod.isBadJar()) {
 			AppLogger.info("adding BAD mod: " + modId, getClass());
 			addBadJar(new IdResult(mod, modId), issue);
@@ -408,6 +408,7 @@ public class ModUtils {
 				scanForMods(mods, true);
 				if (f.exists() && f.isDirectory()) scanForMods(f, false);
 				while(runningThreads.size() > 0) {
+					runningThreads.entrySet().stream().findFirst().ifPresent(e -> AppLogger.debug(e.getKey().getName(), getClass()) );
 					try { TimeUnit.MILLISECONDS.sleep(250); }
 					catch (InterruptedException ignored) { }
 				}

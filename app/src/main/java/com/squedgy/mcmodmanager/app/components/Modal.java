@@ -4,6 +4,7 @@ package com.squedgy.mcmodmanager.app.components;
 import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.controllers.LoadingController;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -75,7 +76,7 @@ public class Modal {
 		try {
 			Modal m = getInstance();
 			m.setFooter();
-			m.getWindow().onCloseRequestProperty().setValue(DEFAULT_ACTION);
+			m.getWindow().onHidingProperty().setValue(DEFAULT_ACTION);
 		} catch (IOException e) {
 			AppLogger.error(e.getMessage(), Modal.class);
 		}
@@ -88,33 +89,34 @@ public class Modal {
 
 	public static Modal loading() throws IOException {
 		Modal ret = getInstance();
+		reset();
 		ret.setContent(new LoadingController().getRoot());
 		ret.open(Startup.getParent().getWindow());
 		return ret;
 	}
 
 	public void setContent(Control node) {
-		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
-		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
-		holder.setContent(node);
-//		node.prefWidthProperty().bind(holder.widthProperty());
-//		node.prefHeightProperty().bind(holder.heightProperty());
+		Platform.runLater(() -> {
+			if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
+			if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
+			holder.setContent(node);
+		});
 	}
 
 	public void setContent(Region node) {
-		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
-		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
-		holder.setContent(node);
-//		node.prefWidthProperty().bind(holder.widthProperty());
-//		node.prefHeightProperty().bind(holder.heightProperty());
+		Platform.runLater(() -> {
+			if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
+			if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
+			holder.setContent(node);
+		});
 	}
 
 	public void setContent(WebView node) {
-		if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
-		if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
-		holder.setContent(node);
-//		node.prefWidthProperty().bind(holder.widthProperty());
-//		node.prefHeightProperty().bind(holder.heightProperty());
+		Platform.runLater(() -> {
+			if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(30));
+			if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(40));
+			holder.setContent(node);
+		});
 	}
 
 	public void bindMinHeight(ObservableNumberValue v) {
@@ -131,14 +133,13 @@ public class Modal {
 
 	public void open(Window owner) {
 		setUp(owner);
-		if (stage.isShowing()) stage.close();
-		stage.show();
+		if (!stage.isShowing()) stage.show();
 	}
 
 	public void setAfterClose(EventHandler<WindowEvent> e) {
-		if(e == null) stage.onCloseRequestProperty().setValue(DEFAULT_ACTION);
+		if(e == null) stage.onHidingProperty().setValue(DEFAULT_ACTION);
 		else if (stage != null){
-			stage.onCloseRequestProperty().setValue(ev -> {
+			stage.onHidingProperty().setValue(ev -> {
 				e.handle(ev);
 				reset();
 			});
@@ -149,14 +150,13 @@ public class Modal {
 
 	public void openAndWait(Window window) {
 		setUp(window);
-		if (stage.isShowing()) stage.close();
-		stage.showAndWait();
+		if (!stage.isShowing()) stage.showAndWait();
 	}
 
 	private void setUp(Window window) {
 		if (stage == null) {
 			stage = new Stage();
-			stage.onCloseRequestProperty().set(e -> stage.close());
+			stage.onHidingProperty().set(DEFAULT_ACTION);
 			Scene scene = new Scene(root);
 			scene.setRoot(root);
 			stage.setMinWidth(200);

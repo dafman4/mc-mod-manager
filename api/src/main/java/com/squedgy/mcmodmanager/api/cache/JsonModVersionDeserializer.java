@@ -55,7 +55,7 @@ public class JsonModVersionDeserializer extends StdDeserializer<Map<String, ModV
 							.withDescription(getText(version, JSON_KEY_DESCRIPTION).replaceAll("\\r\\n|\\n|\\r", ""))
 							.withId(getLong(version, JSON_KEY_ID))
 							.uploadedAt(LocalDateTime.parse(getText(version, JSON_KEY_UPLOADED_AT)))
-							.badJar(Boolean.valueOf(getText(version, JSON_KEY_BAD_JAR)))
+							.badJar(getBoolean(version, JSON_KEY_BAD_JAR))
 							.build()
 					);
 				}
@@ -70,11 +70,9 @@ public class JsonModVersionDeserializer extends StdDeserializer<Map<String, ModV
 		return true;
 	}
 
-	private String getText(JsonNode node, String id) {
-		return node.get(id).textValue();
-	}
+	private String getText(JsonNode node, String id) { return node.get(id).textValue(); }
 
-	private long getLong(JsonNode node, String id) {
-		return node.get(id).longValue();
-	}
+	private long getLong(JsonNode node, String id) { return node.get(id).longValue(); }
+
+	private boolean getBoolean(JsonNode node, String id) { return node.get(id).booleanValue(); }
 }

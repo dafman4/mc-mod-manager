@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 
 public class Cacher<ValueType> {
 
-	public static final String MOD_CACHE_DIRECTORY = "cache" + File.separator;
 	private Map<String, ValueType> cachedMods;
 	private String fileName;
 

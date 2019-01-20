@@ -30,6 +30,7 @@ public class Startup extends Application {
 	}
 
 	public static void main(String[] args) {
+		System.setProperty("sun.java2d.opengl", "true");
 		String os = System.getProperty("os.name");
 		ModUtils c = ModUtils.getInstance();
 

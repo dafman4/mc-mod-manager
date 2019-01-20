@@ -109,7 +109,7 @@ public class NewModsController {
 				results.put(id, result);
 			}
 			try {
-				new ModUpdaterController(updates).updateAll(null);
+				ModUpdaterController.updateAll(updates);
 				afterAdd(results);
 			} catch (IOException ignored) {
 			}

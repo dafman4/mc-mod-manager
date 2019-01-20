@@ -39,7 +39,7 @@ public class ModUpdaterThread extends Thread {
 
 		while (updateThreads.size() > 0) {
 			try {
-				TimeUnit.SECONDS.sleep(2);
+				TimeUnit.SECONDS.sleep(1);
 			} catch (InterruptedException e) {
 				AppLogger.error(e, getClass());
 			}
@@ -51,10 +51,9 @@ public class ModUpdaterThread extends Thread {
 	private Thread buildThread(ModVersion update, Map<ModVersion, Result> results) {
 		return new Thread(() -> {
 			boolean downloaded = false;
-			try {
+			try (InputStream file = ModChecker.download(update);){
 				ModVersion oldMod = ModUtils.getInstance().getMod(update.getModId());
 				String fileLocation = PathUtils.findModLocation(oldMod);
-				InputStream file = ModChecker.download(update);
 				if (file != null && new File(fileLocation).exists()) {
 					try (
 						FileOutputStream outFile = new FileOutputStream(new File(fileLocation));
@@ -67,6 +66,8 @@ public class ModUpdaterThread extends Thread {
 						AppLogger.error(e.getMessage(), getClass());
 					}
 				}
+			} catch (IOException e) {
+				AppLogger.error(e, getClass());
 			} finally {
 				if (downloaded) results.put(update, new Result(true, "succeeded"));
 				else results.put(update, new Result(false, "failed: Couldn't download"));
