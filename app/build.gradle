@@ -1,3 +1,7 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.time.LocalDateTime
+
 buildscript {
 	repositories { mavenCentral() }
 }
@@ -21,4 +25,17 @@ jar {
 			it.isDirectory() ? it : zipTree(it)
 		}
 	}
+
+}
+
+
+
+task afterJar(type: Zip){
+	dependsOn 'build'
+	from 'build/libs'
+	include '*.jar'
+	from'../'
+	include 'LICENSE.txt'
+	archiveName 'manager-latest.zip'
+	destinationDir file('build/release/')
 }
