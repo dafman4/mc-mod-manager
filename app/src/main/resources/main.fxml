@@ -15,11 +15,12 @@
 			<MenuItem text="Find Updates" onAction="#searchForUpdates"/>
 			<MenuItem text="Fix Ids" onAction="#setJarIds"/>
 		</Menu>
+		<Menu text="Settings">
+			<MenuItem text="Save Column Order" onAction="#setColumns"/>
+			<MenuItem text="Change Minecraft Version" onAction="#mcVersion"/>
+		</Menu>
 		<Menu text="View">
 			<MenuItem text="Bad Jars" fx:id="badJars" onAction="#showBadJars"/>
-		</Menu>
-		<Menu text="Save">
-			<MenuItem text="Columns" onAction="#setColumns"/>
 		</Menu>
 	</MenuBar>
 	<GridPane styleClass="l-r-padding" fx:id="listGrid" prefHeight="${root.height - menu.height}" prefWidth="${root.width - menu.width}">

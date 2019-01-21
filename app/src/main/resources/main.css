@@ -62,7 +62,7 @@
 	-fx-border-color:rgba(0,0,0,0) rgba(0,0,0,0) -border rgba(0,0,0,0);
 }
 
-.text-field, .text-box{
+.text-field, .text-box, .choice-box{
 	-fx-background-color:-back;
 	-fx-border-color: -border;
 }

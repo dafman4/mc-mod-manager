@@ -71,7 +71,7 @@ public class SetJarIdController {
 	private void onMouseReleased(ModUtils.IdResult id, TextInputControl input, Button b, HBox holder, Label label) {
 		ModUtils utils = ModUtils.getInstance();
 		try {
-			ModVersion found = getLatestVersion(input.getText(), Config.minecraftVersion, id.mod.getFileName());
+			ModVersion found = getLatestVersion(input.getText(), Config.getMinecraftVersion(), id.mod.getFileName());
 			if (found == null) {
 				b.setText(" Ignore Failure, and Save?");
 				((Version) id.mod).setModId(input.getText());

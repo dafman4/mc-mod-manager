@@ -21,7 +21,7 @@ public class ModCheckingThread extends Thread {
 	private final Map<ModVersion, Thread> updateCheckers;
 
 	public ModCheckingThread(Callback<List<ModVersion>, ?> callback) {
-		this(Arrays.asList(ModUtils.getInstance().getMods()), Config.minecraftVersion, callback);
+		this(Arrays.asList(ModUtils.getInstance().getMods()), Config.getMinecraftVersion(), callback);
 	}
 
 	public ModCheckingThread(List<ModVersion> modIds, String mcVersion, Callback<List<ModVersion>, ?> callback) {

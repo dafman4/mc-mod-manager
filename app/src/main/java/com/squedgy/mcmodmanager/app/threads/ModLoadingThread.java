@@ -1,7 +1,9 @@
 package com.squedgy.mcmodmanager.app.threads;
 
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
+import javafx.application.Platform;
 import javafx.util.Callback;
 
 import java.util.Arrays;

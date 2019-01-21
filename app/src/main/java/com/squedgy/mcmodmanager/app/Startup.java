@@ -37,10 +37,12 @@ public class Startup extends Application {
 		String mcDir;
 		//If custom set, otherwise looking for defaults
 		if (c.CONFIG.getProperty(Config.CUSTOM_MC_DIR) != null) mcDir = c.CONFIG.getProperty(Config.CUSTOM_MC_DIR);
-		else if (os.matches(".*[Ww]indows.*"))
+		else if (os.matches(".*[Ww]indows.*")) {
 			mcDir = System.getenv("APPDATA") + File.separator + ".minecraft";
-		else if (os.matches(".*[Mm]ac [Oo][Ss].*"))
+		}
+		else if (os.matches(".*[Mm]ac [Oo][Ss].*")) {
 			mcDir = System.getProperty("user.home") + File.separator + "Library" + File.separator + "Application Support" + File.separator + "minecraft";
+		}
 		else mcDir = System.getProperty("user.home") + File.separator + ".minecraft";
 
 		File dotMc = new File(mcDir);
@@ -62,11 +64,15 @@ public class Startup extends Application {
 
 	@Override
 	public void start(Stage stage) throws IOException {
+
 		getInstance();
 		stage.setTitle("Minecraft Mod Manager");
 		stage.setMinHeight(MAIN_VIEW.getRoot().getMinHeight());
 		stage.setMinWidth(MAIN_VIEW.getRoot().getMinWidth());
 		stage.setScene(PARENT);
+		stage.onCloseRequestProperty().setValue(e -> {
+			System.exit(0);
+		});
 		stage.centerOnScreen();
 		stage.show();
 	}

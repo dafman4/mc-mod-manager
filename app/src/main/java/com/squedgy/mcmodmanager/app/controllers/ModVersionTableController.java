@@ -79,7 +79,7 @@ public class ModVersionTableController {
 		root.getColumns().add(index, column);
 	}
 
-	public List<ModVersion> getItems() {
+	public List<DisplayVersion> getItems() {
 		return new ArrayList<>(root.getItems());
 	}
 

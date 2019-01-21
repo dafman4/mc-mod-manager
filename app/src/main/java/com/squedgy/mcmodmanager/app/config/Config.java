@@ -5,17 +5,38 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
+import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
+import com.squedgy.mcmodmanager.app.components.Modal;
+import com.squedgy.mcmodmanager.app.controllers.MinecraftVersionController;
+import com.squedgy.mcmodmanager.app.util.JavafxUtils;
 import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.applet.Applet;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
 
 public class Config {
 
@@ -28,7 +49,7 @@ public class Config {
 	private static final FileReader<Map<String, String>> READER = new FileReader<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format);
 	private static final FileWriter<Map<String, String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format, false);
 
-	public static String minecraftVersion = "1.12.2";
+	private static String minecraftVersion;
 
 	private static Map<String, String> CONFIG;
 	private static Config instance;
@@ -36,11 +57,64 @@ public class Config {
 
 	private Config() {
 		CONFIG = readProps();
-		AppLogger.debug(String.format("CONFIG %s %s", (CONFIG.containsKey(MINECRAFT_VERSION_KEY) ? "contains": "doesn't contain"), MINECRAFT_VERSION_KEY), getClass());
+	}
+
+	private void displaySetWindow(){
+		Platform.runLater(() -> {
+			Stage s = new Stage();
+			Label l = new Label("Choose a Minecraft Version: ");
+			ChoiceBox<String> choices = new ChoiceBox<>(FXCollections.observableArrayList(PathUtils.getPossibleMinecraftVersions()));
+			HBox start = new HBox(l,choices);
+			start.setAlignment(Pos.CENTER);
+			start.setPadding(new Insets(5,0,5,0));
+			Button b = new Button("Set");
+			HBox button = new HBox(b);
+			button.setPadding(new Insets(5,0,5,0));
+			button.setAlignment(Pos.CENTER_RIGHT);
+			Scene sc = new Scene(new VBox(start, button));
+			b.onMouseReleasedProperty().setValue( e ->{
+				setMinecraftVersion(choices.getValue());
+				s.close();
+			});
+			sc.getStylesheets().setAll(getResource("main.css").toString());
+			s.setScene(sc);
+			s.minHeightProperty().bind(new SimpleDoubleProperty(105));
+			s.minWidthProperty().bind(new SimpleDoubleProperty(300));
+			s.maxWidthProperty().bind(new SimpleDoubleProperty(300));
+			s.maxHeightProperty().bind(new SimpleDoubleProperty(105));
+			s.initOwner(Startup.getParent().getWindow());
+			s.initModality(Modality.WINDOW_MODAL);
+			s.setAlwaysOnTop(true);
+			s.showAndWait();
+		});
+	}
+
+	private void decideMinecraftVersion() {
 		if(CONFIG.containsKey(MINECRAFT_VERSION_KEY)) minecraftVersion = CONFIG.get(MINECRAFT_VERSION_KEY);
+		else if (minecraftVersion == null){
+			displaySetWindow();
+			while(minecraftVersion == null) {
+				try {
+					TimeUnit.MILLISECONDS.sleep(500);
+				} catch (InterruptedException e) {
+					AppLogger.error(e, getClass());
+				}
+			}
+		}
 		else CONFIG.put(MINECRAFT_VERSION_KEY, minecraftVersion);
-		AppLogger.debug(CONFIG.get(MINECRAFT_VERSION_KEY), getClass());
+		writeProps();
 		setCacher(minecraftVersion);
+	}
+
+	public static String getMinecraftVersion() {
+		if(minecraftVersion == null && instance != null) instance.decideMinecraftVersion();
+		return minecraftVersion;
+	}
+
+	public static void setMinecraftVersion(String minecraftVersion) {
+		Config.minecraftVersion = minecraftVersion;
+		CONFIG.put(MINECRAFT_VERSION_KEY, minecraftVersion);
+		Config.getInstance().setCacher(minecraftVersion);
 	}
 
 	public static Config getInstance() {
@@ -124,8 +198,7 @@ public class Config {
 		//Rewrite the columns keys to table.{column_name} so it's within an inner object
 		props.entrySet()
 			.stream()
-			.map(e -> new AbstractMap.SimpleEntry<>(tableName + "." + e.getKey(), e.getValue()))
-			.forEach(e -> CONFIG.put(e.getKey(), e.getValue()));
+			.forEach(e -> CONFIG.put(tableName + "." + e.getKey(), e.getValue()));
 		//Add CONFIG so it's all nice and dandy
 		CONFIG.putAll(props);
 		writeProps();

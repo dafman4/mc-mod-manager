@@ -56,10 +56,6 @@ public class NewModsController {
 		Modal.getInstance().setFooter(footer);
 	}
 
-	@FXML
-	public void initialize() {
-	}
-
 	private boolean downloadMod(ModVersion v, String output, ModUtils utils) {
 		try (
 			FileOutputStream outFile = new FileOutputStream(output);
@@ -142,7 +138,7 @@ public class NewModsController {
 
 	private Result checkCurseForge(String id, Result result) throws ModIdNotFoundException {
 		ModUtils utils = ModUtils.getInstance();
-		ModVersion mod = ModChecker.getNewest(id, Config.minecraftVersion);
+		ModVersion mod = ModChecker.getNewest(id, Config.getMinecraftVersion());
 		ModVersion current = utils.getMod(id);
 		if(current != null && mod.getFileName().equals(current.getFileName())){
 			result.reason = "Alread have the latest version.";

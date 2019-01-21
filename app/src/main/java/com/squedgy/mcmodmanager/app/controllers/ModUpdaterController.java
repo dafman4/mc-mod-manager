@@ -27,6 +27,7 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
 
@@ -104,7 +105,7 @@ public class ModUpdaterController {
 
 	@FXML
 	public void updateAll(Event e)  {
-		updateAll(table.getItems());
+		updateAll(table.getItems().stream().map(e1 -> (ModVersion) e1).collect(Collectors.toList()));
 	}
 
 	private static void handleSuccessfulDownload(ModVersion key, Result value) {

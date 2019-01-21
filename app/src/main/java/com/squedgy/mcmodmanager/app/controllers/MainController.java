@@ -5,6 +5,7 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
 import com.squedgy.mcmodmanager.app.components.Modal;
+import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.threads.ModLoadingThread;
@@ -65,6 +66,7 @@ public class MainController {
 
 	@FXML
 	public void initialize() {
+		PathUtils.ensureMinecraftDirectory();
 		objectView.cacheProperty().setValue(true);
 		//Set the default view to a decent looking background
 		updateObjectView("<h1>&nbsp;</h1>");
@@ -80,7 +82,6 @@ public class MainController {
 				AppLogger.error(e.getMessage(), getClass());
 			}
 		});
-		PathUtils.ensureMinecraftDirectory();
 
 		ModLoadingThread t = new ModLoadingThread((mods) -> {
 			Platform.runLater(() -> {
@@ -137,7 +138,9 @@ public class MainController {
 
 		//Selection updating
 		table.setOnChange((obs, old, neu) -> {
-			if(neu.getDescription() == null) {
+			if(neu == null) {
+				updateObjectView("");
+			}else if(neu.getDescription() == null) {
 				updateObjectView("<h1>Loading...</h1>");
 				ModInfoThread gathering = new ModInfoThread(
 					neu,
@@ -155,7 +158,7 @@ public class MainController {
 		return root;
 	}
 
-	public List<ModVersion> getItems() {
+	public List<DisplayVersion> getItems() {
 		return table.getItems();
 	}
 
@@ -243,14 +246,8 @@ public class MainController {
 					new Thread(() -> {
 						if(controller.isUpdated()) {
 							ModUtils utils = ModUtils.getInstance();
-							ModUtils.viewBadJars().forEach((key, value) -> {
-								AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
-							});
-							utils.setMods();
 							AppLogger.debug("setting mods", getClass());
-							ModUtils.viewBadJars().forEach((key, value) -> {
-								AppLogger.debug("BAD: " + key.mod.getModId(), getClass());
-							});
+							utils.setMods();
 							loadMods();
 						}
 						m.setAfterClose(null);
@@ -273,6 +270,17 @@ public class MainController {
 			m.openAndWait(Startup.getParent().getWindow());
 		} catch (IOException e1) {
 			AppLogger.error(e1.getMessage(), getClass());
+		}
+	}
+
+	@FXML
+	public void mcVersion(Event e){
+		try{
+			Modal modal = Modal.getInstance(Startup.getParent().getWindow());
+			modal.setContent(new MinecraftVersionController().getRoot());
+			modal.openAndWait(Startup.getParent().getWindow());
+		} catch (IOException e1) {
+			AppLogger.error(e1, getClass());
 		}
 	}
 

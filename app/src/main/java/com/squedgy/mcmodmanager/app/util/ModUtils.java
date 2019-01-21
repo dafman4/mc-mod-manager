@@ -33,7 +33,7 @@ public class ModUtils {
 	private static final Map<String, ModVersion> inactiveMods = new HashMap<>();
 	private static ModUtils instance;
 	public final Config CONFIG;
-	private Map<JarFile, Thread> runningThreads = new HashMap<>();
+	private Map<String, Thread> runningThreads = new HashMap<>();
 
 	private ModUtils() {
 		CONFIG = Config.getInstance();
@@ -221,16 +221,17 @@ public class ModUtils {
 						ZipEntry e = getMcmodInfo(file);
 						if (e != null) {
 							String jarId = getJarModId(file, e);
+							String key = file.getName();
 							ModLocatorThread thread = new ModLocatorThread(jarId, fileName, file, (id, v) ->{
 								addMod(id, v, isActive);
-								runningThreads.remove(file);
+								toRemove.add(key);
 							}, () -> {
 								//Otherwise read the mcmod.info as a json node and find the first working one as a stand-in
 								try { readJson(file, (e), jarId, isActive); }
 								catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
-								finally{ runningThreads.remove(file); }
+								finally{ toRemove.add(key); }
 							});
-							runningThreads.put(file, thread);
+							runningThreads.put(file.getName(), thread);
 							thread.start();
 						}
 					} catch (Exception e2) {
@@ -304,7 +305,7 @@ public class ModUtils {
 				AppLogger.debug("testing id: " + id, getClass());
 				try {
 					test = matchesExistingId(id, fileName);
-				} catch (IOException | ModIdNotFoundException e) {
+				} catch (IOException | ModIdNotFoundException | ModIdFoundConnectionFailed e) {
 					issues.add(e);
 				}
 				if (test != null) {
@@ -313,8 +314,6 @@ public class ModUtils {
 					return ret;
 				}
 			}
-		} catch (ModIdFoundConnectionFailed e) {
-			throw new ModIdNotFoundException(file.getName() + File.separator + " found a curse record, but it didn't contain a matching file");
 		} finally {
 			if (test == null) {
 				AppLogger.info("attemptable: " + testStrings, getClass());
@@ -329,11 +328,11 @@ public class ModUtils {
 
 		List<ModVersion> versions;
 		if (ret == null) {
-			versions = ModChecker.getForVersion(id, Config.minecraftVersion)
+			versions = ModChecker.getForVersion(id, Config.getMinecraftVersion())
 				.getVersions();
 
 		} else if (!ret.getFileName().equals(fileName)) {
-			versions = ModChecker.getForVersion(ret.getModId(), Config.minecraftVersion)
+			versions = ModChecker.getForVersion(ret.getModId(), Config.getMinecraftVersion())
 				.getVersions();
 
 		} else{
@@ -402,22 +401,35 @@ public class ModUtils {
 		return null;
 	}
 
+	private static List<String> toRemove;
+
 	public void setMods() {
 		mods.clear();
 		inactiveMods.clear();
 		badJars.clear();
+		toRemove = new LinkedList<>();
 		File f = new File(PathUtils.getMinecraftDirectory());
 		if (f.exists() && f.isDirectory()) {
 			File mods = new File(PathUtils.getModsDir());
-			f = f.toPath().resolve(Config.minecraftVersion).toFile();
+			f = f.toPath().resolve(Config.getMinecraftVersion()).toFile();
 			if (mods.exists() && mods.isDirectory()) {
 				scanForMods(mods, true);
 				if (f.exists() && f.isDirectory()) scanForMods(f, false);
 				while(runningThreads.size() > 0) {
-					runningThreads.entrySet().stream().findFirst().ifPresent(e -> AppLogger.debug(e.getKey().getName(), getClass()) );
-					try { TimeUnit.MILLISECONDS.sleep(250); }
+					try {
+						toRemove.forEach(removal -> runningThreads.remove(removal));
+						runningThreads.entrySet().stream().findFirst().ifPresent(e ->{
+							if(e.getKey() != null) AppLogger.debug(e.getKey(), getClass());
+						} );
+						TimeUnit.MILLISECONDS.sleep(250);
+					}
 					catch (InterruptedException ignored) { }
+					catch(Exception e) {
+						AppLogger.error(e, getClass());
+					}
 				}
+				AppLogger.info("Done loading mods", getClass());
+				toRemove = null;
 				try {
 					Map<String, ModVersion> allMods = new HashMap<>(ModUtils.mods);
 					allMods.putAll(inactiveMods);

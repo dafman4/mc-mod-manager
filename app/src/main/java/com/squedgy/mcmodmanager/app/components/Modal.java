@@ -5,6 +5,8 @@ import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.controllers.LoadingController;
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -76,6 +78,10 @@ public class Modal {
 		try {
 			Modal m = getInstance();
 			m.setFooter();
+			m.setMaxHeight(null);
+			m.setMaxWidth(null);
+			m.bindMinHeight(new SimpleDoubleProperty(150));
+			m.bindMinWidth(new SimpleDoubleProperty(200));
 			stage.onHidingProperty().setValue(DEFAULT_ACTION);
 		} catch (IOException e) {
 			AppLogger.error(e.getMessage(), Modal.class);
@@ -97,31 +103,29 @@ public class Modal {
 
 	public void setContent(Control node) {
 		Platform.runLater(() -> {
-			if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(20));
-			if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(45));
+			if(node.minWidthProperty().get() > 200) bindMinWidth(node.minWidthProperty().add(20));
+			if(node.minHeightProperty().get() > 150)bindMinHeight(node.minHeightProperty().add(40).add(45));
 			holder.setContent(node);
 			node.prefWidthProperty().bind(holder.widthProperty());
-			node.prefHeightProperty().bind(holder.heightProperty().subtract(10));
 		});
 	}
 
 	public void setContent(Region node) {
 		Platform.runLater(() -> {
-			if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(20));
-			if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(45));
+			if(node.minWidthProperty().get() > 200) bindMinWidth(node.minWidthProperty().add(20));
+			if(node.minHeightProperty().get() > 150)bindMinHeight(node.minHeightProperty().add(40).add(45));
 			holder.setContent(node);
-			node.prefWidthProperty().bind(holder.prefWidthProperty());
-			node.prefHeightProperty().bind(holder.heightProperty().subtract(10));
+			node.prefWidthProperty().bind(holder.widthProperty());
 		});
 	}
 
 	public void setContent(WebView node) {
 		Platform.runLater(() -> {
-			if(node.minWidthProperty().get() > 50) bindMinWidth(node.minWidthProperty().add(20));
-			if(node.minHeightProperty().get() > 50)bindMinHeight(node.minHeightProperty().add(40).add(45));
+			if(node.minWidthProperty().get() > 200) bindMinWidth(node.minWidthProperty().add(20));
+			if(node.minHeightProperty().get() > 150)bindMinHeight(node.minHeightProperty().add(40).add(45));
 			holder.setContent(node);
-			node.prefWidthProperty().bind(holder.prefWidthProperty());
-			node.prefHeightProperty().bind(holder.heightProperty().subtract(10));
+			node.prefWidthProperty().bind(holder.widthProperty());
+//			node.minHeightProperty().bind(holder.prefViewportHeightProperty().subtract(10));
 		});
 	}
 
@@ -137,11 +141,6 @@ public class Modal {
 		return root;
 	}
 
-	public void open(Window owner) {
-		setUp(owner);
-		if (!stage.isShowing()) stage.show();
-	}
-
 	public void setAfterClose(EventHandler<WindowEvent> e) {
 		if(e == null) stage.onHidingProperty().setValue(DEFAULT_ACTION);
 		else if (stage != null){
@@ -154,9 +153,32 @@ public class Modal {
 		}
 	}
 
-	public void openAndWait(Window window) {
-		setUp(window);
+	public void open(){
+		if (!stage.isShowing()) stage.show();
+	}
+
+	public void open(Window owner) {
+		open();
+	}
+
+	public void openAndWait(){
 		if (!stage.isShowing()) stage.showAndWait();
+	}
+
+	public void openAndWait(Window window) {
+		openAndWait();
+	}
+
+	public void setMaxHeight(Double height){
+		if(height != null && height < 50) height =50.;
+		if(height == null) stage.maxHeightProperty().bind(new SimpleDoubleProperty(Double.MAX_VALUE));
+		else stage.maxHeightProperty().bind(new SimpleDoubleProperty(height + 40 + 45));
+	}
+
+	public void setMaxWidth(Double width){
+		if(width != null && width < 200) width = 200.;
+		if(width == null) stage.maxWidthProperty().bind(new SimpleDoubleProperty(Double.MAX_VALUE));
+		else stage.maxWidthProperty().bind(new SimpleDoubleProperty(width + 20));
 	}
 
 	private void setUp(Window window) {
@@ -175,7 +197,6 @@ public class Modal {
 
 	public void close() {
 		stage.close();
-		reset(stage);
 	}
 
 }

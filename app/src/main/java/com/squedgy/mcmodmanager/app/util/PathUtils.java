@@ -12,9 +12,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Objects;
-
-import static com.squedgy.mcmodmanager.app.config.Config.minecraftVersion;
+import java.util.*;
 
 
 public class PathUtils {
@@ -50,7 +48,7 @@ public class PathUtils {
 	}
 
 	public static String getStorageDir() {
-		return minecraftDirectory + File.separator + minecraftVersion;
+		return minecraftDirectory + File.separator + Config.getMinecraftVersion();
 	}
 
 	public static String getModLocation(ModVersion v) {
@@ -123,6 +121,21 @@ public class PathUtils {
 		} catch (MalformedURLException e) {
 			return null;
 		}
+	}
+
+	public static Set<String> getPossibleMinecraftVersions(){
+		Set<String> returns = new HashSet<>();
+		File[] versions = new File(getMinecraftDirectory() + File.separator + "versions").listFiles();
+		if(versions != null) {
+			for (File f : versions) {
+				System.out.println(f);
+				System.out.println(f.getName());
+				System.out.println(f.getName().matches("[0-9.]+-[Ff]orge.*"));
+				System.out.println();
+				if(f.getName().matches("[0-9.]+-[Ff]orge.*")) returns.add(f.getName().substring(0, f.getName().indexOf('-')));
+			}
+		}
+		return returns;
 	}
 
 }

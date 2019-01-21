@@ -2,6 +2,7 @@ package com.squedgy.mcmodmanager.api.cache;
 
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.squedgy.utilities.interfaces.FileFormatter;
 
 import java.io.*;
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,24 +18,27 @@ public class JsonFileFormat implements FileFormatter<Map<String, String>> {
 
 	private String workingFile = "";
 
+	private JsonNode writeNode(Map.Entry<String,String> conf, ObjectNode root){
+		String key = conf.getKey();
+		int ind = key.indexOf('.');
+		if(ind >= 0){
+			String baseKey = key.substring(0, ind);
+			Map.Entry<String,String> next = new AbstractMap.SimpleEntry<>(key.substring(ind + 1), conf.getValue());
+			if(root.get(baseKey) == null || !(root.get(baseKey) instanceof ObjectNode)) root.set(baseKey,writeNode(next, JsonNodeFactory.instance.objectNode()));
+			else root.set(key.substring(0, ind),writeNode(next, (ObjectNode) root.get(baseKey)));
+		}else{
+			root.put(key, conf.getValue());
+		}
+		return root;
+	}
+
 	@Override
 	public Void encode(Map<String, String> conf) {
 		ObjectNode ret = JsonNodeFactory.instance.objectNode();
 
-		conf
-			.entrySet()
-			.forEach(entry -> {
-				String[] keys = entry.getKey().split("\\.");
-				ObjectNode toModify = ret;
-				for (String key : keys) {
-					if (toModify.has(key)) {
-						if (toModify.get(key).isObject()) toModify = (ObjectNode) toModify.get(key);
-						else toModify.putObject("key");
-					} else if (key.equals(keys[keys.length - 1])) {
-						toModify.put(key, entry.getValue());
-					} else toModify = toModify.putObject(key);
-				}
-			});
+		for(Map.Entry<String,String> entry : conf.entrySet()){
+			writeNode(entry, ret);
+		}
 		ObjectMapper mapper = new ObjectMapper();
 		DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
 

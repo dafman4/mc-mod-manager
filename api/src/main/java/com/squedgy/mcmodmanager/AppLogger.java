@@ -33,6 +33,6 @@ public abstract class AppLogger {
 	}
 
 	private static String getFormattedClassString(Class<?> clazz) {
-		return "[" + clazz.getSimpleName() + "] ";
+		return "[" + clazz.getSimpleName() + "][" + Thread.currentThread().getStackTrace()[3].getLineNumber() + "] ";
 	}
 }

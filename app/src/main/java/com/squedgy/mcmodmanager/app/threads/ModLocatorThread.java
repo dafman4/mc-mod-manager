@@ -16,6 +16,7 @@ public class ModLocatorThread extends Thread {
 	private Runnable failedToLocate;
 	private String jarId, fileName;
 	private JarFile file;
+	private ModVersion toReturn = null;
 
 	public ModLocatorThread(String jarId, String fileName, JarFile file, BiConsumer<String, ModVersion> found, Runnable failedToLocate){
 		this.found = found;
@@ -31,9 +32,10 @@ public class ModLocatorThread extends Thread {
 		try{
 			ModUtils utils = ModUtils.getInstance();
 			try {
-				ModVersion v = utils.matchesExistingId(jarId, fileName);
-				if (v != null) {
-					found.accept(jarId, v);
+				AppLogger.info("Looking for matches for: " + jarId, getClass());
+				toReturn = utils.matchesExistingId(jarId, fileName);
+				if (toReturn != null) {
+					AppLogger.info("Found a match for: " + jarId, getClass());
 					return;
 				}
 			} catch (IOException | ModIdFoundConnectionFailed e) {
@@ -41,13 +43,20 @@ public class ModLocatorThread extends Thread {
 			}
 
 			//Attempt to find an online ModVersion matching the installed one
+			AppLogger.info("getting the real mod id: " + jarId, getClass());
 			ModUtils.IdResult id = utils.getRealModId(file);
-			found.accept(id.jarId, id.mod);
+			jarId = id.jarId;
+			toReturn = id.mod;
+			AppLogger.info("found a real id: " +id.jarId, getClass());
 		}catch(Exception e){
 			AppLogger.error(e, getClass());
-			failedToLocate.run();
 		}finally {
 			this.interrupt();
+			if(toReturn != null) found.accept(jarId, toReturn);
+			else failedToLocate.run();
 		}
+		AppLogger.info("returning: " + jarId, getClass());
+		AppLogger.info("", getClass());
+		return;
 	}
 }
