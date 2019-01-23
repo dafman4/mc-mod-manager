@@ -28,7 +28,10 @@ jar {
 
 }
 
-
+task Release{
+	dependsOn("afterJar")
+	Files.move(file("build/release/manager-latest.zip").toPath(), file(this.properties.releaseDir + "manager-latest.zip").toPath())
+}
 
 task afterJar(type: Zip){
 	dependsOn 'build'

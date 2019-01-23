@@ -23,4 +23,6 @@ cache
 !**/src/**
 local.properties
 
+.properties
+
 FiddlerKeystore
