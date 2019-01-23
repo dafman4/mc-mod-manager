@@ -1,6 +1,4 @@
 import java.nio.file.Files
-import java.nio.file.Paths
-import java.time.LocalDateTime
 
 buildscript {
 	repositories { mavenCentral() }
@@ -28,11 +26,6 @@ jar {
 
 }
 
-task Release{
-	dependsOn("afterJar")
-	Files.move(file("build/release/manager-latest.zip").toPath(), file(this.properties.releaseDir + "manager-latest.zip").toPath())
-}
-
 task afterJar(type: Zip){
 	dependsOn 'build'
 	from 'build/libs'
@@ -41,4 +34,26 @@ task afterJar(type: Zip){
 	include 'LICENSE.txt'
 	archiveName 'manager-latest.zip'
 	destinationDir file('build/release/')
+}
+
+task Release{
+	dependsOn "afterJar"
+	def release = this.properties.releaseDir + "manager-latest.zip"
+	def project = "build/release/manager-latest.zip"
+	def oldVersion = ""
+	if(file(project).exists()) {
+		if(file(release).exists()){
+			def entry = zipTree(release)
+			for(File f : entry.files){
+				if(f.getName().endsWith(".jar")){
+					def jar = f.getName().substring(0,f.getName().length()-".jar".length()).split("[-]")
+					oldVersion = jar[jar.length -1]
+				}
+			}
+			println oldVersion
+			println this.properties.releaseDir + "manager-" + oldVersion + ".zip"
+			Files.move(file(this.properties.releaseDir + "manager-latest.zip").toPath(), file(this.properties.releaseDir + "manager-" + oldVersion + ".zip").toPath())
+		}
+		Files.move(file(project).toPath(), file(release).toPath())
+	}
 }
