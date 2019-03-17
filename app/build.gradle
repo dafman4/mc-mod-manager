@@ -40,9 +40,9 @@ task Release{
 	dependsOn "afterJar"
 	def release = this.properties.releaseDir + "manager-latest.zip"
 	def project = "build/release/manager-latest.zip"
-	def oldVersion = ""
 	if(file(project).exists()) {
 		if(file(release).exists()){
+			def oldVersion = ""
 			def entry = zipTree(release)
 			for(File f : entry.files){
 				if(f.getName().endsWith(".jar")){
