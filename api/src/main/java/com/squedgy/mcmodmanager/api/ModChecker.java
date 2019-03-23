@@ -61,9 +61,11 @@ public abstract class ModChecker {
 			HttpGet get = new HttpGet(url);
 			try{
 				CloseableHttpResponse resp = client.execute(get);
-				int responseCode = resp.getStatusLine().getStatusCode();
-				if(responseCode >= 200 && responseCode < 300){
 
+				int responseCode = resp.getStatusLine().getStatusCode();
+				AppLogger.debug("Response code: " + responseCode, ModChecker.class);
+				if(responseCode >= 200 && responseCode < 300){
+					AppLogger.debug("returning response: " + resp, ModChecker.class);
 					return resp;
 				}else {
 					resp.close();
@@ -97,12 +99,11 @@ public abstract class ModChecker {
 					.collect(Collectors.joining(""))
 					.replaceAll("\\n", "\\\\n")
 					.replaceAll("\\r", "\\\\r");
-
-				return mapper
-					.readValue(
+				AppLogger.debug("Received entity:\n" + text, ModChecker.class);
+				return mapper.readValue(
 						text,
 						CurseForgeResponse.class
-					);
+				);
 			} catch (FileNotFoundException e) {
 				throw new IOException(e.getMessage());
 			} catch (Exception e) {

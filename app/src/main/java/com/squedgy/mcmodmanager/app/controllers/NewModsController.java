@@ -99,7 +99,8 @@ public class NewModsController {
 				if (mod == null) {
 					try {
 						checkCurseForge(id, result);
-					} catch (ModIdNotFoundException ignored) {
+					} catch (ModIdNotFoundException ex) {
+						AppLogger.error(ex, getClass());
 						result.reason = "Failed to locate a mod with id: " + id;
 					}
 				} else {
@@ -141,7 +142,7 @@ public class NewModsController {
 		ModVersion mod = ModChecker.getNewest(id, Config.getMinecraftVersion());
 		ModVersion current = utils.getMod(id);
 		if(current != null && mod.getFileName().equals(current.getFileName())){
-			result.reason = "Alread have the latest version.";
+			result.reason = "Already have the latest version.";
 			result.succeded = true;
 			result.version = mod;
 		} else if (downloadMod(mod, PathUtils.getModLocation(mod), utils)) {

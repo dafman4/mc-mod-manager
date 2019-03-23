@@ -36,7 +36,9 @@ public class Startup extends Application {
 
 		String mcDir;
 		//If custom set, otherwise looking for defaults
-		if (c.CONFIG.getProperty(Config.CUSTOM_MC_DIR) != null) mcDir = c.CONFIG.getProperty(Config.CUSTOM_MC_DIR);
+		if (c.CONFIG.getProperty(Config.CUSTOM_MC_DIR) != null) {
+			mcDir = c.CONFIG.getProperty(Config.CUSTOM_MC_DIR);
+		}
 		else if (os.matches(".*[Ww]indows.*")) {
 			mcDir = System.getenv("APPDATA") + File.separator + ".minecraft";
 		}

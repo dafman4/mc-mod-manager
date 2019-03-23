@@ -31,6 +31,8 @@ import javafx.stage.Stage;
 import java.applet.Applet;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -46,7 +48,7 @@ public class Config {
 	private static final Path CONFIG_FILE_PATH = CONFIG_DIRECTORY.resolve("manager.json");
 	private static final String MINECRAFT_VERSION_KEY = "minecraft-version";
 	private static final JsonFileFormat format = new JsonFileFormat();
-	private static final FileReader<Map<String, String>> READER = new FileReader<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format);
+	private static final FileReader<Map<String, String>> READER = new FileReader<>(format);
 	private static final FileWriter<Map<String, String>> WRITER = new FileWriter<>(CONFIG_FILE_PATH.toFile().getAbsolutePath(), format, false);
 
 	private static String minecraftVersion;
@@ -56,7 +58,12 @@ public class Config {
 	private Cacher<ModVersion> cachedMods;
 
 	private Config() {
-		CONFIG = readProps();
+		try {
+			CONFIG = readProps();
+		} catch (IOException e) {
+			AppLogger.error(e, getClass());
+		}
+		AppLogger.info("Config: " + CONFIG, getClass());
 	}
 
 	private void displaySetWindow(){
@@ -138,14 +145,22 @@ public class Config {
 		CONFIG.remove(key);
 	}
 
-	public Map<String, String> readProps() {
+	public Map<String, String> readProps() throws IOException {
 		AppLogger.info(String.format("Config file location %s", CONFIG_FILE_PATH.toFile().getAbsolutePath()), getClass());
-		return readProps(CONFIG_FILE_PATH.toFile().getAbsolutePath());
+		if(!CONFIG_FILE_PATH.toFile().exists()){
+			try {
+				Files.createDirectories(CONFIG_FILE_PATH.getParent());
+				Files.createFile(CONFIG_FILE_PATH);
+				Files.write(CONFIG_FILE_PATH, "{}".getBytes(Charset.forName("UTF-8")));
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return readProps(CONFIG_FILE_PATH.toAbsolutePath().toString());
 	}
 
-	public Map<String, String> readProps(String file) {
-		READER.setFileLocation(file);
-		return READER.read();
+	public Map<String, String> readProps(String file) throws IOException {
+		return READER.read(file);
 	}
 
 	public void writeProps() {

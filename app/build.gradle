@@ -2,6 +2,18 @@ import java.nio.file.Files
 
 buildscript {
 	repositories { mavenCentral() }
+	dependencies {
+		classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+	}
+}
+
+plugins {
+}
+
+apply plugin: 'javafx-gradle-plugin'
+logger.lifecycle(System.getenv().JAVA_HOME)
+jfx {
+
 }
 
 dependencies {
@@ -56,4 +68,10 @@ task Release{
 		}
 		Files.move(file(project).toPath(), file(release).toPath())
 	}
+}
+
+jfx {
+	mainClass = "com.squedgy.mcmodmanager.app.Startup"
+
+	vendor = "SquEdgy"
 }
