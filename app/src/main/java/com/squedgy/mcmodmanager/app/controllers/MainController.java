@@ -189,6 +189,9 @@ public class MainController {
 	}
 
 	@FXML
+	public void updateList(Event e){ updateModList(); }
+
+	@FXML
 	public void searchForUpdates(Event e) {
 		Platform.runLater(() -> {
 			Modal modal;

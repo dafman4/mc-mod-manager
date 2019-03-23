@@ -14,6 +14,7 @@
 			<MenuItem text="Add" onAction="#newMods"/>
 			<MenuItem text="Find Updates" onAction="#searchForUpdates"/>
 			<MenuItem text="Fix Ids" onAction="#setJarIds"/>
+			<MenuItem text="Refresh List" onAction="#updateList"/>
 		</Menu>
 		<Menu text="Settings">
 			<MenuItem text="Save Column Order" onAction="#setColumns"/>

@@ -27,6 +27,9 @@ import org.apache.http.message.BasicHeader;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -99,7 +102,6 @@ public abstract class ModChecker {
 					.collect(Collectors.joining(""))
 					.replaceAll("\\n", "\\\\n")
 					.replaceAll("\\r", "\\\\r");
-				AppLogger.debug("Received entity:\n" + text, ModChecker.class);
 				return mapper.readValue(
 						text,
 						CurseForgeResponse.class
@@ -121,9 +123,16 @@ public abstract class ModChecker {
 				.stream()
 				.max(Comparator.comparing(ModVersion::getUploadedAt))
 				.orElse(null);
-			new ObjectMapper().writeValue(new File(System.getProperty("user.home") + File.separator + "checker-debug" + File.separator + mId + ".json"), resp);
+			Path p = Paths.get(System.getProperty("user.home") + File.separator + "checker-debug" + File.separator + mId + ".json");
+			if(!p.toFile().exists()) {
+				if(!p.getParent().toFile().exists())
+					Files.createDirectories(p.getParent());
+				Files.createFile(p);
+			}
+			new ObjectMapper().writeValue(p.toFile(), resp);
 			if (ret != null) return ret;
 		} catch (Exception ex) {
+			AppLogger.error(ex, ModChecker.class);
 		}
 		throw new ModIdNotFoundException(
 			String.format(
@@ -182,14 +191,4 @@ public abstract class ModChecker {
 		}
 	}
 
-	//You're using firefox and THAT'S THAT
-	private static String getUserAgentForOs() {
-		String base = "Mozilla/5.0 (%s rv:65.0) Gecko/20100101 Firefox/65.0";
-		String os = System.getProperty("os.name");
-		if (os.matches(".*[Ww]indows.*"))
-			return String.format(base, "Windows NT 10.0; Win64; x64;");
-		else if (os.matches(".*[Mm]ac [Oo][Ss].*"))
-			return String.format(base, "Macintosh; Intel Mac OS X 10.13;");
-		else return String.format(base, "X11; Ubuntu; Linux x86_64;");
-	}
 }
