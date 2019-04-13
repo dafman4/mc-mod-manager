@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.*;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModLocatorThread;
+import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -24,9 +24,11 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class ModUtils {
 
-
+	private static final Logger log = getLogger(ModUtils.class);
 	public static final String NO_MOD_INFO = "mcmod.info doesn't exist";
 	private static final Map<IdResult, String> badJars = new HashMap<>();
 	private static final Map<String, ModVersion> mods = new HashMap<>();
@@ -57,7 +59,7 @@ public class ModUtils {
 		return name;
 	}
 
-	public static String[] getJarModNames(JarFile file) {
+	private static String[] getJarModNames(JarFile file) {
 		ZipEntry e = file.getEntry("mcmod.info");
 		if (e != null && !e.isDirectory()) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -95,7 +97,7 @@ public class ModUtils {
 		return ret;
 	}
 
-	public static String[] getJarModIds(JarFile file) {
+	private static String[] getJarModIds(JarFile file) {
 		ZipEntry e = file.getEntry("mcmod.info");
 		if (e != null && !e.isDirectory()) {
 			ObjectMapper mapper = new ObjectMapper();
@@ -137,7 +139,7 @@ public class ModUtils {
 		return e;
 	}
 
-	public static void addBadJar(IdResult node, String reason) {
+	private static void addBadJar(IdResult node, String reason) {
 		badJars.put(node, reason);
 	}
 
@@ -146,7 +148,7 @@ public class ModUtils {
 		return getJarModId(file, e);
 	}
 
-	public static String getJarModId(JarFile file, ZipEntry e){
+	private static String getJarModId(JarFile file, ZipEntry e){
 		if (e != null && !e.isDirectory()) {
 			ObjectMapper mapper = new ObjectMapper();
 			try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(e)))) {
@@ -209,7 +211,7 @@ public class ModUtils {
 		return mods.values().stream().map(ModVersion::getModId).anyMatch(e -> e.equals(value.getModId()));
 	}
 
-	public void scanForMods(File folder, boolean isActive) {
+	private void scanForMods(File folder, boolean isActive) {
 		for (File f : Objects.requireNonNull(folder.listFiles())) {
 			if (f.isDirectory()) scanForMods(f, isActive);
 			else if (f.getName().endsWith(".jar")) {
@@ -228,14 +230,14 @@ public class ModUtils {
 							}, () -> {
 								//Otherwise read the mcmod.info as a json node and find the first working one as a stand-in
 								try { readJson(file, (e), jarId, isActive); }
-								catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
+								catch (IOException e1) { log.error(e1.getMessage(), getClass()); }
 								finally{ toRemove.add(key); }
 							});
 							runningThreads.put(file.getName(), thread);
 							thread.start();
 						}
 					} catch (Exception e2) {
-						AppLogger.error(e2, getClass());
+						log.error("", e2);
 					}
 				}
 			}
@@ -260,7 +262,7 @@ public class ModUtils {
 		else addMod(getJarModId(file), readNode(root, file),"Couldn't find a curse forge match.", isActive);
 	}
 
-	public ModVersion readNode(JsonNode modInfo, JarFile modJar) throws ModIdFailedException {
+	private ModVersion readNode(JsonNode modInfo, JarFile modJar) throws ModIdFailedException {
 
 		ModVersionFactory factory = new ModVersionFactory();
 		factory.badJar(true);
@@ -302,7 +304,7 @@ public class ModUtils {
 		ModVersion test = null;
 		try {
 			for (String id : testStrings) {
-				AppLogger.debug("testing id: " + id, getClass());
+				log.debug("testing id: " + id, getClass());
 				try {
 					test = matchesExistingId(id, fileName);
 				} catch (IOException | ModIdNotFoundException | ModIdFoundConnectionFailed e) {
@@ -316,8 +318,8 @@ public class ModUtils {
 			}
 		} finally {
 			if (test == null) {
-				AppLogger.info("attemptable: " + testStrings, getClass());
-				AppLogger.info("errors: " + issues, getClass());
+				log.info("attemptable: " + testStrings);
+				log.info("errors: " + issues);
 			}
 		}
 		throw new ModIdNotFoundException(file.getName() + File.separator + "mcmod.info name/modid doesn't match curse forge id.");
@@ -339,7 +341,7 @@ public class ModUtils {
 			return ret;
 		}
 
-		AppLogger.info("potential file matches: " + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining("|||")), getClass());
+		log.info("potential file matches: " + versions.stream().map(ModVersion::getFileName).collect(Collectors.joining("|||")), getClass());
 		ret = versions
 			.stream()
 			.filter(v -> fileName.equals(v.getFileName()))
@@ -363,9 +365,9 @@ public class ModUtils {
 		} while (i < length);
 	}
 
-	public void addMod(IdResult mod, boolean active) {
-		addMod(mod.jarId, mod.mod, active);
-	}
+//	public void addMod(IdResult mod, boolean active) {
+//		addMod(mod.jarId, mod.mod, active);
+//	}
 
 	public void addMod(String modId, ModVersion mod, boolean active) {
 		addMod(modId, mod, "", active);
@@ -374,11 +376,11 @@ public class ModUtils {
 	public void addMod(String modId, ModVersion mod, String issue, boolean active) {
 		if(issue == null || issue.isEmpty()) issue = modId + " did not have a proper link to curse forge!";
 		if (mod.isBadJar()) {
-			AppLogger.info("adding BAD mod: " + modId, getClass());
+			log.info("adding BAD mod: " + modId, getClass());
 			addBadJar(new IdResult(mod, modId), issue);
 		}
 		if (!modId.contains("/") && !modId.contains("\\")) CONFIG.getCachedMods().putItem(modId, mod);
-		else AppLogger.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
+		else log.info("Did not save " + mod.getModName() + " as it did not have a successful CurseForge match.", getClass());
 		if (active) mods.put(modId, mod);
 		else inactiveMods.put(modId, mod);
 	}
@@ -419,16 +421,16 @@ public class ModUtils {
 					try {
 						toRemove.forEach(removal -> runningThreads.remove(removal));
 						runningThreads.entrySet().stream().findFirst().ifPresent(e ->{
-							if(e.getKey() != null) AppLogger.debug(e.getKey(), getClass());
+							if(e.getKey() != null) log.debug(e.getKey(), getClass());
 						} );
 						TimeUnit.MILLISECONDS.sleep(250);
 					}
 					catch (InterruptedException ignored) { }
 					catch(Exception e) {
-						AppLogger.error(e, getClass());
+						log.error("", e);
 					}
 				}
-				AppLogger.info("Done loading mods", getClass());
+				log.info("Done loading mods");
 				toRemove = null;
 				try {
 					Map<String, ModVersion> allMods = new HashMap<>(ModUtils.mods);
@@ -436,7 +438,7 @@ public class ModUtils {
 					CONFIG.getCachedMods().clearUnmatched(allMods);
 					CONFIG.getCachedMods().writeCache();
 				} catch (IOException e) {
-					AppLogger.error(e.getMessage(), getClass());
+					log.error(e.getMessage(), getClass());
 				}
 			}
 		}
@@ -457,10 +459,10 @@ public class ModUtils {
 		public ModVersion mod;
 		public String jarId;
 
-		public IdResult() {
+		IdResult() {
 		}
 
-		public IdResult(ModVersion v, String id) {
+		IdResult(ModVersion v, String id) {
 			this.mod = v;
 			this.jarId = id;
 		}

@@ -1,6 +1,5 @@
 package com.squedgy.mcmodmanager.app.threads;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
@@ -8,12 +7,16 @@ import com.squedgy.mcmodmanager.api.response.Version;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import javafx.util.Callback;
+import org.slf4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class ModCheckingThread extends Thread {
 
+	private static final Logger log = getLogger(ModCheckingThread.class);
 	private final List<ModVersion> IDS;
 	private final String mc;
 	private final List<ModVersion> updateables = new LinkedList<>();
@@ -54,7 +57,7 @@ public class ModCheckingThread extends Thread {
 					}
 				} catch (ModIdNotFoundException | NullPointerException e) {
 				} catch (Exception e) {
-					AppLogger.error(e, getClass());
+					log.error("", e);
 				} finally {
 					removeThread(id);
 				}
@@ -66,7 +69,7 @@ public class ModCheckingThread extends Thread {
 			try {
 				TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {
-				AppLogger.error(e, getClass());
+				log.error("", e);
 			}
 		}
 		callback.call(updateables);

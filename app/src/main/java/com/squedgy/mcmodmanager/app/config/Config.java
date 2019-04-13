@@ -1,15 +1,11 @@
 package com.squedgy.mcmodmanager.app.config;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
-import com.squedgy.mcmodmanager.app.components.Modal;
-import com.squedgy.mcmodmanager.app.controllers.MinecraftVersionController;
-import com.squedgy.mcmodmanager.app.util.JavafxUtils;
 import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
@@ -27,9 +23,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
 
-import java.applet.Applet;
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -39,12 +34,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class Config {
 
-	public static final Path CACHE_DIRECTORY = PathUtils.getPathFromProjectDir("cache" + File.separator);
+	private static final Logger log = getLogger(Config.class);
+	public static final Path CACHE_DIRECTORY = PathUtils.PROJECT_HOME.resolve("cache");
 	public static final String CUSTOM_MC_DIR = "mc-dir";
-	private static final Path CONFIG_DIRECTORY = PathUtils.getPathFromProjectDir("config" + File.separator);
+	private static final Path CONFIG_DIRECTORY = PathUtils.PROJECT_HOME.resolve("config");
 	private static final Path CONFIG_FILE_PATH = CONFIG_DIRECTORY.resolve("manager.json");
 	private static final String MINECRAFT_VERSION_KEY = "minecraft-version";
 	private static final JsonFileFormat format = new JsonFileFormat();
@@ -61,9 +58,9 @@ public class Config {
 		try {
 			CONFIG = readProps();
 		} catch (IOException e) {
-			AppLogger.error(e, getClass());
+			log.error("", e);
 		}
-		AppLogger.info("Config: " + CONFIG, getClass());
+		log.info("Config: " + CONFIG);
 	}
 
 	private void displaySetWindow(){
@@ -104,7 +101,7 @@ public class Config {
 				try {
 					TimeUnit.MILLISECONDS.sleep(500);
 				} catch (InterruptedException e) {
-					AppLogger.error(e, getClass());
+					log.error("", e);
 				}
 			}
 		}
@@ -146,7 +143,7 @@ public class Config {
 	}
 
 	public Map<String, String> readProps() throws IOException {
-		AppLogger.info(String.format("Config file location %s", CONFIG_FILE_PATH.toFile().getAbsolutePath()), getClass());
+		log.info(String.format("Config file location %s", CONFIG_FILE_PATH.toFile().getAbsolutePath()), getClass());
 		if(!CONFIG_FILE_PATH.toFile().exists()){
 			try {
 				Files.createDirectories(CONFIG_FILE_PATH.getParent());

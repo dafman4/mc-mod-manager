@@ -1,11 +1,9 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
 import com.squedgy.mcmodmanager.app.components.Modal;
-import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
 import com.squedgy.mcmodmanager.app.threads.ModInfoThread;
 import com.squedgy.mcmodmanager.app.threads.ModLoadingThread;
@@ -21,12 +19,12 @@ import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
-import javafx.scene.effect.BlendMode;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
 import javafx.util.Callback;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,9 +32,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class MainController {
 
+	private static final Logger log = getLogger(MainController.class);
 	private static final String TABLE_NAME = "home";
 	private static MainController instance;
 	private ModVersionTableController table;
@@ -79,7 +79,7 @@ public class MainController {
 			try {
 				root.getChildren().setAll(new LoadingController().getRoot());
 			} catch (IOException e) {
-				AppLogger.error(e.getMessage(), getClass());
+				log.error(e.getMessage(), getClass());
 			}
 		});
 
@@ -131,7 +131,7 @@ public class MainController {
 					utils.activateMod(mod);
 				}
 			} catch (Exception e) {
-				AppLogger.error(e, getClass());
+				log.error("", e);
 			}
 			return null;
 		});
@@ -214,7 +214,7 @@ public class MainController {
 							modal.setContent(table.getRoot());
 							modal.openAndWait(Startup.getParent().getWindow());
 						} catch (IOException e1) {
-							AppLogger.error(e1, getClass());
+							log.error("", e1);
 							modal.close();
 						}
 					});
@@ -233,7 +233,7 @@ public class MainController {
 			m.setContent(c.getRoot());
 			m.open(Startup.getParent().getWindow());
 		}
-		catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
+		catch (IOException e1) { log.error(e1.getMessage(), getClass()); }
 	}
 
 	@FXML
@@ -249,18 +249,18 @@ public class MainController {
 					new Thread(() -> {
 						if(controller.isUpdated()) {
 							ModUtils utils = ModUtils.getInstance();
-							AppLogger.debug("setting mods", getClass());
+							log.debug("setting mods");
 							utils.setMods();
 							loadMods();
 						}
 						m.setAfterClose(null);
 					}).start();
 				} catch (IOException e1) {
-					AppLogger.error(e1, getClass());
+					log.error("", e1);
 				}
 			});
 		}
-		catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
+		catch (IOException e1) { log.error(e1.getMessage()); }
 
 
 	}
@@ -272,7 +272,7 @@ public class MainController {
 			m.setContent(new NewModsController().getRoot());
 			m.openAndWait(Startup.getParent().getWindow());
 		} catch (IOException e1) {
-			AppLogger.error(e1.getMessage(), getClass());
+			log.error(e1.getMessage(), getClass());
 		}
 	}
 
@@ -283,7 +283,7 @@ public class MainController {
 			modal.setContent(new MinecraftVersionController().getRoot());
 			modal.openAndWait(Startup.getParent().getWindow());
 		} catch (IOException e1) {
-			AppLogger.error(e1, getClass());
+			log.error("", e1);
 		}
 	}
 

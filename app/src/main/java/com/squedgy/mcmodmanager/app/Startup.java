@@ -19,7 +19,7 @@ public class Startup extends Application {
 	private static Startup instance;
 	private static MainController MAIN_VIEW;
 
-	public Startup() throws IOException {
+	private Startup() throws IOException {
 		if (MAIN_VIEW == null) MAIN_VIEW = MainController.getInstance();
 		if (PARENT == null) PARENT = new Scene(MAIN_VIEW.getRoot());
 	}
@@ -52,6 +52,10 @@ public class Startup extends Application {
 			mcDir = null;
 		}
 		PathUtils.setMinecraftDirectory(mcDir);
+
+		if(!PathUtils.PROJECT_HOME.toFile().exists()){
+
+		}
 
 		launch(args);
 	}

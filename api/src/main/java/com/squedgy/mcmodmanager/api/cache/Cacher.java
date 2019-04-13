@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.squedgy.mcmodmanager.AppLogger;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,8 +13,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class Cacher<ValueType> {
 
+	private static final Logger log = getLogger(Cacher.class);
 	private Map<String, ValueType> cachedMods;
 	private String fileName;
 
@@ -50,7 +53,7 @@ public class Cacher<ValueType> {
 		} catch (FileNotFoundException e) {
 			cachedMods = new HashMap<>();
 		} catch (Exception e) {
-			AppLogger.error(e, getClass());
+			log.error("", e);
 			cachedMods = new HashMap<>();
 		}
 	}
@@ -66,7 +69,7 @@ public class Cacher<ValueType> {
 		} catch (FileNotFoundException e) {
 			ret.clear();
 		} catch (Exception e) {
-			AppLogger.error(e, getClass());
+			log.error("", e);
 			ret.clear();
 		}
 		return ret;

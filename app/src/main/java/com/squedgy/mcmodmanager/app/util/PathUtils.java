@@ -1,9 +1,9 @@
 package com.squedgy.mcmodmanager.app.util;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.config.Config;
 import javafx.stage.DirectoryChooser;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -14,9 +14,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 public class PathUtils {
 
+	private static final Logger log = getLogger(PathUtils.class);
+	public static final Path PROJECT_HOME = getUserHome().resolve(".mc-mod-man");
 	private static String minecraftDirectory;
 
 	public static boolean allSubDirsMatch(File dir, String... subDirs) {
@@ -70,8 +74,7 @@ public class PathUtils {
 	public static void ensureMinecraftDirectory() {
 		Config utils = ModUtils.getInstance().CONFIG;
 		while (minecraftDirectory == null) {
-			DirectoryChooser fc = new DirectoryChooser();
-			File location = fc.showDialog(null);
+			File location = new DirectoryChooser().showDialog(null);
 			if(location == null){
 				System.exit(0);
 			}
@@ -87,7 +90,7 @@ public class PathUtils {
 		try {
 			return new File(URLDecoder.decode(PathUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8")).toPath().getParent().toFile();
 		} catch (UnsupportedEncodingException e) {
-			AppLogger.error(e.getMessage(), PathUtils.class);
+			log.error(e.getMessage(), PathUtils.class);
 			return null;
 		}
 	}
@@ -128,14 +131,14 @@ public class PathUtils {
 		File[] versions = new File(getMinecraftDirectory() + File.separator + "versions").listFiles();
 		if(versions != null) {
 			for (File f : versions) {
-				System.out.println(f);
-				System.out.println(f.getName());
-				System.out.println(f.getName().matches("[0-9.]+-[Ff]orge.*"));
-				System.out.println();
 				if(f.getName().matches("[0-9.]+-[Ff]orge.*")) returns.add(f.getName().substring(0, f.getName().indexOf('-')));
 			}
 		}
 		return returns;
+	}
+
+	public static Path getUserHome() {
+		return Paths.get(System.getProperty("user.home"));
 	}
 
 }

@@ -8,13 +8,13 @@ buildscript {
 }
 
 plugins {
+	id 'java'
+	id 'idea'
 }
 
 apply plugin: 'javafx-gradle-plugin'
-logger.lifecycle(System.getenv().JAVA_HOME)
-jfx {
 
-}
+logger.lifecycle(System.getenv().JAVA_HOME)
 
 dependencies {
 	compile project(':api')

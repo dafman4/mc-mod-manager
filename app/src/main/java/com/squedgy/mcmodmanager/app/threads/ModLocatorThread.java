@@ -1,17 +1,19 @@
 package com.squedgy.mcmodmanager.app.threads;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
-import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;
 import java.util.jar.JarFile;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class ModLocatorThread extends Thread {
 
+	private static final Logger log = getLogger(ModLocatorThread.class);
 	private BiConsumer<String,ModVersion> found;
 	private Runnable failedToLocate;
 	private String jarId, fileName;
@@ -32,31 +34,30 @@ public class ModLocatorThread extends Thread {
 		try{
 			ModUtils utils = ModUtils.getInstance();
 			try {
-				AppLogger.info("Looking for matches for: " + jarId, getClass());
+				log.info("Looking for matches for: " + jarId, getClass());
 				toReturn = utils.matchesExistingId(jarId, fileName);
 				if (toReturn != null) {
-					AppLogger.info("Found a match for: " + jarId, getClass());
+					log.info("Found a match for: " + jarId, getClass());
 					return;
 				}
 			} catch (IOException | ModIdFoundConnectionFailed e) {
-				AppLogger.error(e.getMessage(), getClass());
+				log.error(e.getMessage(), getClass());
 			}
 
 			//Attempt to find an online ModVersion matching the installed one
-			AppLogger.info("getting the real mod id: " + jarId, getClass());
+			log.info("getting the real mod id: " + jarId, getClass());
 			ModUtils.IdResult id = utils.getRealModId(file);
 			jarId = id.jarId;
 			toReturn = id.mod;
-			AppLogger.info("found a real id: " +id.jarId, getClass());
+			log.info("found a real id: " +id.jarId, getClass());
 		}catch(Exception e){
-			AppLogger.error(e, getClass());
+			log.error("", e);
 		}finally {
 			this.interrupt();
 			if(toReturn != null) found.accept(jarId, toReturn);
 			else failedToLocate.run();
 		}
-		AppLogger.info("returning: " + jarId, getClass());
-		AppLogger.info("", getClass());
-		return;
+		log.info("returning: " + jarId, getClass());
+		log.info("");
 	}
 }

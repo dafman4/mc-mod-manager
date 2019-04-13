@@ -1,6 +1,5 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
@@ -17,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,9 +32,11 @@ import java.util.Map;
 import java.util.jar.JarFile;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class NewModsController {
 
+	private static final Logger log = getLogger(NewModsController.class);
 	@FXML
 	public VBox root;
 	@FXML
@@ -75,7 +77,7 @@ public class NewModsController {
 		try {
 			Modal.getInstance().close();
 		} catch (IOException e1) {
-			AppLogger.error(e1, getClass());
+			log.error("", e1);
 		}
 	}
 
@@ -83,7 +85,7 @@ public class NewModsController {
 	public void addMods(Event e)  {
 		//A mod id consists of "-" and alpha-numerical, things that aren't those are the delimiters
 		try { Modal.loading(); }
-		catch (IOException e1) { AppLogger.error(e1.getMessage(), getClass()); }
+		catch (IOException e1) { log.error(e1.getMessage(), getClass()); }
 		Thread t = new Thread(() -> {
 
 			List<ModVersion> updates = new LinkedList<>();
@@ -100,7 +102,7 @@ public class NewModsController {
 					try {
 						checkCurseForge(id, result);
 					} catch (ModIdNotFoundException ex) {
-						AppLogger.error(ex, getClass());
+						log.error("", ex);
 						result.reason = "Failed to locate a mod with id: " + id;
 					}
 				} else {

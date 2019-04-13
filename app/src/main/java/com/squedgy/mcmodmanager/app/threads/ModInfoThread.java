@@ -1,17 +1,19 @@
 package com.squedgy.mcmodmanager.app.threads;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFailedException;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
-import javafx.util.Callback;
+import org.slf4j.Logger;
 
 import java.util.function.Consumer;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class ModInfoThread extends Thread {
 
+	private static final Logger log = getLogger(ModInfoThread.class);
 	private final ModVersion toFind;
 	private final Consumer<ModVersion> callback;
 	private final Runnable couldntFind;
@@ -51,10 +53,10 @@ public class ModInfoThread extends Thread {
 					toFind.getMinecraftVersion()
 				);
 			} catch (Exception e1) {
-				AppLogger.error(e1.getMessage(), getClass());
+				log.error(e1.getMessage());
 			}
 		} catch (Exception e) {
-			AppLogger.error(e.getMessage(), getClass());
+			log.error(e.getMessage());
 		}
 
 		if (resp != null) {

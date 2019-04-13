@@ -1,7 +1,5 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.AppLogger;
-import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
@@ -15,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,9 +22,11 @@ import java.util.PriorityQueue;
 import java.util.Queue;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class MinecraftVersionController {
 
+	private static final Logger log = getLogger(MinecraftVersionController.class);
 	@FXML
 	private ChoiceBox<String> choices;
 	@FXML
@@ -58,7 +59,7 @@ public class MinecraftVersionController {
 			try {
 				MainController.getInstance().getRoot().getChildren().setAll(new LoadingController().getRoot());
 			} catch (IOException e1) {
-				AppLogger.error(e1, getClass());
+				log.error("", e1);
 			}
 			Runnable t = () -> {
 				File mods = new File(PathUtils.getModsDir());
@@ -69,13 +70,13 @@ public class MinecraftVersionController {
 					System.gc();
 					for (File file : mods.listFiles()) {
 						try { Files.move(file.toPath(), currentStorage.toPath().resolve(file.getName())); }
-						catch (IOException e1) { AppLogger.error(e1, getClass()); }
+						catch (IOException e1) { log.error("", e1); }
 					}
 					System.gc();
 					if (newStorage.exists() && newStorage.isDirectory()) {
 						for (File file : newStorage.listFiles()) {
 							try { Files.move(file.toPath(), mods.toPath().resolve(file.getName())); }
-							catch (IOException e1) { AppLogger.error(e1,getClass()); }
+							catch (IOException e1) { log.error("", e1); }
 						}
 					}
 					ModUtils.getInstance().setMods();
@@ -83,11 +84,11 @@ public class MinecraftVersionController {
 						try {
 							MainController.getInstance().loadMods();
 						} catch (IOException e1) {
-							AppLogger.error(e1, getClass());
+							log.error("", e1);
 						}
 					});
 				}catch(NullPointerException e1){
-					AppLogger.error(e1, getClass());
+					log.error("", e1);
 				}
 				Config.getInstance().writeProps();
 			};
@@ -104,7 +105,7 @@ public class MinecraftVersionController {
 		try {
 			Modal.getInstance().close();
 		} catch (IOException e1) {
-			AppLogger.error(e1, getClass());
+			log.error("", e1);
 		}
 	}
 

@@ -1,11 +1,9 @@
 package com.squedgy.mcmodmanager.app.components;
 
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.controllers.LoadingController;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableNumberValue;
 import javafx.event.Event;
@@ -13,7 +11,6 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Control;
 import javafx.scene.control.ScrollPane;
@@ -26,13 +23,16 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.stage.WindowEvent;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class Modal {
 
+	private static final Logger log = getLogger(Modal.class);
 	private static Modal instance;
 	@FXML
 	private VBox root;
@@ -84,7 +84,7 @@ public class Modal {
 			m.bindMinWidth(new SimpleDoubleProperty(200));
 			stage.onHidingProperty().setValue(DEFAULT_ACTION);
 		} catch (IOException e) {
-			AppLogger.error(e.getMessage(), Modal.class);
+			log.error(e.getMessage(), Modal.class);
 		}
 	}
 
@@ -149,7 +149,7 @@ public class Modal {
 				reset(stage);
 			});
 		}else {
-			AppLogger.debug("STAGE NULL", getClass());
+			log.debug("STAGE NULL");
 		}
 	}
 

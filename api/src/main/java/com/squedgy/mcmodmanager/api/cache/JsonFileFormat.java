@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.utilities.interfaces.FileFormatter;
 
 import java.io.*;

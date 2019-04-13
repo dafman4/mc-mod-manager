@@ -2,18 +2,13 @@ package com.squedgy.mcmodmanager.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.CurseForgeResponseDeserializer;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.ModIdNotFoundException;
-import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
-import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -23,7 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultRedirectStrategy;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.net.*;
@@ -31,10 +26,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public abstract class ModChecker {
+
+	private static final Logger log = getLogger(ModChecker.class);
 
 	private static final RedirectStrategy redirectionStrategy = new DefaultRedirectStrategy() {
 		@Override
@@ -58,7 +56,7 @@ public abstract class ModChecker {
 	private static CloseableHttpResponse connectInOrder(String... urls){
 
 		for(String url: urls){
-			AppLogger.debug("Trying to access url: " + url, ModChecker.class);
+			log.debug("Trying to access url: " + url, ModChecker.class);
 			CloseableHttpClient client = getClient();
 
 			HttpGet get = new HttpGet(url);
@@ -66,15 +64,15 @@ public abstract class ModChecker {
 				CloseableHttpResponse resp = client.execute(get);
 
 				int responseCode = resp.getStatusLine().getStatusCode();
-				AppLogger.debug("Response code: " + responseCode, ModChecker.class);
+				log.debug("Response code: " + responseCode);
 				if(responseCode >= 200 && responseCode < 300){
-					AppLogger.debug("returning response: " + resp, ModChecker.class);
+					log.debug("returning response: " + resp);
 					return resp;
 				}else {
 					resp.close();
 				}
 			}catch(IOException e){
-				AppLogger.error(e.getMessage(), ModChecker.class);
+				log.error(e.getMessage(), ModChecker.class);
 			}
 		}
 
@@ -111,7 +109,7 @@ public abstract class ModChecker {
 			} catch (Exception e) {
 				throw new ModIdFoundConnectionFailed(String.format("Unknown Error with mod %s: %s", mod, e.getMessage()), e);
 			}
-		}catch(Exception e){ AppLogger.error(e, ModChecker.class); throw e; }
+		}catch(Exception e){ log.error("", e); throw e; }
 	}
 
 	public static ModVersion getNewest(String mId, String mcV) throws ModIdNotFoundException {
@@ -132,7 +130,7 @@ public abstract class ModChecker {
 			new ObjectMapper().writeValue(p.toFile(), resp);
 			if (ret != null) return ret;
 		} catch (Exception ex) {
-			AppLogger.error(ex, ModChecker.class);
+			log.error("", ex);
 		}
 		throw new ModIdNotFoundException(
 			String.format(
@@ -186,7 +184,7 @@ public abstract class ModChecker {
 			catch (IOException e) { return null; }
 
 		} catch (IOException | URISyntaxException e) {
-			AppLogger.error(e.getMessage(), ModChecker.class);
+			log.error(e.getMessage(), ModChecker.class);
 			return null;
 		}
 	}

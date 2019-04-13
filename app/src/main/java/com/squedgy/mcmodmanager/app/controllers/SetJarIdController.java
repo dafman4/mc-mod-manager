@@ -1,15 +1,12 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.response.ModIdFoundConnectionFailed;
 import com.squedgy.mcmodmanager.api.response.Version;
-import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.config.Config;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -20,25 +17,28 @@ import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class SetJarIdController {
 
+	private static final Logger log = getLogger(SetJarIdController.class);
 	@FXML
 	private VBox root;
 	private boolean updated;
 
-	public SetJarIdController() throws IOException {
+	SetJarIdController() throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/jar-ids.fxml"));
 		loader.setController(this);
 		loader.load();
 		updated = false;
 	}
 
-	public boolean isUpdated() {
+	boolean isUpdated() {
 		return updated;
 	}
 
@@ -83,7 +83,7 @@ public class SetJarIdController {
 							holder.getChildren().setAll(label, new Label(input.getText()), new Label(" - saved"));
 							updated = true;
 						} catch (IOException e2) {
-							AppLogger.error(e2.getMessage(), getClass());
+							log.error(e2.getMessage(), getClass());
 						}
 					} else {
 						onMouseReleased(id, input, b, holder, label);
@@ -97,7 +97,7 @@ public class SetJarIdController {
 				updated = true;
 			}
 		} catch (ModIdFoundConnectionFailed | IOException modIdFoundConnectionFailed) {
-			AppLogger.error(modIdFoundConnectionFailed.getMessage(), getClass());
+			log.error(modIdFoundConnectionFailed.getMessage(), getClass());
 		}
 	}
 

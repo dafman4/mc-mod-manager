@@ -1,12 +1,12 @@
 package com.squedgy.mcmodmanager.app.threads;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.ModChecker;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.util.ModUtils;
 import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.mcmodmanager.app.util.Result;
 import javafx.util.Callback;
+import org.slf4j.Logger;
 
 import java.io.*;
 import java.nio.channels.Channels;
@@ -17,9 +17,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 
 public class ModUpdaterThread extends Thread {
 
+	private static final Logger log = getLogger(ModUpdaterThread.class);
 	private final List<ModVersion> updates;
 	private final Callback<Map<ModVersion, Result>, Void> callback;
 	private final Map<ModVersion, Thread> updateThreads = new HashMap<>();
@@ -41,7 +44,7 @@ public class ModUpdaterThread extends Thread {
 			try {
 				TimeUnit.SECONDS.sleep(1);
 			} catch (InterruptedException e) {
-				AppLogger.error(e, getClass());
+				log.error("", e);
 			}
 		}
 
@@ -51,7 +54,7 @@ public class ModUpdaterThread extends Thread {
 	private Thread buildThread(ModVersion update, Map<ModVersion, Result> results) {
 		return new Thread(() -> {
 			boolean downloaded = false;
-			try (InputStream file = ModChecker.download(update);){
+			try (InputStream file = ModChecker.download(update)){
 				ModVersion oldMod = ModUtils.getInstance().getMod(update.getModId());
 				String fileLocation = PathUtils.findModLocation(oldMod);
 				if (file != null && new File(fileLocation).exists()) {
@@ -63,15 +66,15 @@ public class ModUpdaterThread extends Thread {
 						out.transferFrom(in, 0, Long.MAX_VALUE);
 						downloaded = true;
 					}catch (IOException e) {
-						AppLogger.error(e.getMessage(), getClass());
+						log.error(e.getMessage(), getClass());
 					}
 				}
 			} catch (IOException e) {
-				AppLogger.error(e, getClass());
+				log.error("", e);
 			} finally {
 				if (downloaded) results.put(update, new Result(true, "succeeded"));
 				else results.put(update, new Result(false, "failed: Couldn't download"));
-				AppLogger.info("removed: " + updateThreads.remove(update), getClass());
+				log.info("removed: " + updateThreads.remove(update));
 			}
 		});
 	}

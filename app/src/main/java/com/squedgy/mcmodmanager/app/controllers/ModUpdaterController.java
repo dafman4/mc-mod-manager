@@ -1,6 +1,5 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
-import com.squedgy.mcmodmanager.AppLogger;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.app.Startup;
 import com.squedgy.mcmodmanager.app.components.Modal;
@@ -20,6 +19,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,9 +30,11 @@ import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import static com.squedgy.mcmodmanager.app.util.PathUtils.getResource;
+import static org.slf4j.LoggerFactory.getLogger;
 
 public class ModUpdaterController {
 
+	private static final Logger log = getLogger(ModUpdaterController.class);
 	private static final String TABLE_NAME = "updater";
 	@FXML
 	public VBox root;
@@ -43,7 +45,7 @@ public class ModUpdaterController {
 	private static ModVersionTableController table;
 	private static ModUpdaterThread updates;
 
-	public ModUpdaterController(List<ModVersion> updates) throws IOException {
+	ModUpdaterController(List<ModVersion> updates) throws IOException {
 		FXMLLoader loader = new FXMLLoader(getResource("components/updates.fxml"));
 		loader.setController(this);
 		loader.load();
@@ -64,7 +66,7 @@ public class ModUpdaterController {
 		try {
 			Modal.getInstance().close();
 		} catch (IOException e1) {
-			AppLogger.error(e1.getMessage(), getClass());
+			log.error(e1.getMessage(), getClass());
 		}
 	}
 
@@ -88,7 +90,7 @@ public class ModUpdaterController {
 									ModUtils.getInstance().setMods();
 									Startup.getInstance().getMainView().updateModList();
 								} catch (IOException e2) {
-									AppLogger.error(e2, ModUpdaterController.class);
+									log.error("", e2);
 								}
 							});
 							return null;
@@ -98,13 +100,13 @@ public class ModUpdaterController {
 				}
 				if (!updates.isAlive()) updates.start();
 			} catch (IOException e1) {
-				AppLogger.error(e1, ModUpdaterController.class);
+				log.error("", e1);
 			}
 		} );
 	}
 
 	@FXML
-	public void updateAll(Event e)  {
+	private void updateAll(Event e)  {
 		updateAll(table.getItems().stream().map(e1 -> (ModVersion) e1).collect(Collectors.toList()));
 	}
 
@@ -114,7 +116,7 @@ public class ModUpdaterController {
 		File newMod = new File(PathUtils.findModLocation(key));
 		File oldMod = new File(PathUtils.findModLocation(old));
 
-		AppLogger.info("Old File ||| New File\n" + oldMod.getAbsolutePath() + "|||" + newMod.getAbsolutePath(), ModUpdaterController.class);
+		log.info("Old File ||| New File\n" + oldMod.getAbsolutePath() + "|||" + newMod.getAbsolutePath(), ModUpdaterController.class);
 
 		value.setResult(oldMod.delete());
 		value.setReason(value.isResult() ? "Succeeded!" : "couldn't delete the old file");
