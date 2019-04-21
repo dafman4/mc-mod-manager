@@ -1,7 +1,7 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.App;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.threads.ModCheckingThread;
@@ -96,7 +96,7 @@ public class MainController {
 				}
 				badJars.setVisible(ModUtils.viewBadJars().size() > 0);
 				root.getChildren().setAll(menu, listGrid);
-				Platform.runLater(() -> Startup.getParent().getWindow().centerOnScreen());
+				Platform.runLater(() -> App.getParent().getWindow().centerOnScreen());
 			});
 			return null;
 		});
@@ -212,7 +212,7 @@ public class MainController {
 						try {
 							table = new ModUpdaterController(l);
 							modal.setContent(table.getRoot());
-							modal.openAndWait(Startup.getParent().getWindow());
+							modal.openAndWait(App.getParent().getWindow());
 						} catch (IOException e1) {
 							log.error("", e1);
 							modal.close();
@@ -228,10 +228,10 @@ public class MainController {
 	@FXML
 	public void showBadJars(Event e)  {
 		try {
-			Modal m = Modal.getInstance(Startup.getParent().getWindow());
+			Modal m = Modal.getInstance(App.getParent().getWindow());
 			BadJarsController c = new BadJarsController();
 			m.setContent(c.getRoot());
-			m.open(Startup.getParent().getWindow());
+			m.open(App.getParent().getWindow());
 		}
 		catch (IOException e1) { log.error(e1.getMessage(), getClass()); }
 	}
@@ -239,13 +239,13 @@ public class MainController {
 	@FXML
 	public void setJarIds(Event e){
 		try {
-			Modal m = Modal.getInstance(Startup.getParent().getWindow());
+			Modal m = Modal.getInstance(App.getParent().getWindow());
 			SetJarIdController controller = new SetJarIdController();
 			m.setContent(controller.getRoot());
-			m.open(Startup.getParent().getWindow());
+			m.open(App.getParent().getWindow());
 			m.setAfterClose(e2 -> {
 								try {
-					if(controller.isUpdated()) Startup.getInstance().getMainView().getRoot().getChildren().setAll(new LoadingController().getRoot());
+					if(controller.isUpdated()) App.getInstance().getMainView().getRoot().getChildren().setAll(new LoadingController().getRoot());
 					new Thread(() -> {
 						if(controller.isUpdated()) {
 							ModUtils utils = ModUtils.getInstance();
@@ -268,9 +268,9 @@ public class MainController {
 	@FXML
 	public void newMods(Event e) {
 		try {
-			Modal m = Modal.getInstance(Startup.getParent().getWindow());
+			Modal m = Modal.getInstance(App.getParent().getWindow());
 			m.setContent(new NewModsController().getRoot());
-			m.openAndWait(Startup.getParent().getWindow());
+			m.openAndWait(App.getParent().getWindow());
 		} catch (IOException e1) {
 			log.error(e1.getMessage(), getClass());
 		}
@@ -279,9 +279,9 @@ public class MainController {
 	@FXML
 	public void mcVersion(Event e){
 		try{
-			Modal modal = Modal.getInstance(Startup.getParent().getWindow());
+			Modal modal = Modal.getInstance(App.getParent().getWindow());
 			modal.setContent(new MinecraftVersionController().getRoot());
-			modal.openAndWait(Startup.getParent().getWindow());
+			modal.openAndWait(App.getParent().getWindow());
 		} catch (IOException e1) {
 			log.error("", e1);
 		}

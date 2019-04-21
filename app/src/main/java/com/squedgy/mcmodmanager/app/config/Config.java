@@ -4,7 +4,7 @@ import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
 import com.squedgy.mcmodmanager.api.cache.Cacher;
 import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.mcmodmanager.api.cache.JsonModVersionDeserializer;
-import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.App;
 import com.squedgy.mcmodmanager.app.components.DisplayVersion;
 import com.squedgy.mcmodmanager.app.util.PathUtils;
 import com.squedgy.utilities.reader.FileReader;
@@ -86,7 +86,7 @@ public class Config {
 			s.minWidthProperty().bind(new SimpleDoubleProperty(300));
 			s.maxWidthProperty().bind(new SimpleDoubleProperty(300));
 			s.maxHeightProperty().bind(new SimpleDoubleProperty(105));
-			s.initOwner(Startup.getParent().getWindow());
+			s.initOwner(App.getParent().getWindow());
 			s.initModality(Modality.WINDOW_MODAL);
 			s.setAlwaysOnTop(true);
 			s.showAndWait();

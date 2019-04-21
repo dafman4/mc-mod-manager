@@ -1,7 +1,7 @@
 package com.squedgy.mcmodmanager.app.components;
 
 
-import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.App;
 import com.squedgy.mcmodmanager.app.controllers.LoadingController;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -97,7 +97,7 @@ public class Modal {
 		Modal ret = getInstance();
 		reset(ret.stage);
 		ret.setContent(new LoadingController().getRoot());
-		ret.open(Startup.getParent().getWindow());
+		ret.open(App.getParent().getWindow());
 		return ret;
 	}
 

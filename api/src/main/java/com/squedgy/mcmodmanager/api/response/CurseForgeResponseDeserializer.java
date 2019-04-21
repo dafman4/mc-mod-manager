@@ -7,13 +7,18 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.squedgy.mcmodmanager.api.abstractions.CurseForgeResponse;
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
+import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 public class CurseForgeResponseDeserializer extends StdDeserializer<CurseForgeResponse> {
+
+	private static final Logger log = getLogger(CurseForgeResponseDeserializer.class);
 
 	public static final DateTimeFormatter formatter = new DateTimeFormatterBuilder()
 		.append(DateTimeFormatter.ISO_LOCAL_DATE)
@@ -43,6 +48,7 @@ public class CurseForgeResponseDeserializer extends StdDeserializer<CurseForgeRe
 			ModInformation ret = new ModInformation();
 
 			JsonNode node = parser.getCodec().readTree(parser);
+
 			String[] urlId = node.get("urls").get("project").textValue().split("/");
 			String modName = node.get("title").asText(),
 				modId = urlId[urlId.length - 1];

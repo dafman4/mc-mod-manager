@@ -7,12 +7,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.squedgy.utilities.interfaces.FileFormatter;
+import com.squedgy.utilities.formatter.ConfigFileFormat;
 
 import java.io.*;
 import java.util.*;
 
-public class JsonFileFormat implements FileFormatter<Map<String, String>> {
+public class JsonFileFormat extends ConfigFileFormat {
 
 	private String workingFile = "";
 

@@ -4,8 +4,8 @@ import com.squedgy.mcmodmanager.api.cache.JsonFileFormat;
 import com.squedgy.utilities.interfaces.FileFormatter;
 import com.squedgy.utilities.reader.FileReader;
 import com.squedgy.utilities.writer.FileWriter;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,7 +24,6 @@ public class JsonFileFormatTest {
 		FileFormatter<Map<String, String>> format = new JsonFileFormat();
 
 		FileWriter<Map<String, String>> writer = new FileWriter<>("test/test.json", format, false);
-		;
 
 		Map<String, String> map = new HashMap<>();
 		map.put(singleDeep, singleWrite);
@@ -34,9 +33,9 @@ public class JsonFileFormatTest {
 		writer.write(map);
 
 		map = new FileReader<>(format).read("test/test.json");
-		Assertions.assertEquals(singleWrite, map.get(singleDeep));
-		Assertions.assertEquals(doubleWrite, map.get(doubleDeep));
-		Assertions.assertEquals(tripleWrite, map.get(tripleDeep));
+		Assert.assertEquals(singleWrite, map.get(singleDeep));
+		Assert.assertEquals(doubleWrite, map.get(doubleDeep));
+		Assert.assertEquals(tripleWrite, map.get(tripleDeep));
 	}
 
 }

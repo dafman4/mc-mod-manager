@@ -1,7 +1,7 @@
 package com.squedgy.mcmodmanager.app.controllers;
 
 import com.squedgy.mcmodmanager.api.abstractions.ModVersion;
-import com.squedgy.mcmodmanager.app.Startup;
+import com.squedgy.mcmodmanager.app.App;
 import com.squedgy.mcmodmanager.app.components.Modal;
 import com.squedgy.mcmodmanager.app.threads.ModUpdaterThread;
 import com.squedgy.mcmodmanager.app.util.*;
@@ -88,7 +88,7 @@ public class ModUpdaterController {
 								modal.setContent(resultTable);
 								try {
 									ModUtils.getInstance().setMods();
-									Startup.getInstance().getMainView().updateModList();
+									App.getInstance().getMainView().updateModList();
 								} catch (IOException e2) {
 									log.error("", e2);
 								}
